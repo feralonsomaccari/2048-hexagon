@@ -1,0 +1,7 @@
+.hexagon {
+    width: 200px;
+    height: 173px;
+    background-image: url('./hexagon.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
