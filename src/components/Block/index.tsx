@@ -5,7 +5,7 @@ type props = {
   y: number;
   z: number;
   value?: number;
-  style?: object;
+  style?: {};
 };
 
 const Block = ({ x, y, z, value = 0, style = {} }: props): JSX.Element => {
