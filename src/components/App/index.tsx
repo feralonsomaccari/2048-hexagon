@@ -15,9 +15,9 @@ const hardcodedGrid = [
 ];
 
 const hardcodedServerResponse = [
-  { x: 0, y: 1, z: -1, value: 2, key: 'asd' },
-  // { x: 1, y: 0, z: -1, value: 2 },
-  // { x: 1, y: -1, z: 0, value: 2 },
+  { x: 0, y: 1, z: -1, value: 2 },
+  { x: 1, y: 0, z: -1, value: 2 },
+  { x: 1, y: -1, z: 0, value: 2 },
 ];
 
 type coordinates = {
@@ -41,7 +41,14 @@ export const App: React.FC = () => {
   
   useEffect(() => {
     setTilesPos(hardcodedServerResponse)
+  }, [])
+
+  useEffect(() => {
+    setTilesPos(hardcodedServerResponse)
     const tempGrid = [...hardcodedGrid];
+    
+    tempGrid.forEach(serverCoords => serverCoords.value = 0)
+
     hardcodedServerResponse.forEach(serverCoords => {
       tempGrid.forEach(gridCoords => {
         if(gridCoords.x === serverCoords.x 
@@ -52,10 +59,8 @@ export const App: React.FC = () => {
       })
     })
     setGrid(tempGrid)
+  }, [tilesPos])
 
-  }, [])
-
-  if(!setTilesPos.length)  return <></>;
 
 
   const updateTilesPos = (direction : string) => {
@@ -86,12 +91,29 @@ export const App: React.FC = () => {
         tilePos.y = tilePos.y -= 1 
       }
     }
-    const newTilesPos = [...tilesPos]
-    const updatedNewTilesPos = newTilesPos.map(tilePos => {
-        cube(tilePos)
-        return tilePos;
+
+    const newTilesPos = [...tilesPos].map((tile) => {
+      const tempPos = {...tile}
+      for(let i = 0; i <= grid.length; i++) {
+        cube(tempPos)
+        const checkGridBlock = grid.filter(block => tempPos.x === block.x && tempPos.y === block.y && tempPos.z === block.z)
+        if(checkGridBlock.length){
+          if(!checkGridBlock[0].value){
+            tile.x = checkGridBlock[0].x
+            tile.y = checkGridBlock[0].y
+            tile.z = checkGridBlock[0].z
+            continue;
+          }else{
+            console.log("OHH NO!");
+            break;
+          }
+        }else{
+          break;
+        }
+      }
+      return tile
     })
-    setTilesPos(updatedNewTilesPos)
+    setTilesPos(newTilesPos)
   }
 
   const keyPressHandler = (event: KeyboardEvent): void => {
@@ -127,6 +149,7 @@ export const App: React.FC = () => {
     }
   };
 
+  if(!setTilesPos.length)  return <></>;
   return (
     <div className={styles.gameWrapper}>
       <div className={styles.gameContainer}>
