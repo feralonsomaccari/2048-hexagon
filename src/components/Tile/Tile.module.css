@@ -15,4 +15,5 @@
     font-weight: bold;
     text-align: center;
     color: var(--color-text-main);
+    transition: all 100ms ease-in-out;
 }
