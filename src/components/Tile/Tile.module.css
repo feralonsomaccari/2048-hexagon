@@ -1,0 +1,10 @@
+.hexagon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: 173px;
+    background-image: url('./tile-hexagon.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
