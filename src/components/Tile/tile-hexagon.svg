@@ -2,6 +2,8 @@
 <style>
       path {
         fill: #eee1c9;
+        stroke-width: 10px;
+        stroke: #eee1c9;
       }
     </style>
   <path d='M38,2 

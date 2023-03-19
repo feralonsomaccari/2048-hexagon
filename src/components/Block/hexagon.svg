@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 -3 121 110'>
 <style>
       path {
-        fill: #cdc1b4;
+        <!-- fill: #cdc1b4; -->
+        fill: transparent;
         stroke-width: 10px;
         stroke: #bcae9f;
       }
