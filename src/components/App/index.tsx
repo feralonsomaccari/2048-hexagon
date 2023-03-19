@@ -44,7 +44,6 @@ export const App: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    setTilesPos(hardcodedServerResponse)
     const tempGrid = [...hardcodedGrid];
     
     tempGrid.forEach(serverCoords => serverCoords.value = 0)
@@ -59,9 +58,23 @@ export const App: React.FC = () => {
       })
     })
     setGrid(tempGrid)
+  }, [])
+
+  useEffect(() => {
+    const tempGrid = [...grid];
+    
+    tempGrid.forEach(serverCoords => serverCoords.value = 0)
+
+    tilesPos.forEach(serverCoords => {
+      tempGrid.forEach(gridCoords => {
+        if(gridCoords.x === serverCoords.x 
+          && gridCoords.y === serverCoords.y 
+          && gridCoords.z === serverCoords.z ){
+            gridCoords.value = serverCoords.value
+          }
+      })
+    })
   }, [tilesPos])
-
-
 
   const updateTilesPos = (direction : string) => {
       
@@ -92,6 +105,7 @@ export const App: React.FC = () => {
       }
     }
 
+    const removeTiles: number[] = [];
     const newTilesPos = [...tilesPos].map((tile) => {
       const tempPos = {...tile}
       for(let i = 0; i <= grid.length; i++) {
@@ -104,7 +118,17 @@ export const App: React.FC = () => {
             tile.z = checkGridBlock[0].z
             continue;
           }else{
-            console.log("OHH NO!");
+            if(tempPos.value === checkGridBlock[0].value) {
+              [...tilesPos].forEach((tile, index) => {
+                if(tile.x === checkGridBlock[0].x && tile.y === checkGridBlock[0].y && tile.z === checkGridBlock[0].z){
+                  removeTiles.push(index)
+                }
+              })
+              tile.x = checkGridBlock[0].x
+              tile.y = checkGridBlock[0].y
+              tile.z = checkGridBlock[0].z
+              tile.value = tile.value + checkGridBlock[0].value
+            }
             break;
           }
         }else{
@@ -112,6 +136,10 @@ export const App: React.FC = () => {
         }
       }
       return tile
+    })
+
+    removeTiles.forEach((tileIndex) => {
+      newTilesPos.splice(tileIndex,1);
     })
     setTilesPos(newTilesPos)
   }
