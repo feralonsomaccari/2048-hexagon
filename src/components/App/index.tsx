@@ -14,6 +14,12 @@ const hardcodedGrid = [
   { x: 1, y: -1, z: 0 },
 ];
 
+const hardcodedServerResponse = [
+  { x: 0, y: 1, z: -1, value: 2 },
+  { x: 1, y: 0, z: -1, value: 2 },
+  { x: 1, y: -1, z: 0, value: 2 },
+];
+
 export const App: React.FC = () => {
   useEffect(() => {
     document.addEventListener("keydown", keyPressHandler);
@@ -45,7 +51,9 @@ export const App: React.FC = () => {
   return (
     <div className={styles.gameWrapper}>
       <div className={styles.gameContainer}>
-        <Tile style={{ left: "95px", top: "0px" }} value={2} />
+        {hardcodedServerResponse.map((tile) => (
+          <Tile style={getPositionFromCoords(tile)} value={tile.value} />
+        ))}
         {hardcodedGrid.map((coords, index) => (
           <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={0} />
         ))}
