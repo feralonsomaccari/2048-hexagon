@@ -7,7 +7,7 @@ type props = {
   
 const Tile = ({value, style} : props) : JSX.Element => {
   return (
-    <div className={styles.tile}>Tile</div>
+    <div className={styles.tile} style={style}>{value}</div>
   )
 }
 

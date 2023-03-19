@@ -1,5 +1,6 @@
 import React from "react";
 import Block from "../Block";
+import Tile from "../Tile";
 import styles from "./App.module.css";
 
 export const App: React.FC = () => {
@@ -40,6 +41,7 @@ export const App: React.FC = () => {
   return (
     <div className={styles.gameWrapper}>
       <div className={styles.gameContainer}>
+        <Tile style={{left: '95px', top: '0px'}} value={2}></Tile>
         {hardcodedField.map((coords, index) => (
           <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={0} />
         ))}
