@@ -22,4 +22,31 @@ const getPositionFromCoords = (grid: coordinates): any => {
   };
 };
 
-export { getPositionFromCoords };
+const cubeMovement = (tilePos: coordinates, direction: string) => {
+  if(direction === 'northWest'){
+    tilePos.x = tilePos.x -= 1
+    tilePos.y = tilePos.y += 1 
+  }
+  if(direction === 'north'){
+    tilePos.y = tilePos.y += 1
+    tilePos.z = tilePos.z -= 1 
+  }
+  if(direction === 'northEast'){
+    tilePos.x = tilePos.x += 1
+    tilePos.z = tilePos.z -= 1 
+  }
+  if(direction === 'southWest'){
+    tilePos.x = tilePos.x -= 1
+    tilePos.z = tilePos.z += 1 
+  }
+  if(direction === 'south'){
+    tilePos.y = tilePos.y -= 1
+    tilePos.z = tilePos.z += 1 
+  }
+  if(direction === 'southEast'){
+    tilePos.x = tilePos.x += 1
+    tilePos.y = tilePos.y -= 1 
+  }
+}
+
+export { getPositionFromCoords, cubeMovement };

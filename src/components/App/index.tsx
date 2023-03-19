@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Block from "../Block";
 import Tile from "../Tile";
 import styles from "./App.module.css";
-import { getPositionFromCoords } from "./utils";
+import { getPositionFromCoords, cubeMovement } from "./utils";
 
 const hardcodedGrid = [
   { x: 0, y: 1, z: -1, value: 0 },
@@ -30,6 +30,7 @@ type coordinates = {
 export const App: React.FC = () => {
   const [grid, setGrid] = useState<coordinates[]>([])
   const [tilesPos, setTilesPos] = useState<coordinates[]>([])
+  const [moving, setMoving] = useState(false)
   
   useEffect(() => {
     document.addEventListener("keydown", keyPressHandler);
@@ -37,15 +38,12 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tilesPos]);
+  }, [tilesPos, moving]);
   
   useEffect(() => {
     setTilesPos(hardcodedServerResponse)
-  }, [])
 
-  useEffect(() => {
     const tempGrid = [...hardcodedGrid];
-    
     tempGrid.forEach(serverCoords => serverCoords.value = 0)
 
     hardcodedServerResponse.forEach(serverCoords => {
@@ -74,42 +72,21 @@ export const App: React.FC = () => {
           }
       })
     })
+
+    setTimeout(() => {
+      setMoving(false)
+    },100)
+
   }, [tilesPos])
 
   const updateTilesPos = (direction : string) => {
-      
-    const cube = (tilePos : coordinates) => {
-      if(direction === 'northWest'){
-        tilePos.x = tilePos.x -= 1
-        tilePos.y = tilePos.y += 1 
-      }
-      if(direction === 'north'){
-        tilePos.y = tilePos.y += 1
-        tilePos.z = tilePos.z -= 1 
-      }
-      if(direction === 'northEast'){
-        tilePos.x = tilePos.x += 1
-        tilePos.z = tilePos.z -= 1 
-      }
-      if(direction === 'southWest'){
-        tilePos.x = tilePos.x -= 1
-        tilePos.z = tilePos.z += 1 
-      }
-      if(direction === 'south'){
-        tilePos.y = tilePos.y -= 1
-        tilePos.z = tilePos.z += 1 
-      }
-      if(direction === 'southEast'){
-        tilePos.x = tilePos.x += 1
-        tilePos.y = tilePos.y -= 1 
-      }
-    }
+    setMoving(true)
 
     const removeTiles: number[] = [];
     const newTilesPos = [...tilesPos].map((tile) => {
       const tempPos = {...tile}
       for(let i = 0; i <= grid.length; i++) {
-        cube(tempPos)
+        cubeMovement(tempPos, direction)
         const checkGridBlock = grid.filter(block => tempPos.x === block.x && tempPos.y === block.y && tempPos.z === block.z)
         if(checkGridBlock.length){
           if(!checkGridBlock[0].value){
@@ -141,11 +118,12 @@ export const App: React.FC = () => {
     removeTiles.forEach((tileIndex) => {
       newTilesPos.splice(tileIndex,1);
     })
+
     setTilesPos(newTilesPos)
   }
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat) return;
+    if (event.repeat || moving) return;
     switch (event.key) {
       case "q":
       case "Q":
