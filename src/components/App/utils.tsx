@@ -49,4 +49,25 @@ const cubeMovement = (tilePos: coordinates, direction: string) => {
   }
 }
 
-export { getPositionFromCoords, cubeMovement };
+const sortTileSet = (tiles: coordinates[], direction: string) => {
+  if(direction === 'northWest'){
+    tiles.sort((a, b) => a.x - b.x && a.y - b.y)
+  }
+  if(direction === 'north'){
+    tiles.sort((a, b) => b.y - a.y && a.z - b.z)
+  }
+  if(direction === 'northEast'){
+    tiles.sort((a, b) => b.x - a.x && a.z - b.z)
+  }
+  if(direction === 'southWest'){
+    tiles.sort((a, b) => a.x - b.x && b.z - a.z)
+  }
+  if(direction === 'south'){
+    tiles.sort((a, b) => a.y - b.y && b.z - a.z)
+  }
+  if(direction === 'southEast'){
+    tiles.sort((a, b) => b.x - a.x && a.y - b.y)
+  }
+}
+
+export { getPositionFromCoords, cubeMovement, sortTileSet };
