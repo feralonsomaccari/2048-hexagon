@@ -67,6 +67,11 @@ export const App: React.FC = () => {
     }
   }, [tilesPos]);
 
+  const resetGameHandler = async () => {
+    setTilesPos([])
+    await serverCall([])
+  }
+
   const serverCall = async (newTilesPos: coordinates[] = []) => {
     if (!disableServer) {
       const serverResponse = await fetch("http://localhost:13337/2", {
@@ -203,7 +208,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Game Menu */}
-      <GameMenu gameOver={gameOver} />
+      <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver}/>
 
       {/* Game */}
       <div className={styles.gameWrapper}>
