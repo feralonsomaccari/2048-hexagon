@@ -8,7 +8,7 @@ type props = {
 const Score = ({ title, score }: props) => {
   return (
     <div className={styles.scoreWrapper}>
-      <h3>{title}</h3>
+      <h3 className={styles.scoreTitle}>{title}</h3>
       <h3>{score}</h3>
     </div>
   );

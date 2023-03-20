@@ -1,14 +1,18 @@
 .scoreWrapper {
   position: relative;
-  background: #bbada0;
+  background: var(--color-tertiary);
   font-size: 25px;
   font-weight: bold;
   border-radius: 3px;
-  color: white;
+  color: var(--color-text-secondary);
   text-align: center;
   width: fit-content;
-  height: fit-content;
-  padding: 5px 15px;
-  font-size: 14px;
+  padding: 5px 20px;
+  font-size: 20px;
+}
+
+.scoreTitle {
   text-transform: uppercase;
+  font-size: 12px;
+  color: var(--bg-color-4);
 }
