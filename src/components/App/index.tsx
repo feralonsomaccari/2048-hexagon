@@ -70,6 +70,7 @@ export const App: React.FC = () => {
 
   const resetGameHandler = async () => {
     setTilesPos([])
+    setScore(0)
     await serverCall([])
   }
 
