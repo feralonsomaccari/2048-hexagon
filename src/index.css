@@ -2,6 +2,19 @@
   --color-text-main: #776e65;
   --color-text-secondary: #f9f6f2;
   --color-secondary: #8f7a66;
+  
+  --bg-color-2: #eee4da;
+  --bg-color-4: #ede0c8;
+  --bg-color-8: #f2b179;
+  --bg-color-16: #f59563;
+  --bg-color-32: #f67c5f;
+  --bg-color-64: #f65e3b;
+  --bg-color-128: #edcf72;
+  --bg-color-256: #edcc61;
+  --bg-color-512: #edc850;
+  --bg-color-1024: #edc53f;
+  --bg-color-2048: #edc22e;
+  --bg-color-final: #3c3a32;
 }
 
 body {

@@ -6,8 +6,9 @@ type props = {
 };
 
 const Tile = ({ value, style }: props): JSX.Element => {
+  const color = `color-${value}`
   return (
-    <div className={styles.tile} style={style}>
+    <div className={`${styles.tile} ${styles[color]}`} style={style}>
       {value}
     </div>
   );

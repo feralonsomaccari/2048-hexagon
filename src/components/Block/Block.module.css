@@ -1,11 +1,11 @@
 .hexagon {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 200px;
-    height: 173px;
-    background-image: url('./hexagon.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 173px;
+  background-image: url("./hexagon.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  text-align: center;
 }

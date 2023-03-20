@@ -1,18 +1,76 @@
 .tile {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 200px;
-    height: 173px;
-    background-image: url('./tile-hexagon.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    font-size: 55px;
-    font-weight: bold;
-    text-align: center;
-    color: var(--color-text-main);
-    transition: all 100ms ease-in-out;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 173px;
+  mask-image: url("./tile-hexagon.svg");
+  mask-repeat: no-repeat;
+  mask-size: cover;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  font-size: 55px;
+  font-weight: bold;
+  text-align: center;
+  color: var(--color-text-main);
+  background-color: var(--color-2);
+  transition: all 100ms ease-in-out;
+  animation: popin 0.25s;
+}
+
+.color-4 {
+  background-color: var(--bg-color-4);
+}
+.color-8 {
+  background-color: var(--bg-color-8);
+  color: var(--color-text-secondary);
+}
+.color-16 {
+  background-color: var(--bg-color-16);
+  color: var(--color-text-secondary);
+}
+.color-32 {
+  background-color: var(--bg-color-32);
+  color: var(--color-text-secondary);
+}
+.color-64 {
+  background-color: var(--bg-color-64);
+  color: var(--color-text-secondary);
+}
+.color-128 {
+  background-color: var(--bg-color-128);
+  color: var(--color-text-secondary);
+}
+.color-256 {
+  background-color: var(--bg-color-256);
+  color: var(--color-text-secondary);
+}
+.color-512 {
+  background-color: var(--bg-color-512);
+  color: var(--color-text-secondary);
+}
+.color-1024 {
+  background-color: var(--bg-color-1024);
+  color: var(--color-text-secondary);
+}
+.color-2048 {
+  background-color: var(--bg-color-2048);
+  color: var(--color-text-secondary);
+}
+.color-final {
+  background-color: var(--bg-color-final);
+  color: var(--color-text-secondary);
+}
+
+@keyframes popin {
+  0% {
+    transform: scale(0);
+    clip-path: circle(0%);
+  }
+
+  100% {
+    transform: scale(1);
+    clip-path: circle(100%);
+  }
 }
