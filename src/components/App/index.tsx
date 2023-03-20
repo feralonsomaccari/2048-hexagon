@@ -15,19 +15,12 @@ const hardcodedGrid = [
   { x: 1, y: -1, z: 0, value: 0 },
 ];
 
-// const hardcodedServerResponse = [
-//   { x: 0, y: -1, z: 1, value: 2, id: Math.random() },
-//   { x: 0, y: 1, z: -1, value: 2, id: Math.random() },
-//   { x: 0, y: 0, z: 0, value: 2, id: Math.random() },
-// ];
-
 type coordinates = {
   x: number;
   y: number;
   z: number;
   value: number;
   id?: number;
-  added?: boolean;
 };
 
 export const App: React.FC = () => {
@@ -93,7 +86,8 @@ export const App: React.FC = () => {
       });
       setFirstCall(false);
       setTilesPos([...dataWithIds, ...newTilesPos]);
-   }
+    }
+    setMoving(false);
   };
 
   const findNextBlock = (tile: coordinates, direction: string, move: boolean, tempGrid: coordinates[]) => {
@@ -161,7 +155,6 @@ export const App: React.FC = () => {
     setTilesPos(newTilesPos);
 
     setTimeout(() => {
-      setMoving(false);
       serverCall(newTilesPos);
     }, 200);
   };
@@ -200,13 +193,13 @@ export const App: React.FC = () => {
   };
 
   if (!setTilesPos.length) return <></>;
-  
+
   return (
     <div className={styles.wrapper}>
       {/* Dev Tools */}
       <div className={styles.devTools}>
-        <button onClick={() => setShowCoords((prev) => !prev)}>⚠️  {showCoords ? "Hide Coords" : "Show Coords"}</button>
-        <button onClick={() => setDisableServer((prev) => !prev)}>⚠️ {disableServer ? "Enable Server" : "Disable Server"}</button>
+        <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>⚠️ {showCoords ? "Hide Coords" : "Show Coords"}</button>
+        <button title="dev button" onClick={() => setDisableServer((prev) => !prev)}>⚠️ {disableServer ? "Enable Server" : "Disable Server"}</button>
       </div>
 
       {/* Game Menu */}
@@ -215,7 +208,7 @@ export const App: React.FC = () => {
       {/* Game */}
       <div className={styles.gameWrapper}>
         <div className={styles.gameContainer}>
-          {tilesPos.map((tile, index) => (
+          {tilesPos.map(tile => (
             <Tile key={tile.id} style={getPositionFromCoords(tile)} value={tile.value} />
           ))}
           {grid.map((coords, index) => (
