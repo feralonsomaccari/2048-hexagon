@@ -70,7 +70,6 @@ export const App: React.FC = () => {
   }, [tilesPos]);
 
   const serverCall = async (newTilesPos: coordinates[] = []) => {
-    console.log("response");
     const serverResponse = await fetch("http://localhost:13337/2", {
       method: "POST",
       body: JSON.stringify(newTilesPos),
@@ -87,8 +86,7 @@ export const App: React.FC = () => {
       };
     });
     setFirstCall(false);
-    console.log(dataWithIds);
-    setTilesPos([...dataWithIds, ...tilesPos]);
+    setTilesPos([...dataWithIds, ...newTilesPos]);
   };
 
   const findNextBlock = (tile: coordinates, direction: string, move: boolean, tempGrid: coordinates[]) => {
