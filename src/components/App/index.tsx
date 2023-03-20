@@ -4,6 +4,7 @@ import Tile from "../Tile";
 import styles from "./App.module.css";
 import { getPositionFromCoords, cubeMovement, sortTileSet } from "./utils";
 import GameStatus from "../GameStatus";
+import GameMenu from "../GameMenu";
 
 const hardcodedGrid = [
   { x: 0, y: 1, z: -1, value: 0 },
@@ -195,9 +196,10 @@ export const App: React.FC = () => {
 
   if (!setTilesPos.length) return <></>;
   return (
-    <>
-      <GameStatus gameOver={gameOver} />
-
+    <div className={styles.wrapper}>
+      {/* Game Menu */}
+        <GameMenu gameOver={gameOver}/>
+      {/* Game */}
       <div className={styles.gameWrapper}>
         <div className={styles.gameContainer}>
           {tilesPos.map((tile, index) => (
@@ -208,6 +210,6 @@ export const App: React.FC = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

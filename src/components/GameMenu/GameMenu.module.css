@@ -1,0 +1,43 @@
+.gameMenu {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-main);
+  margin-bottom: 50px;
+}
+
+.subMenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 55px;
+}
+
+.subtitle {
+  font-size: 24px;
+}
+
+.text {
+  margin-top: 20px;
+}
+
+.button {
+  padding: 0 20px;
+  background-color: var(--color-secondary);
+  color: var(--color-text-secondary);
+  outline: none;
+  border: none;
+  font-weight: bold;
+  font-size: 18px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.howTo {
+  font-weight: bold;
+  color: var(--color-text-main);
+}

@@ -1,6 +1,7 @@
 .gamestatus {
+  color: green;
 }
 
 .gameover {
-  background-color: red;
+  color: red;
 }
