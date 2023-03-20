@@ -1,14 +1,14 @@
 .scoreWrapper {
   position: relative;
-  display: block;
   background: #bbada0;
-  padding: 15px 25px;
   font-size: 25px;
-  height: 25px;
-  line-height: 47px;
   font-weight: bold;
   border-radius: 3px;
   color: white;
-  margin-top: 8px;
   text-align: center;
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 15px;
+  font-size: 14px;
+  text-transform: uppercase;
 }

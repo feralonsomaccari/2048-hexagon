@@ -1,20 +1,29 @@
 .gameMenu {
   width: 100%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
   color: var(--color-text-main);
-  margin-bottom: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 50px auto;
 }
 
 .subMenu {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   justify-content: space-between;
+  align-items: flex-end;
+}
+
+.scoreContainer {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 20px;
 }
 
 .title {
   font-size: 55px;
+  line-height: 48px;
 }
 
 .subtitle {
@@ -35,6 +44,10 @@
   font-size: 18px;
   height: 40px;
   cursor: pointer;
+  flex-grow: 1;
+  border-radius: 3px;
+  max-height: 40px;
+  max-width: fit-content;
 }
 
 .howTo {

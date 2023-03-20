@@ -19,8 +19,10 @@ const GameMenu = ({ resetGameHandler, gameOver }: props) => {
         <GameStatus gameOver={gameOver} />
       </div>
       <div className={styles.subMenu}>
-          <Score title={"Score"} score={30}></Score>
-          <Score title={"Best"} score={300}></Score>
+        <div className={styles.scoreContainer}>
+          <Score title={"Score"} score={30}/>
+          <Score title={"Best"} score={300}/>
+        </div>
         <button className={styles.button} onClick={resetGameHandler}>New Game</button>
       </div>
     </article>

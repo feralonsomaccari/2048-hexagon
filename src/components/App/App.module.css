@@ -39,4 +39,5 @@
   outline: none;
   cursor: pointer;
   min-width: 140px;
+  border-radius: 3px;
 }
