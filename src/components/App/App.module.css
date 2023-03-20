@@ -23,3 +23,20 @@
   display: flex;
   justify-content: center;
 }
+
+.devTools {
+  display: flex;
+  column-gap: 5px;
+}
+
+.devTools button {
+  text-align: center;
+  background-color: var(--color-secondary);
+  color: var(--color-text-secondary);
+  height: 20px;
+  padding: 0 15px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  min-width: 140px;
+}

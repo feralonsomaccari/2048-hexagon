@@ -6,14 +6,19 @@ type props = {
   z: number;
   value?: number;
   style?: {};
+  showCoords?: boolean;
 };
 
-const Block = ({ x, y, z, value = 0, style = {} }: props): JSX.Element => {
-  return <div data-testid="hexagon-el" style={style} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value}>
-    {x} {' '}
-    {y} {' '}
-    {z} {' '}
-  </div>;
+const Block = ({ x, y, z, value = 0, style = {}, showCoords }: props): JSX.Element => {
+  return (
+    <div data-testid="hexagon-el" style={style} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value}>
+      {showCoords && (
+        <>
+          x: {x} y: {y} z: {z} value: {value}
+        </>
+      )}
+    </div>
+  );
 };
 
 export default Block;

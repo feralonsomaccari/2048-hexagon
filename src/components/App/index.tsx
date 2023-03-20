@@ -3,7 +3,6 @@ import Block from "../Block";
 import Tile from "../Tile";
 import styles from "./App.module.css";
 import { getPositionFromCoords, cubeMovement, sortTileSet } from "./utils";
-import GameStatus from "../GameStatus";
 import GameMenu from "../GameMenu";
 
 const hardcodedGrid = [
@@ -38,13 +37,17 @@ export const App: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [firstCall, setFirstCall] = useState(true);
 
+  // DevStates
+  const [showCoords, setShowCoords] = useState(false);
+  const [disableServer, setDisableServer] = useState(false);
+
   useEffect(() => {
     document.addEventListener("keydown", keyPressHandler);
 
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tilesPos, moving]);
+  }, [tilesPos, moving, disableServer]);
 
   useEffect(() => {
     const tempGrid = [...hardcodedGrid];
@@ -72,23 +75,25 @@ export const App: React.FC = () => {
   }, [tilesPos]);
 
   const serverCall = async (newTilesPos: coordinates[] = []) => {
-    const serverResponse = await fetch("http://localhost:13337/2", {
-      method: "POST",
-      body: JSON.stringify(newTilesPos),
-    });
-    const data: coordinates[] = await serverResponse.json();
-    if (!data.length && !firstCall) {
-      setGameOver(true);
-      return;
-    }
-    const dataWithIds = data.map((item) => {
-      return {
-        ...item,
-        id: Math.random(),
-      };
-    });
-    setFirstCall(false);
-    setTilesPos([...dataWithIds, ...newTilesPos]);
+    if (!disableServer) {
+      const serverResponse = await fetch("http://localhost:13337/2", {
+        method: "POST",
+        body: JSON.stringify(newTilesPos),
+      });
+      const data: coordinates[] = await serverResponse.json();
+      if (!data.length && !firstCall) {
+        setGameOver(true);
+        return;
+      }
+      const dataWithIds = data.map((item) => {
+        return {
+          ...item,
+          id: Math.random(),
+        };
+      });
+      setFirstCall(false);
+      setTilesPos([...dataWithIds, ...newTilesPos]);
+   }
   };
 
   const findNextBlock = (tile: coordinates, direction: string, move: boolean, tempGrid: coordinates[]) => {
@@ -158,7 +163,7 @@ export const App: React.FC = () => {
     setTimeout(() => {
       setMoving(false);
       serverCall(newTilesPos);
-    }, 500);
+    }, 200);
   };
 
   const keyPressHandler = (event: KeyboardEvent): void => {
@@ -195,10 +200,18 @@ export const App: React.FC = () => {
   };
 
   if (!setTilesPos.length) return <></>;
+  
   return (
     <div className={styles.wrapper}>
+      {/* Dev Tools */}
+      <div className={styles.devTools}>
+        <button onClick={() => setShowCoords((prev) => !prev)}>⚠️  {showCoords ? "Hide Coords" : "Show Coords"}</button>
+        <button onClick={() => setDisableServer((prev) => !prev)}>⚠️ {disableServer ? "Enable Server" : "Disable Server"}</button>
+      </div>
+
       {/* Game Menu */}
-        <GameMenu gameOver={gameOver}/>
+      <GameMenu gameOver={gameOver} />
+
       {/* Game */}
       <div className={styles.gameWrapper}>
         <div className={styles.gameContainer}>
@@ -206,7 +219,7 @@ export const App: React.FC = () => {
             <Tile key={tile.id} style={getPositionFromCoords(tile)} value={tile.value} />
           ))}
           {grid.map((coords, index) => (
-            <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
+            <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
           ))}
         </div>
       </div>
