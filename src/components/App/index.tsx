@@ -29,6 +29,7 @@ export const App: React.FC = () => {
   const [moving, setMoving] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [firstCall, setFirstCall] = useState(true);
+  const [score, setScore] = useState(0)
 
   // DevStates
   const [showCoords, setShowCoords] = useState(false);
@@ -40,7 +41,7 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tilesPos, moving, disableServer]);
+  }, [tilesPos, moving, disableServer, score]);
 
   useEffect(() => {
     const tempGrid = [...hardcodedGrid];
@@ -113,6 +114,7 @@ export const App: React.FC = () => {
     if (nexBlock && nexBlock.value) {
       if (nexBlock.value === tile.value) {
         const checkGridBlock = tempGrid.filter((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
+        setScore(prevScore => prevScore + (tile.value + nexBlock.value) )
         tile.x = nexBlock.x;
         tile.y = nexBlock.y;
         tile.z = nexBlock.z;
@@ -123,7 +125,6 @@ export const App: React.FC = () => {
         nexBlock.id = tile.id;
         checkGridBlock[0].value = 0;
         delete checkGridBlock[0].id;
-
         return updateTile(tile, direction, removeTiles, tempGrid);
       } else {
         return tile;
@@ -208,7 +209,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Game Menu */}
-      <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver}/>
+      <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver} score={score}/>
 
       {/* Game */}
       <div className={styles.gameWrapper}>

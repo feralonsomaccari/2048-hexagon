@@ -5,9 +5,10 @@ import Score from "../Score";
 type props = {
   resetGameHandler: React.MouseEventHandler;
   gameOver: boolean;
+  score: number;
 };
 
-const GameMenu = ({ resetGameHandler, gameOver }: props) => {
+const GameMenu = ({ resetGameHandler, gameOver, score }: props) => {
   return (
     <article className={styles.gameMenu}>
       <div>
@@ -20,8 +21,8 @@ const GameMenu = ({ resetGameHandler, gameOver }: props) => {
       </div>
       <div className={styles.subMenu}>
         <div className={styles.scoreContainer}>
-          <Score title={"Score"} score={30}/>
-          <Score title={"Best"} score={300}/>
+          <Score title={"Score"} score={score}/>
+          <Score title={"Best"} score={0}/>
         </div>
         <button className={styles.button} onClick={resetGameHandler}>New Game</button>
       </div>
