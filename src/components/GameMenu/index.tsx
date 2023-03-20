@@ -1,5 +1,6 @@
 import styles from "./GameMenu.module.css";
 import GameStatus from "../GameStatus";
+import Score from "../Score";
 
 type props = {
   resetGameHandler: React.MouseEventHandler;
@@ -18,7 +19,8 @@ const GameMenu = ({ resetGameHandler, gameOver }: props) => {
         <GameStatus gameOver={gameOver} />
       </div>
       <div className={styles.subMenu}>
-        <p>Score</p>
+          <Score title={"Score"} score={30}></Score>
+          <Score title={"Best"} score={300}></Score>
         <button className={styles.button} onClick={resetGameHandler}>New Game</button>
       </div>
     </article>
