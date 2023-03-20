@@ -3,6 +3,7 @@ import Block from "../Block";
 import Tile from "../Tile";
 import styles from "./App.module.css";
 import { getPositionFromCoords, cubeMovement, sortTileSet } from "./utils";
+import GameStatus from "../GameStatus";
 
 const hardcodedGrid = [
   { x: 0, y: 1, z: -1, value: 0 },
@@ -52,11 +53,11 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if(grid.length){
+    if (grid.length) {
       const tempGrid = [...grid];
-  
+
       tempGrid.forEach((serverCoords) => (serverCoords.value = 0));
-  
+
       tilesPos.forEach((serverCoords) => {
         tempGrid.forEach((gridCoords) => {
           if (gridCoords.x === serverCoords.x && gridCoords.y === serverCoords.y && gridCoords.z === serverCoords.z) {
@@ -91,7 +92,7 @@ export const App: React.FC = () => {
 
   const findNextBlock = (tile: coordinates, direction: string, move: boolean, tempGrid: coordinates[]) => {
     const tempTilePos = { ...tile };
-    if(move) cubeMovement(tempTilePos, direction);
+    if (move) cubeMovement(tempTilePos, direction);
     const checkGridBlock = tempGrid.filter((block) => tempTilePos.x === block.x && tempTilePos.y === block.y && tempTilePos.z === block.z);
     if (checkGridBlock.length) {
       return checkGridBlock[0];
@@ -100,7 +101,7 @@ export const App: React.FC = () => {
     }
   };
 
-  const updateTile = (tile: coordinates, direction: string, removeTiles: number[], tempGrid: coordinates[]) : coordinates | boolean => {
+  const updateTile = (tile: coordinates, direction: string, removeTiles: number[], tempGrid: coordinates[]): coordinates | boolean => {
     const nexBlock: coordinates | boolean = findNextBlock(tile, direction, true, tempGrid);
     if (nexBlock === false) return tile;
 
@@ -111,27 +112,26 @@ export const App: React.FC = () => {
         tile.y = nexBlock.y;
         tile.z = nexBlock.z;
         tile.value = tile.value + nexBlock.value;
-        if(nexBlock.id) removeTiles.push(nexBlock.id);
+        if (nexBlock.id) removeTiles.push(nexBlock.id);
 
-        nexBlock.value = tile.value
-        nexBlock.id = tile.id
-        checkGridBlock[0].value = 0
-        delete checkGridBlock[0].id
+        nexBlock.value = tile.value;
+        nexBlock.id = tile.id;
+        checkGridBlock[0].value = 0;
+        delete checkGridBlock[0].id;
 
         return updateTile(tile, direction, removeTiles, tempGrid);
       } else {
         return tile;
       }
-    
     } else {
       const checkGridBlock = tempGrid.filter((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
       tile.x = nexBlock.x;
       tile.y = nexBlock.y;
       tile.z = nexBlock.z;
-      nexBlock.value = tile.value
-      nexBlock.id = tile.id
-      checkGridBlock[0].value = 0
-      delete checkGridBlock[0].id
+      nexBlock.value = tile.value;
+      nexBlock.id = tile.id;
+      checkGridBlock[0].value = 0;
+      delete checkGridBlock[0].id;
       return updateTile(tile, direction, removeTiles, tempGrid);
     }
   };
@@ -139,17 +139,17 @@ export const App: React.FC = () => {
   const updateTilesPos = (direction: string) => {
     setMoving(true);
 
-    const newTiles = [...tilesPos]
-    const tempGrid = [...grid]
+    const newTiles = [...tilesPos];
+    const tempGrid = [...grid];
     const removeTiles: number[] = [];
-   
-    sortTileSet(newTiles, direction)
-    const newTilesPos : any = newTiles.map((tile) => {
+
+    sortTileSet(newTiles, direction);
+    const newTilesPos: any = newTiles.map((tile) => {
       return updateTile(tile, direction, removeTiles, tempGrid);
-    })
-   
+    });
+
     removeTiles.forEach((tileId) => {
-      newTilesPos.splice(newTilesPos.map((tile : coordinates) => tile.id).indexOf(tileId), 1);
+      newTilesPos.splice(newTilesPos.map((tile: coordinates) => tile.id).indexOf(tileId), 1);
     });
 
     setTilesPos(newTilesPos);
@@ -158,8 +158,6 @@ export const App: React.FC = () => {
       setMoving(false);
       serverCall(newTilesPos);
     }, 500);
-
-   
   };
 
   const keyPressHandler = (event: KeyboardEvent): void => {
@@ -197,15 +195,19 @@ export const App: React.FC = () => {
 
   if (!setTilesPos.length) return <></>;
   return (
-    <div className={styles.gameWrapper}>
-      <div className={styles.gameContainer}>
-        {tilesPos.map((tile, index) => (
-          <Tile key={tile.id} style={getPositionFromCoords(tile)} value={tile.value} />
-        ))}
-        {grid.map((coords, index) => (
-          <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
-        ))}
+    <>
+      <GameStatus gameOver={gameOver} />
+
+      <div className={styles.gameWrapper}>
+        <div className={styles.gameContainer}>
+          {tilesPos.map((tile, index) => (
+            <Tile key={tile.id} style={getPositionFromCoords(tile)} value={tile.value} />
+          ))}
+          {grid.map((coords, index) => (
+            <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
