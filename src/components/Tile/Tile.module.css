@@ -19,9 +19,14 @@
   animation: popin 0.25s;
 }
 
+.color-2 {
+  background-color: var(--bg-color-2);
+}
+
 .color-4 {
   background-color: var(--bg-color-4);
 }
+
 .color-8 {
   background-color: var(--bg-color-8);
   color: var(--color-text-secondary);
@@ -30,34 +35,42 @@
   background-color: var(--bg-color-16);
   color: var(--color-text-secondary);
 }
+
 .color-32 {
   background-color: var(--bg-color-32);
   color: var(--color-text-secondary);
 }
+
 .color-64 {
   background-color: var(--bg-color-64);
   color: var(--color-text-secondary);
 }
+
 .color-128 {
   background-color: var(--bg-color-128);
   color: var(--color-text-secondary);
 }
+
 .color-256 {
   background-color: var(--bg-color-256);
   color: var(--color-text-secondary);
 }
+
 .color-512 {
   background-color: var(--bg-color-512);
   color: var(--color-text-secondary);
 }
+
 .color-1024 {
   background-color: var(--bg-color-1024);
   color: var(--color-text-secondary);
 }
+
 .color-2048 {
   background-color: var(--bg-color-2048);
   color: var(--color-text-secondary);
 }
+
 .color-final {
   background-color: var(--bg-color-final);
   color: var(--color-text-secondary);
