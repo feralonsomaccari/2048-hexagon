@@ -5,6 +5,7 @@ import styles from "./App.module.css";
 import { getPositionFromCoords, cubeMovement, sortTileSet } from "./utils";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
+import { fetchServer } from "./services"
 
 const hardcodedGrid = [
   { x: 0, y: 1, z: -1, value: 0 },
@@ -76,13 +77,9 @@ export const App: React.FC = () => {
   }
 
   const serverCall = async (newTilesPos: coordinates[] = []) => {
+    const data = await fetchServer(newTilesPos);
     if (!disableServer) {
-      const serverResponse = await fetch("http://localhost:13337/2", {
-        method: "POST",
-        body: JSON.stringify(newTilesPos),
-      });
-      const data: coordinates[] = await serverResponse.json();
-      if (!data.length && !firstCall) {
+      if (!data?.length && !firstCall) {
         setGameOver(true);
         return;
       }
