@@ -2,41 +2,36 @@ import React, { useState, useRef, useEffect } from "react";
 import Block from "../Block";
 import Tile from "../Tile";
 import styles from "./App.module.css";
-import { getPositionFromCoordinates, moveTile, sortTileSet } from "./utils";
+import { getPositionFromCoordinates, moveTile, sortTileSet, hardcodedGrid } from "./utils";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
-import { fetchServer } from "./services"
-
-const hardcodedGrid = [
-  { x: 0, y: 1, z: -1, value: 0 },
-  { x: -1, y: 1, z: 0, value: 0 },
-  { x: 1, y: 0, z: -1, value: 0 },
-  { x: 0, y: 0, z: 0, value: 0 },
-  { x: -1, y: 0, z: 1, value: 0 },
-  { x: -0, y: -1, z: 1, value: 0 },
-  { x: 1, y: -1, z: 0, value: 0 },
-];
+import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
   const [grid, setGrid] = useState<gridElement[]>([]);
-  const [tilesPos, setTilesPos] = useState<gridElement[]>([]);
+  const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [moving, setMoving] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [firstCall, setFirstCall] = useState(true);
-  const [score, setScore] = useState(0)
-
-  // DevStates
+  const [score, setScore] = useState(0);
+  // Dev States
   const [showCoords, setShowCoords] = useState(false);
   const [disableServer, setDisableServer] = useState(false);
 
+  /* 
+    Add event listener to the document
+  */
   useEffect(() => {
     document.addEventListener("keydown", keyPressHandler);
 
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tilesPos, moving, disableServer, score]);
+  }, [tileSet, moving, disableServer, score]);
 
+  /* 
+    Initial component mount
+  */
   useEffect(() => {
     const tempGrid = [...hardcodedGrid];
     tempGrid.forEach((serverCoords) => (serverCoords.value = 0));
@@ -44,13 +39,16 @@ export const App: React.FC = () => {
     serverCall();
   }, []);
 
+  /* 
+    Side-effect on Tile Set
+  */
   useEffect(() => {
     if (grid.length) {
       const tempGrid = [...grid];
 
       tempGrid.forEach((serverCoords) => (serverCoords.value = 0));
 
-      tilesPos.forEach((serverCoords) => {
+      tileSet.forEach((serverCoords) => {
         tempGrid.forEach((gridCoords) => {
           if (gridCoords.x === serverCoords.x && gridCoords.y === serverCoords.y && gridCoords.z === serverCoords.z) {
             gridCoords.value = serverCoords.value;
@@ -60,13 +58,13 @@ export const App: React.FC = () => {
       });
       setGrid(tempGrid);
     }
-  }, [tilesPos]);
+  }, [tileSet]);
 
   const resetGameHandler = async () => {
-    setTilesPos([])
-    setScore(0)
-    await serverCall([])
-  }
+    setTileSet([]);
+    setScore(0);
+    await serverCall([]);
+  };
 
   const serverCall = async (newTilesPos: gridElement[] = []) => {
     const data = await fetchServer(newTilesPos);
@@ -82,7 +80,7 @@ export const App: React.FC = () => {
         };
       });
       setFirstCall(false);
-      setTilesPos([...dataWithIds, ...newTilesPos]);
+      setTileSet([...dataWithIds, ...newTilesPos]);
     }
     setMoving(false);
   };
@@ -105,7 +103,7 @@ export const App: React.FC = () => {
     if (nexBlock && nexBlock.value) {
       if (nexBlock.value === tile.value) {
         const checkGridBlock = tempGrid.filter((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
-        setScore(prevScore => prevScore + (tile.value + nexBlock.value) )
+        setScore((prevScore) => prevScore + (tile.value + nexBlock.value));
         tile.x = nexBlock.x;
         tile.y = nexBlock.y;
         tile.z = nexBlock.z;
@@ -136,7 +134,7 @@ export const App: React.FC = () => {
   const updateTilesPos = (direction: string) => {
     setMoving(true);
 
-    const newTiles = [...tilesPos];
+    const newTiles = [...tileSet];
     const tempGrid = [...grid];
     const removeTiles: number[] = [];
 
@@ -149,7 +147,7 @@ export const App: React.FC = () => {
       newTilesPos.splice(newTilesPos.map((tile: gridElement) => tile.id).indexOf(tileId), 1);
     });
 
-    setTilesPos(newTilesPos);
+    setTileSet(newTilesPos);
 
     setTimeout(() => {
       serverCall(newTilesPos);
@@ -189,23 +187,27 @@ export const App: React.FC = () => {
     }
   };
 
-  if (!setTilesPos.length) return <></>;
+  if (!setTileSet.length) return <></>;
 
   return (
     <div className={styles.wrapper} id="game">
       {/* Dev Tools */}
       <div className={styles.devTools}>
-        <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>⚠️ {showCoords ? "Hide Coords" : "Show Coords"}</button>
-        <button title="dev button" onClick={() => setDisableServer((prev) => !prev)}>⚠️ {disableServer ? "Enable Server" : "Disable Server"}</button>
+        <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>
+          ⚠️ {showCoords ? "Hide Coords" : "Show Coords"}
+        </button>
+        <button title="dev button" onClick={() => setDisableServer((prev) => !prev)}>
+          ⚠️ {disableServer ? "Enable Server" : "Disable Server"}
+        </button>
       </div>
 
       {/* Game Menu */}
-      <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver} score={score}/>
+      <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver} score={score} />
 
       {/* Game */}
       <div className={styles.gameWrapper}>
         <div className={styles.gameContainer}>
-          {tilesPos.map(tile => (
+          {tileSet.map((tile) => (
             <Tile key={tile.id} style={getPositionFromCoordinates(tile)} value={tile.value} />
           ))}
           {grid.map((coords, index) => (
@@ -215,7 +217,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Instructions */}
-      <Instructions/>
+      <Instructions />
     </div>
   );
 };

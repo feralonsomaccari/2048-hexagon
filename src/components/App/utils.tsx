@@ -92,4 +92,14 @@ const sortTileSet = (tileSet: gridElement[], direction: string) => {
   return sortedTileSet;
 }
 
-export { getPositionFromCoordinates, moveTile, sortTileSet };
+const hardcodedGrid = [
+  { x: 0, y: 1, z: -1, value: 0 },
+  { x: -1, y: 1, z: 0, value: 0 },
+  { x: 1, y: 0, z: -1, value: 0 },
+  { x: 0, y: 0, z: 0, value: 0 },
+  { x: -1, y: 0, z: 1, value: 0 },
+  { x: -0, y: -1, z: 1, value: 0 },
+  { x: 1, y: -1, z: 0, value: 0 },
+];
+
+export { getPositionFromCoordinates, moveTile, sortTileSet, hardcodedGrid };
