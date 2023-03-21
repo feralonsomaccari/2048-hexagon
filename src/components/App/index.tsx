@@ -17,17 +17,9 @@ const hardcodedGrid = [
   { x: 1, y: -1, z: 0, value: 0 },
 ];
 
-type coordinates = {
-  x: number;
-  y: number;
-  z: number;
-  value: number;
-  id?: number;
-};
-
 export const App: React.FC = () => {
-  const [grid, setGrid] = useState<coordinates[]>([]);
-  const [tilesPos, setTilesPos] = useState<coordinates[]>([]);
+  const [grid, setGrid] = useState<gridElement[]>([]);
+  const [tilesPos, setTilesPos] = useState<gridElement[]>([]);
   const [moving, setMoving] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [firstCall, setFirstCall] = useState(true);
@@ -76,7 +68,7 @@ export const App: React.FC = () => {
     await serverCall([])
   }
 
-  const serverCall = async (newTilesPos: coordinates[] = []) => {
+  const serverCall = async (newTilesPos: gridElement[] = []) => {
     const data = await fetchServer(newTilesPos);
     if (!disableServer) {
       if (!data?.length && !firstCall) {
@@ -95,7 +87,7 @@ export const App: React.FC = () => {
     setMoving(false);
   };
 
-  const findNextBlock = (tile: coordinates, direction: string, move: boolean, tempGrid: coordinates[]) => {
+  const findNextBlock = (tile: gridElement, direction: string, move: boolean, tempGrid: gridElement[]) => {
     let tempTilePos = { ...tile };
     if (move) tempTilePos = moveTile(tempTilePos, direction);
     const checkGridBlock = tempGrid.filter((block) => tempTilePos.x === block.x && tempTilePos.y === block.y && tempTilePos.z === block.z);
@@ -106,8 +98,8 @@ export const App: React.FC = () => {
     }
   };
 
-  const updateTile = (tile: coordinates, direction: string, removeTiles: number[], tempGrid: coordinates[]): coordinates | boolean => {
-    const nexBlock: coordinates | boolean = findNextBlock(tile, direction, true, tempGrid);
+  const updateTile = (tile: gridElement, direction: string, removeTiles: number[], tempGrid: gridElement[]): gridElement | boolean => {
+    const nexBlock: gridElement | boolean = findNextBlock(tile, direction, true, tempGrid);
     if (nexBlock === false) return tile;
 
     if (nexBlock && nexBlock.value) {
@@ -154,7 +146,7 @@ export const App: React.FC = () => {
     });
 
     removeTiles.forEach((tileId) => {
-      newTilesPos.splice(newTilesPos.map((tile: coordinates) => tile.id).indexOf(tileId), 1);
+      newTilesPos.splice(newTilesPos.map((tile: gridElement) => tile.id).indexOf(tileId), 1);
     });
 
     setTilesPos(newTilesPos);

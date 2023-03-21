@@ -1,17 +1,9 @@
-type coordinates = {
-  x: number;
-  y: number;
-  z: number;
-  value: number;
-  id?: number;
-};
-
 /**
  * Takes a grid block and returns the position in pixel values
- * @param {coordinates} block A block component 
+ * @param {gridElement} block A block component 
  * @returns {object} Returns an object with the position of the element in pixels
  */
-const getPositionFromCoordinates = (block: coordinates): any => {
+const getPositionFromCoordinates = (block: gridElement): any => {
   let edgeLength = 95;
   let edgeW = (edgeLength * 3) / 2;
   let edgeH = (edgeLength * Math.sqrt(3)) / 2;
@@ -32,12 +24,12 @@ const getPositionFromCoordinates = (block: coordinates): any => {
 
 /**
  * Takes a Tile and a Direction and return a new tile with the position updated in that direction whitin the Grid
- * @param {coordinates} tile A game tile
+ * @param {gridElement} tile A game tile
  * @param {string} direction
  * The direction in the x-axis, y-axis, z-axis (nortWest, nort, nortEast, southWest, south, southEast)
- * @returns {coordinates} Returns the tile with the position updated in the specified direction
+ * @returns {gridElement} Returns the tile with the position updated in the specified direction
  */
-const moveTile = (tile: coordinates, direction: string) => {
+const moveTile = (tile: gridElement, direction: string) => {
   const updatedTile = {...tile}
 
   if(direction === 'northWest'){
@@ -70,12 +62,12 @@ const moveTile = (tile: coordinates, direction: string) => {
 
 /**
  * Takes a Tile set and a Direction sort it into the specified direction
- * @param {coordinates[]} tileSet A set of Tiles
+ * @param {gridElement[]} tileSet A set of Tiles
  * @param {string} direction 
  * The direction in the x-axis, y-axis, z-axis (nortWest, nort, nortEast, southWest, south, southEast)
- * @returns {coordinates[]} Returns the sorted set of Tiles
+ * @returns {gridElement[]} Returns the sorted set of Tiles
  */
-const sortTileSet = (tileSet: coordinates[], direction: string) => {
+const sortTileSet = (tileSet: gridElement[], direction: string) => {
   const sortedTileSet = [...tileSet]
 
   if(direction === 'northWest'){
