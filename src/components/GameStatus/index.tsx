@@ -1,19 +1,19 @@
-import styles from './GameStatus.module.css'
+import styles from "./GameStatus.module.css";
 
 type props = {
-  gameOver: boolean
-}
+  gameOver: boolean;
+};
 
-const GameStatus = ({gameOver}: props) => {
+const renderGameStatus = (gameOver: boolean): string => {
+  return gameOver ? "game-over" : "playing";
+};
+
+const GameStatus = ({ gameOver }: props) => {
   return (
-    <div className={`${styles.gamestatus} ${gameOver && styles.gameover}`}>
-      {gameOver ? (
-        'Game Over :('
-      ) : (
-        'You still have valid movements!'
-      )}
+    <div data-testid="gamestatus" className={`${styles.gamestatus} ${gameOver && styles.gameover}`} data-status={renderGameStatus(gameOver)}>
+      {renderGameStatus(gameOver)}
     </div>
-  )
-}
+  );
+};
 
-export default GameStatus
+export default GameStatus;
