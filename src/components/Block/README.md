@@ -1,6 +1,6 @@
 # Block Component
 
-This is the Block component. Each block is an piece of the game grid
+This is the Block component. Each block is an piece of the game grid. In the future this component could be scalated to render other shapes than only Hexagonal shapes.
 
 Doc: https://www.redblobgames.com/grids/hexagons/#coordinates-cube
 
