@@ -2,7 +2,7 @@ import styles from "./Tile.module.css";
 
 type props = {
   value: number;
-  style: {};
+  style?: {};
 };
 
 const Tile = ({ value, style }: props): JSX.Element => {
