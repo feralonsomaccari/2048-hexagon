@@ -3,14 +3,14 @@ import GameStatus from "../GameStatus";
 import Score from "../Score";
 
 type props = {
-  resetGameHandler: React.MouseEventHandler;
+  resetGameHandler?: React.MouseEventHandler;
   gameOver: boolean;
   score: number;
 };
 
 const GameMenu = ({ resetGameHandler, gameOver, score }: props) => {
   return (
-    <article className={styles.gameMenu}>
+    <article data-testid="game-menu" className={styles.gameMenu}>
       <div>
         <h1 className={styles.title}>2048</h1>
         <h2 className={styles.subtitle}>(HEXAGON version!)</h2>
