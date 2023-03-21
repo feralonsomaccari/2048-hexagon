@@ -10,7 +10,7 @@ const renderGameStatus = (gameOver: boolean): string => {
 
 const GameStatus = ({ gameOver }: props) => {
   return (
-    <div data-testid="gamestatus" className={`${styles.gamestatus} ${gameOver && styles.gameover}`} data-status={renderGameStatus(gameOver)}>
+    <div data-testid="game-status" className={`${styles.gamestatus} ${gameOver && styles.gameover}`} data-status={renderGameStatus(gameOver)}>
       {renderGameStatus(gameOver)}
     </div>
   );
