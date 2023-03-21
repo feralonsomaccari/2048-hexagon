@@ -2,15 +2,23 @@ type coordinates = {
   x: number;
   y: number;
   z: number;
+  value: number;
+  id?: number;
 };
-const getPositionFromCoords = (grid: coordinates): any => {
+
+/**
+ * Takes a grid block and returns the position in pixel values
+ * @param {coordinates} block A block component 
+ * @returns {object} Returns an object with the position of the element in pixels
+ */
+const getPositionFromCoordinates = (block: coordinates): any => {
   let edgeLength = 95;
   let edgeW = (edgeLength * 3) / 2;
   let edgeH = (edgeLength * Math.sqrt(3)) / 2;
   const width = 0;
   const height = 0;
 
-  const [x, y, z] = [grid.x, grid.y, grid.z];
+  const [x, y, z] = [block.x, block.y, block.z];
   const posX = x * edgeW + width;
   const posY = (-y + z) * edgeH + height;
 
@@ -22,52 +30,74 @@ const getPositionFromCoords = (grid: coordinates): any => {
   };
 };
 
-const cubeMovement = (tilePos: coordinates, direction: string) => {
+/**
+ * Takes a Tile and a Direction and return a new tile with the position updated in that direction whitin the Grid
+ * @param {coordinates} tile A game tile
+ * @param {string} direction
+ * The direction in the x-axis, y-axis, z-axis (nortWest, nort, nortEast, southWest, south, southEast)
+ * @returns {coordinates} Returns the tile with the position updated in the specified direction
+ */
+const moveTile = (tile: coordinates, direction: string) => {
+  const updatedTile = {...tile}
+
   if(direction === 'northWest'){
-    tilePos.x = tilePos.x -= 1
-    tilePos.y = tilePos.y += 1 
+    updatedTile.x = updatedTile.x -= 1
+    updatedTile.y = updatedTile.y += 1 
   }
   if(direction === 'north'){
-    tilePos.y = tilePos.y += 1
-    tilePos.z = tilePos.z -= 1 
+    updatedTile.y = updatedTile.y += 1
+    updatedTile.z = updatedTile.z -= 1 
   }
   if(direction === 'northEast'){
-    tilePos.x = tilePos.x += 1
-    tilePos.z = tilePos.z -= 1 
+    updatedTile.x = updatedTile.x += 1
+    updatedTile.z = updatedTile.z -= 1 
   }
   if(direction === 'southWest'){
-    tilePos.x = tilePos.x -= 1
-    tilePos.z = tilePos.z += 1 
+    updatedTile.x = updatedTile.x -= 1
+    updatedTile.z = updatedTile.z += 1 
   }
   if(direction === 'south'){
-    tilePos.y = tilePos.y -= 1
-    tilePos.z = tilePos.z += 1 
+    updatedTile.y = updatedTile.y -= 1
+    updatedTile.z = updatedTile.z += 1 
   }
   if(direction === 'southEast'){
-    tilePos.x = tilePos.x += 1
-    tilePos.y = tilePos.y -= 1 
+    updatedTile.x = updatedTile.x += 1
+    updatedTile.y = updatedTile.y -= 1 
   }
+
+  return updatedTile;
 }
 
-const sortTileSet = (tiles: coordinates[], direction: string) => {
+/**
+ * Takes a Tile set and a Direction sort it into the specified direction
+ * @param {coordinates[]} tileSet A set of Tiles
+ * @param {string} direction 
+ * The direction in the x-axis, y-axis, z-axis (nortWest, nort, nortEast, southWest, south, southEast)
+ * @returns {coordinates[]} Returns the sorted set of Tiles
+ */
+const sortTileSet = (tileSet: coordinates[], direction: string) => {
+  const sortedTileSet = [...tileSet]
+
   if(direction === 'northWest'){
-    tiles.sort((a, b) => a.x - b.x && a.y - b.y)
+    sortedTileSet.sort((a, b) => a.x - b.x && a.y - b.y)
   }
   if(direction === 'north'){
-    tiles.sort((a, b) => b.y - a.y && a.z - b.z)
+    sortedTileSet.sort((a, b) => b.y - a.y && a.z - b.z)
   }
   if(direction === 'northEast'){
-    tiles.sort((a, b) => b.x - a.x && a.z - b.z)
+    sortedTileSet.sort((a, b) => b.x - a.x && a.z - b.z)
   }
   if(direction === 'southWest'){
-    tiles.sort((a, b) => a.x - b.x && b.z - a.z)
+    sortedTileSet.sort((a, b) => a.x - b.x && b.z - a.z)
   }
   if(direction === 'south'){
-    tiles.sort((a, b) => a.y - b.y && b.z - a.z)
+    sortedTileSet.sort((a, b) => a.y - b.y && b.z - a.z)
   }
   if(direction === 'southEast'){
-    tiles.sort((a, b) => b.x - a.x && a.y - b.y)
+    sortedTileSet.sort((a, b) => b.x - a.x && a.y - b.y)
   }
+
+  return sortedTileSet;
 }
 
-export { getPositionFromCoords, cubeMovement, sortTileSet };
+export { getPositionFromCoordinates, moveTile, sortTileSet };

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Block from "../Block";
 import Tile from "../Tile";
 import styles from "./App.module.css";
-import { getPositionFromCoords, cubeMovement, sortTileSet } from "./utils";
+import { getPositionFromCoordinates, moveTile, sortTileSet } from "./utils";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import { fetchServer } from "./services"
@@ -96,8 +96,8 @@ export const App: React.FC = () => {
   };
 
   const findNextBlock = (tile: coordinates, direction: string, move: boolean, tempGrid: coordinates[]) => {
-    const tempTilePos = { ...tile };
-    if (move) cubeMovement(tempTilePos, direction);
+    let tempTilePos = { ...tile };
+    if (move) tempTilePos = moveTile(tempTilePos, direction);
     const checkGridBlock = tempGrid.filter((block) => tempTilePos.x === block.x && tempTilePos.y === block.y && tempTilePos.z === block.z);
     if (checkGridBlock.length) {
       return checkGridBlock[0];
@@ -148,8 +148,8 @@ export const App: React.FC = () => {
     const tempGrid = [...grid];
     const removeTiles: number[] = [];
 
-    sortTileSet(newTiles, direction);
-    const newTilesPos: any = newTiles.map((tile) => {
+    const sortedTileSet = sortTileSet(newTiles, direction);
+    const newTilesPos: any = sortedTileSet.map((tile) => {
       return updateTile(tile, direction, removeTiles, tempGrid);
     });
 
@@ -214,10 +214,10 @@ export const App: React.FC = () => {
       <div className={styles.gameWrapper}>
         <div className={styles.gameContainer}>
           {tilesPos.map(tile => (
-            <Tile key={tile.id} style={getPositionFromCoords(tile)} value={tile.value} />
+            <Tile key={tile.id} style={getPositionFromCoordinates(tile)} value={tile.value} />
           ))}
           {grid.map((coords, index) => (
-            <Block key={index} style={getPositionFromCoords(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
+            <Block key={index} style={getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
           ))}
         </div>
       </div>
