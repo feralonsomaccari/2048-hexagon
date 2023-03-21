@@ -1,0 +1,13 @@
+.instructionsWrapper {
+    padding: 100px 0;
+}
+
+.text {
+    margin: 10px 0;
+    color: var(--color-text-main)
+}
+
+.link {
+    font-weight: bold;
+    color: var(--color-text-main);
+  }

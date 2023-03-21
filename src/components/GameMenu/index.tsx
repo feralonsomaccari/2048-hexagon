@@ -15,7 +15,7 @@ const GameMenu = ({ resetGameHandler, gameOver, score }: props) => {
         <h1 className={styles.title}>2048</h1>
         <h2 className={styles.subtitle}>(HEXAGON version!)</h2>
         <p className={styles.text}>Join the tiles, get to <b>2048</b></p>
-        <a className={styles.howTo} href={'#howtoplay'}>How to play →</a>
+        <a className="link" href={'#howtoplay'}>How to play →</a>
         <p className={styles.text}><b>Game Status:</b></p>
         <GameStatus gameOver={gameOver} />
       </div>

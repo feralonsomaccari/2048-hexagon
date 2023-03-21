@@ -4,6 +4,7 @@ import Tile from "../Tile";
 import styles from "./App.module.css";
 import { getPositionFromCoords, cubeMovement, sortTileSet } from "./utils";
 import GameMenu from "../GameMenu";
+import Instructions from "../Instructions";
 
 const hardcodedGrid = [
   { x: 0, y: 1, z: -1, value: 0 },
@@ -202,7 +203,7 @@ export const App: React.FC = () => {
   if (!setTilesPos.length) return <></>;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} id="game">
       {/* Dev Tools */}
       <div className={styles.devTools}>
         <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>⚠️ {showCoords ? "Hide Coords" : "Show Coords"}</button>
@@ -223,6 +224,9 @@ export const App: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Instructions */}
+      <Instructions/>
     </div>
   );
 };
