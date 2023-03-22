@@ -45,7 +45,8 @@ export const App: React.FC = () => {
     const updatedGrid = [...grid];
 
     // Me must clear and update the [data-values] on the grid 
-    updatedGrid.forEach((serverCoords) => (serverCoords.value = 0));
+    updatedGrid.forEach((block) => (block.value = 0, block.merged = false));
+    tileSet.forEach((tile) => (tile.merged = false));
 
     tileSet.forEach((serverCoords) => {
       updatedGrid.forEach((gridCoords) => {
@@ -55,7 +56,6 @@ export const App: React.FC = () => {
         }
       });
     });
-
       setGrid(updatedGrid);
   }, [tileSet]);
 
@@ -65,7 +65,6 @@ export const App: React.FC = () => {
       setIsMoveBlocked(false);
       return;
     } 
-
     const serverResponseData = await fetchServer(newTileSet);
     if (!serverResponseData?.length && !firstCall) {
       setGameOver(true);
@@ -76,25 +75,28 @@ export const App: React.FC = () => {
     setIsMoveBlocked(false);
   };
 
-  const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): gridElement | boolean => {
-    const nexBlock = findNextBlock(tile, direction, grid);
-    if (nexBlock === false) return tile;
+  const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): gridElement => {
+    const nextBlock = findNextBlock(tile, direction, grid);
+    if (nextBlock === false || tile.merged) return tile;
 
-    if (nexBlock && nexBlock.value) {
-      if (nexBlock.value === tile.value) {
+    if (nextBlock && nextBlock.value) {
+      if (nextBlock.value === tile.value && !nextBlock.merged) {
         const currentBlock = grid.find((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
         if(currentBlock){
           currentBlock.value = 0;
           delete currentBlock.id;
         }
-        setScore((prevScore) => prevScore + (tile.value + nexBlock.value));
-        tile.x = nexBlock.x;
-        tile.y = nexBlock.y;
-        tile.z = nexBlock.z;
-        tile.value = tile.value + nexBlock.value;
-        if (nexBlock.id) removeTiles.push(nexBlock.id);
-        nexBlock.value = tile.value;
-        nexBlock.id = tile.id;
+        setScore((prevScore) => prevScore + (tile.value + nextBlock.value));
+        tile.x = nextBlock.x;
+        tile.y = nextBlock.y;
+        tile.z = nextBlock.z;
+        tile.merged = true;
+        tile.value = tile.value + nextBlock.value;
+        
+        if (nextBlock.id) removeTiles.push(nextBlock.id);
+        nextBlock.value = tile.value;
+        nextBlock.id = tile.id;
+        nextBlock.merged = true;
        
         return updateTile(tile, direction, grid, removeTiles);
       } else {
@@ -106,11 +108,11 @@ export const App: React.FC = () => {
         currentBlock.value = 0;
         delete currentBlock.id;
       }
-      tile.x = nexBlock.x;
-      tile.y = nexBlock.y;
-      tile.z = nexBlock.z;
-      nexBlock.value = tile.value;
-      nexBlock.id = tile.id;
+      tile.x = nextBlock.x;
+      tile.y = nextBlock.y;
+      tile.z = nextBlock.z;
+      nextBlock.value = tile.value;
+      nextBlock.id = tile.id;
       
       return updateTile(tile, direction, grid, removeTiles);
     }
@@ -121,7 +123,7 @@ export const App: React.FC = () => {
 
     const tilesToBeRemoved: number[] = [];
     const sortedTileSet = sortTileSet([...tileSet], direction);
-    const updatedTileSet: any = sortedTileSet.map((tile) => {
+    const updatedTileSet: gridElement[] = sortedTileSet.map((tile) => {
       return updateTile(tile, direction, [...grid], tilesToBeRemoved);
     });
 

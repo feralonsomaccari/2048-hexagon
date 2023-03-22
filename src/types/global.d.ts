@@ -7,5 +7,6 @@ declare global {
     z: number;
     value: number;
     id?: number;
+    merged?: boolean
   };
 }
