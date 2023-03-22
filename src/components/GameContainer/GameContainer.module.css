@@ -25,6 +25,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    row-gap: 25px;
     z-index: 2;
     font-size: 32px;
     font-weight: bold;
