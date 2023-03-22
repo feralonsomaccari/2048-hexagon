@@ -2,6 +2,7 @@ import styles from "./GameContainer.module.css";
 import Block from "../Block";
 import Tile from "../Tile";
 import { getPositionFromCoordinates } from "../App/utils";
+import Button from "../Button";
 
 type props = {
   tileSet: gridElement[];
@@ -16,8 +17,8 @@ const GameContainer = ({ tileSet, grid, resetGameHandler, isGameOver, showCoords
     <div className={styles.gameWrapper} id="game">
       {isGameOver && (
         <div className={styles.gameOverOverlay}>
-          <span>Game Over :(</span>
-          <button onClick={resetGameHandler}>Try again</button>
+          <h4>Game Over :(</h4>
+          <Button clickHandler={resetGameHandler} text='Try Again'/>
         </div>
       )}
       <div className={styles.gameContainer}>

@@ -1,0 +1,15 @@
+.button {
+  padding: 0 20px;
+  background-color: var(--color-secondary);
+  color: var(--color-text-secondary);
+  outline: none;
+  border: none;
+  font-weight: bold;
+  font-size: 18px;
+  height: 40px;
+  cursor: pointer;
+  flex-grow: 1;
+  border-radius: 3px;
+  max-height: 40px;
+  max-width: fit-content;
+}
