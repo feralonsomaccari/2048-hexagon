@@ -4,19 +4,27 @@ import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
-import { sortTileSet, findNextBlock, addIds, hardcodedGrid } from "./utils";
+import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsLeft } from "./utils";
 import { fetchServer } from "./services";
+
 
 export const App: React.FC = () => {
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
-  const [isMoveBlocked, setIsMoveBlocked] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [firstCall, setFirstCall] = useState(true);
+  const [isMovementBlocked, setIsMovementBlocked] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
   const [disableServer, setDisableServer] = useState(false);
+
+  /* 
+    Initial component mount
+  */
+    useEffect(() => {
+      setGrid(hardcodedGrid);
+      serverCall();
+    }, []);
 
   /* 
     Add event listener to the document
@@ -27,15 +35,7 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMoveBlocked, disableServer, score]);
-
-  /* 
-    Initial component mount
-  */
-  useEffect(() => {
-    setGrid(hardcodedGrid);
-    serverCall();
-  }, []);
+  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver]);
 
   /* 
     Side-effect on Tile Set
@@ -46,33 +46,34 @@ export const App: React.FC = () => {
 
     // Me must clear and update the [data-values] on the grid 
     updatedGrid.forEach((block) => (block.value = 0, block.merged = false));
-    tileSet.forEach((tile) => (tile.merged = false));
-
-    tileSet.forEach((serverCoords) => {
-      updatedGrid.forEach((gridCoords) => {
-        if (gridCoords.x === serverCoords.x && gridCoords.y === serverCoords.y && gridCoords.z === serverCoords.z) {
-          gridCoords.value = serverCoords.value;
-          gridCoords.id = serverCoords.id;
+    tileSet.forEach((tile) => {
+      updatedGrid.forEach((block) => {
+        if (block.x === tile.x && block.y === tile.y && block.z === tile.z) {
+          block.value = tile.value;
+          block.id = tile.id;
         }
       });
+      tile.merged = false
     });
-      setGrid(updatedGrid);
+    setGrid(updatedGrid);
+      
+    // We must check if it is possible to keep moving on the grid
+    if(validMovementsLeft(tileSet, grid)){
+      setIsMovementBlocked(false);
+    }else{
+      setIsGameOver(true);
+    }
   }, [tileSet]);
 
 
-  const serverCall = async (newTileSet: gridElement[] = []) => {
-    if (disableServer){
-      setIsMoveBlocked(false);
-      return;
-    } 
-    const serverResponseData = await fetchServer(newTileSet);
-    if (!serverResponseData?.length && !firstCall) {
-      setGameOver(true);
-      return;
-    }
-    setFirstCall(false);
-    setTileSet([...addIds(serverResponseData), ...newTileSet]);
-    setIsMoveBlocked(false);
+  const serverCall = async (tileSet: gridElement[] = []) => {
+    if (disableServer) return setIsMovementBlocked(false);
+      
+    const serverResponseData = await fetchServer(tileSet);
+    if (!serverResponseData?.length) return;
+    
+    const updatedTileSet = [...addIds(serverResponseData), ...tileSet]
+    setTileSet(updatedTileSet);
   };
 
   const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): gridElement => {
@@ -119,7 +120,7 @@ export const App: React.FC = () => {
   };
 
   const updateTilesPos = (direction: string) => {
-    setIsMoveBlocked(true);
+    setIsMovementBlocked(true);
 
     const tilesToBeRemoved: number[] = [];
     const sortedTileSet = sortTileSet([...tileSet], direction);
@@ -139,7 +140,7 @@ export const App: React.FC = () => {
   };
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || isMoveBlocked || gameOver) return;
+    if (event.repeat || isMovementBlocked || isGameOver) return;
     switch (event.key) {
       case "q":
       case "Q":
@@ -172,19 +173,17 @@ export const App: React.FC = () => {
   };
 
   const resetGameHandler = async () => {
-    setTileSet([]);
     setScore(0);
+    setIsGameOver(false)
     await serverCall([]);
   };
-
-  if (!setTileSet.length) return <></>;
 
   return (
     <div className={styles.wrapper} >
       {/* Dev Tools */}
       <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
       {/* Game Menu */}
-      <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver} score={score} />
+      <GameMenu resetGameHandler={resetGameHandler} isGameOver={isGameOver} score={score} />
       {/* Game */}
       <GameContainer tileSet={tileSet} grid={grid} showCoords={showCoords}/>
       {/* Instructions */}

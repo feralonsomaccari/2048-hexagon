@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import GameMenu from ".";
 
 const props = {
-  gameOver: true,
+  isGameOver: true,
   score: 100,
 }
 

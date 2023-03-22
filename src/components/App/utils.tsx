@@ -119,6 +119,28 @@ const findNextBlock = (
 };
 
 /**
+ * Determine if there are still valid movements in the game 
+ * @param {gridElement[]} tiles A set of Tiles
+ * @param {gridElement[]} grid Game Grid
+ * @returns { boolean } Returns true if there are still valid movements and false if the game is over
+ */
+const validMovementsLeft = (tiles: gridElement[], grid: gridElement[]) => {
+  const directions: string[] = ['northWest', 'north', 'southWest', 'south', 'southEast']
+
+  const isValidMovementsLeft = tiles.some(tile => {
+    return [...directions].some(direction => {
+      const nextBlock = findNextBlock(tile, direction, grid)
+      if (!nextBlock) return false;
+      if(nextBlock.value === 0) return true;
+      if(nextBlock.value === tile.value) return true
+      return false;
+    })
+  })
+
+  return isValidMovementsLeft
+}
+
+/**
  * Given an Array of gridElements this function will add a random ID into every element
  * @param {gridElement[]} dataSet A Tile element
  * The direction in the x-axis, y-axis, z-axis (nortWest, nort, nortEast, southWest, south, southEast)
@@ -151,4 +173,5 @@ export {
   findNextBlock,
   addIds,
   hardcodedGrid,
+  validMovementsLeft
 };

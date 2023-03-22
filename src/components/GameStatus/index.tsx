@@ -1,17 +1,17 @@
 import styles from "./GameStatus.module.css";
 
 type props = {
-  gameOver: boolean;
+  isGameOver: boolean;
 };
 
-const renderGameStatus = (gameOver: boolean): string => {
-  return gameOver ? "game-over" : "playing";
+const renderGameStatus = (isGameOver: boolean): string => {
+  return isGameOver ? "game-over" : "playing";
 };
 
-const GameStatus = ({ gameOver }: props) => {
+const GameStatus = ({ isGameOver }: props) => {
   return (
-    <div data-testid="game-status" className={`${styles.gamestatus} ${gameOver && styles.gameover}`} data-status={renderGameStatus(gameOver)}>
-      {renderGameStatus(gameOver)}
+    <div data-testid="game-status" className={`${styles.gamestatus} ${isGameOver && styles.isGameOver}`} data-status={renderGameStatus(isGameOver)}>
+      {renderGameStatus(isGameOver)}
     </div>
   );
 };

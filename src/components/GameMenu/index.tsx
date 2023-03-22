@@ -4,11 +4,11 @@ import Score from "../Score";
 
 type props = {
   resetGameHandler?: React.MouseEventHandler;
-  gameOver: boolean;
+  isGameOver: boolean;
   score: number;
 };
 
-const GameMenu = ({ resetGameHandler, gameOver, score }: props) => {
+const GameMenu = ({ resetGameHandler, isGameOver, score }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
       <div>
@@ -17,7 +17,7 @@ const GameMenu = ({ resetGameHandler, gameOver, score }: props) => {
         <p className={styles.text}>Join the tiles, get to <b>2048</b></p>
         <a className="link" href={'#howtoplay'}>How to play →</a>
         <p className={styles.text}><b>Game Status:</b></p>
-        <GameStatus gameOver={gameOver} />
+        <GameStatus isGameOver={isGameOver} />
       </div>
       <div className={styles.subMenu}>
         <div className={styles.scoreContainer}>
