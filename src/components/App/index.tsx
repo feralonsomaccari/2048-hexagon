@@ -58,11 +58,8 @@ export const App: React.FC = () => {
     setGrid(updatedGrid);
       
     // We must check if it is possible to keep moving on the grid
-    if(validMovementsLeft(tileSet, grid)){
-      setIsMovementBlocked(false);
-    }else{
-      setIsGameOver(true);
-    }
+    if(!validMovementsLeft(tileSet, grid)) setIsGameOver(true);
+
   }, [tileSet]);
 
 
@@ -70,6 +67,7 @@ export const App: React.FC = () => {
     if (disableServer) return setIsMovementBlocked(false);
       
     const serverResponseData = await fetchServer(tileSet);
+    setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
     
     const updatedTileSet = [...addIds(serverResponseData), ...tileSet]
