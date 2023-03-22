@@ -185,7 +185,7 @@ export const App: React.FC = () => {
       {/* Game Menu */}
       <GameMenu resetGameHandler={resetGameHandler} isGameOver={isGameOver} score={score} />
       {/* Game */}
-      <GameContainer tileSet={tileSet} grid={grid} showCoords={showCoords}/>
+      <GameContainer tileSet={tileSet} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
       {/* Instructions */}
       <Instructions />
     </div>
