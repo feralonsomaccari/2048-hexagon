@@ -17,6 +17,8 @@
   background-color: var(--color-2);
   transition: all 100ms ease-in-out;
   animation: popin 0.25s;
+  animation-fill-mode: forwards;
+  transform: scale(0);
 }
 
 .color-2 {

@@ -92,6 +92,14 @@ const sortTileSet = (tileSet: gridElement[], direction: string) => {
   return sortedTileSet;
 };
 
+const sortTileSetById = (tileSet: gridElement[]) => {
+  return tileSet.sort((a,b) => {
+    if(a.id && b.id){
+      return a.id - b.id
+    }
+    return a.x - b.x
+  })
+}
 
 /**
  * Takes a Tile element and returns the next Block and its properties in the grid in a particular direction.
@@ -173,5 +181,6 @@ export {
   findNextBlock,
   addIds,
   hardcodedGrid,
-  validMovementsLeft
+  validMovementsLeft,
+  sortTileSetById
 };

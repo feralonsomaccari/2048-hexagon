@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react'
 import styles from "./GameContainer.module.css";
 import Block from "../Block";
 import Tile from "../Tile";
@@ -13,6 +14,7 @@ type props = {
 };
 
 const GameContainer = ({ tileSet, grid, resetGameHandler, isGameOver, showCoords }: props) => {
+
   return (
     <div className={styles.gameWrapper} id="game">
       {isGameOver && (
@@ -23,14 +25,14 @@ const GameContainer = ({ tileSet, grid, resetGameHandler, isGameOver, showCoords
       )}
       <div className={styles.gameContainer}>
         {tileSet.map((tile) => (
-          <Tile key={tile.id} style={getPositionFromCoordinates(tile)} value={tile.value} />
+          <Tile key={tile.id} {...getPositionFromCoordinates(tile)} value={tile.value} />
         ))}
         {grid.map((coords, index) => (
-          <Block key={index} style={getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
+          <Block key={index} {...getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
         ))}
       </div>
     </div>
   );
 };
 
-export default GameContainer;
+export default React.memo(GameContainer);

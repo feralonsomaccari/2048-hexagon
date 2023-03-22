@@ -1,17 +1,19 @@
+import React from 'react'
 import styles from "./Tile.module.css";
 
 type props = {
   value: number;
-  style?: {};
+  left?: number;
+  top?: number;
 };
 
-const Tile = ({ value, style }: props): JSX.Element => {
+const Tile = ({ value, left, top }: props): JSX.Element => {
   const color = `color-${value}`;
   return (
-    <div data-testid="tile" className={`${styles.tile} ${styles[color]}`} style={style}>
+    <div data-testid="tile" className={`${styles.tile} ${styles[color]}`} style={{left: left, top: top} }>
       {value}
     </div>
   );
 };
 
-export default Tile;
+export default React.memo(Tile);

@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import styles from "./App.module.css";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
-import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsLeft } from "./utils";
+import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsLeft, sortTileSetById } from "./utils";
 import { fetchServer } from "./services";
-
 
 export const App: React.FC = () => {
   const [grid, setGrid] = useState<gridElement[]>([]);
@@ -170,11 +169,11 @@ export const App: React.FC = () => {
     }
   };
 
-  const resetGameHandler = async () => {
+  const resetGameHandler = useCallback(() => {
     setScore(0);
-    setIsGameOver(false)
-    await serverCall([]);
-  };
+    setIsGameOver(false);
+    serverCall([]);
+  }, []);
 
   return (
     <div className={styles.wrapper} >
@@ -183,7 +182,7 @@ export const App: React.FC = () => {
       {/* Game Menu */}
       <GameMenu resetGameHandler={resetGameHandler} isGameOver={isGameOver} score={score} />
       {/* Game */}
-      <GameContainer tileSet={tileSet} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
+      <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
       {/* Instructions */}
       <Instructions />
     </div>
