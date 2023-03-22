@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import Block from "../Block";
-import Tile from "../Tile";
 import styles from "./App.module.css";
-import { getPositionFromCoordinates, moveTile, sortTileSet, hardcodedGrid } from "./utils";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
+import GameContainer from "../GameContainer";
+import DevTools from "../DevTools";
+import { sortTileSet, findNextBlock, addIds, hardcodedGrid } from "./utils";
 import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
-  const [moving, setMoving] = useState(false);
+  const [isMoveBlocked, setIsMoveBlocked] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [firstCall, setFirstCall] = useState(true);
   const [score, setScore] = useState(0);
@@ -27,15 +27,13 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, moving, disableServer, score]);
+  }, [tileSet, isMoveBlocked, disableServer, score]);
 
   /* 
     Initial component mount
   */
   useEffect(() => {
-    const tempGrid = [...hardcodedGrid];
-    tempGrid.forEach((serverCoords) => (serverCoords.value = 0));
-    setGrid(tempGrid);
+    setGrid(hardcodedGrid);
     serverCall();
   }, []);
 
@@ -43,119 +41,103 @@ export const App: React.FC = () => {
     Side-effect on Tile Set
   */
   useEffect(() => {
-    if (grid.length) {
-      const tempGrid = [...grid];
+    if (!grid.length) return;
+    const updatedGrid = [...grid];
 
-      tempGrid.forEach((serverCoords) => (serverCoords.value = 0));
+    // Me must clear and update the [data-values] on the grid 
+    updatedGrid.forEach((serverCoords) => (serverCoords.value = 0));
 
-      tileSet.forEach((serverCoords) => {
-        tempGrid.forEach((gridCoords) => {
-          if (gridCoords.x === serverCoords.x && gridCoords.y === serverCoords.y && gridCoords.z === serverCoords.z) {
-            gridCoords.value = serverCoords.value;
-            gridCoords.id = serverCoords.id;
-          }
-        });
+    tileSet.forEach((serverCoords) => {
+      updatedGrid.forEach((gridCoords) => {
+        if (gridCoords.x === serverCoords.x && gridCoords.y === serverCoords.y && gridCoords.z === serverCoords.z) {
+          gridCoords.value = serverCoords.value;
+          gridCoords.id = serverCoords.id;
+        }
       });
-      setGrid(tempGrid);
-    }
+    });
+
+      setGrid(updatedGrid);
   }, [tileSet]);
 
-  const resetGameHandler = async () => {
-    setTileSet([]);
-    setScore(0);
-    await serverCall([]);
-  };
 
-  const serverCall = async (newTilesPos: gridElement[] = []) => {
-    const data = await fetchServer(newTilesPos);
-    if (!disableServer) {
-      if (!data?.length && !firstCall) {
-        setGameOver(true);
-        return;
-      }
-      const dataWithIds = data.map((item) => {
-        return {
-          ...item,
-          id: Math.random(),
-        };
-      });
-      setFirstCall(false);
-      setTileSet([...dataWithIds, ...newTilesPos]);
+  const serverCall = async (newTileSet: gridElement[] = []) => {
+    if (disableServer){
+      setIsMoveBlocked(false);
+      return;
+    } 
+
+    const serverResponseData = await fetchServer(newTileSet);
+    if (!serverResponseData?.length && !firstCall) {
+      setGameOver(true);
+      return;
     }
-    setMoving(false);
+    setFirstCall(false);
+    setTileSet([...addIds(serverResponseData), ...newTileSet]);
+    setIsMoveBlocked(false);
   };
 
-  const findNextBlock = (tile: gridElement, direction: string, move: boolean, tempGrid: gridElement[]) => {
-    let tempTilePos = { ...tile };
-    if (move) tempTilePos = moveTile(tempTilePos, direction);
-    const checkGridBlock = tempGrid.filter((block) => tempTilePos.x === block.x && tempTilePos.y === block.y && tempTilePos.z === block.z);
-    if (checkGridBlock.length) {
-      return checkGridBlock[0];
-    } else {
-      return false;
-    }
-  };
-
-  const updateTile = (tile: gridElement, direction: string, removeTiles: number[], tempGrid: gridElement[]): gridElement | boolean => {
-    const nexBlock: gridElement | boolean = findNextBlock(tile, direction, true, tempGrid);
+  const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): gridElement | boolean => {
+    const nexBlock = findNextBlock(tile, direction, grid);
     if (nexBlock === false) return tile;
 
     if (nexBlock && nexBlock.value) {
       if (nexBlock.value === tile.value) {
-        const checkGridBlock = tempGrid.filter((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
+        const currentBlock = grid.find((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
+        if(currentBlock){
+          currentBlock.value = 0;
+          delete currentBlock.id;
+        }
         setScore((prevScore) => prevScore + (tile.value + nexBlock.value));
         tile.x = nexBlock.x;
         tile.y = nexBlock.y;
         tile.z = nexBlock.z;
         tile.value = tile.value + nexBlock.value;
         if (nexBlock.id) removeTiles.push(nexBlock.id);
-
         nexBlock.value = tile.value;
         nexBlock.id = tile.id;
-        checkGridBlock[0].value = 0;
-        delete checkGridBlock[0].id;
-        return updateTile(tile, direction, removeTiles, tempGrid);
+       
+        return updateTile(tile, direction, grid, removeTiles);
       } else {
         return tile;
       }
     } else {
-      const checkGridBlock = tempGrid.filter((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
+      const currentBlock = grid.find((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
+      if(currentBlock){
+        currentBlock.value = 0;
+        delete currentBlock.id;
+      }
       tile.x = nexBlock.x;
       tile.y = nexBlock.y;
       tile.z = nexBlock.z;
       nexBlock.value = tile.value;
       nexBlock.id = tile.id;
-      checkGridBlock[0].value = 0;
-      delete checkGridBlock[0].id;
-      return updateTile(tile, direction, removeTiles, tempGrid);
+      
+      return updateTile(tile, direction, grid, removeTiles);
     }
   };
 
   const updateTilesPos = (direction: string) => {
-    setMoving(true);
+    setIsMoveBlocked(true);
 
-    const newTiles = [...tileSet];
-    const tempGrid = [...grid];
-    const removeTiles: number[] = [];
-
-    const sortedTileSet = sortTileSet(newTiles, direction);
-    const newTilesPos: any = sortedTileSet.map((tile) => {
-      return updateTile(tile, direction, removeTiles, tempGrid);
+    const tilesToBeRemoved: number[] = [];
+    const sortedTileSet = sortTileSet([...tileSet], direction);
+    const updatedTileSet: any = sortedTileSet.map((tile) => {
+      return updateTile(tile, direction, [...grid], tilesToBeRemoved);
     });
 
-    removeTiles.forEach((tileId) => {
-      newTilesPos.splice(newTilesPos.map((tile: gridElement) => tile.id).indexOf(tileId), 1);
+    tilesToBeRemoved.forEach((tileId) => {
+      updatedTileSet.splice(updatedTileSet.map((tile: gridElement) => tile.id).indexOf(tileId), 1);
     });
 
-    setTileSet(newTilesPos);
+    setTileSet(updatedTileSet);
 
     setTimeout(() => {
-      serverCall(newTilesPos);
+      serverCall(updatedTileSet);
     }, 200);
   };
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || moving || gameOver) return;
+    if (event.repeat || isMoveBlocked || gameOver) return;
     switch (event.key) {
       case "q":
       case "Q":
@@ -187,35 +169,22 @@ export const App: React.FC = () => {
     }
   };
 
+  const resetGameHandler = async () => {
+    setTileSet([]);
+    setScore(0);
+    await serverCall([]);
+  };
+
   if (!setTileSet.length) return <></>;
 
   return (
-    <div className={styles.wrapper} id="game">
+    <div className={styles.wrapper} >
       {/* Dev Tools */}
-      <div className={styles.devTools}>
-        <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>
-          ⚠️ {showCoords ? "Hide Coords" : "Show Coords"}
-        </button>
-        <button title="dev button" onClick={() => setDisableServer((prev) => !prev)}>
-          ⚠️ {disableServer ? "Enable Server" : "Disable Server"}
-        </button>
-      </div>
-
+      <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
       {/* Game Menu */}
       <GameMenu resetGameHandler={resetGameHandler} gameOver={gameOver} score={score} />
-
       {/* Game */}
-      <div className={styles.gameWrapper}>
-        <div className={styles.gameContainer}>
-          {tileSet.map((tile) => (
-            <Tile key={tile.id} style={getPositionFromCoordinates(tile)} value={tile.value} />
-          ))}
-          {grid.map((coords, index) => (
-            <Block key={index} style={getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
-          ))}
-        </div>
-      </div>
-
+      <GameContainer tileSet={tileSet} grid={grid} showCoords={showCoords}/>
       {/* Instructions */}
       <Instructions />
     </div>
