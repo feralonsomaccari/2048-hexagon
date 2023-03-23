@@ -68,7 +68,7 @@ const moveTile = (tile: gridElement, direction: string) => {
  * @returns {gridElement[]} Returns the sorted set of Tiles
  */
 const sortTileSet = (tileSet: gridElement[], direction: string) => {
-  const sortedTileSet = [...tileSet];
+  const sortedTileSet = structuredClone(tileSet);
 
   if (direction === "northWest") {
     sortedTileSet.sort((a, b) => a.x - b.x || b.y - a.y);
@@ -98,7 +98,7 @@ const sortTileSet = (tileSet: gridElement[], direction: string) => {
  * @returns {gridElement[] | boolean } Returns the same tileSet sorted by id
  */
 const sortTileSetById = (tileSet: gridElement[]) => {
-  return [...tileSet].sort((a,b) => {
+  return tileSet.sort((a,b) => {
     if(a.id && b.id){
       return a.id - b.id
     }
