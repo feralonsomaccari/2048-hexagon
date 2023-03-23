@@ -92,8 +92,13 @@ const sortTileSet = (tileSet: gridElement[], direction: string) => {
   return sortedTileSet;
 };
 
+/**
+ * Takes a set of Tiles and sort it by id
+ * @param {gridElement[]} tileSet A set of Tiles
+ * @returns {gridElement[] | boolean } Returns the same tileSet sorted by id
+ */
 const sortTileSetById = (tileSet: gridElement[]) => {
-  return tileSet.sort((a,b) => {
+  return [...tileSet].sort((a,b) => {
     if(a.id && b.id){
       return a.id - b.id
     }
@@ -107,7 +112,6 @@ const sortTileSetById = (tileSet: gridElement[]) => {
  * @param {gridElement} tile A Tile element
  * @param {string} direction Direction of the movement
  * @param {string} grid Game Grid
- * The direction in the x-axis, y-axis, z-axis (nortWest, nort, nortEast, southWest, south, southEast)
  * @returns {gridElement[] | boolean } Returns the next block and its properties or false if non has been found
  */
 const findNextBlock = (
@@ -127,16 +131,17 @@ const findNextBlock = (
 };
 
 /**
- * Determine if there are still valid movements in the game 
+ * Determine if there are still valid movements in the game in an particular direction
  * @param {gridElement[]} tiles A set of Tiles
  * @param {gridElement[]} grid Game Grid
- * @returns { boolean } Returns true if there are still valid movements and false if the game is over
+ * @param {string[]} directions an Array of directions if non is given it will check all directions
+ * @returns { boolean } Returns true if there are still valid movements and false if is not possible to move further
  */
-const validMovementsLeft = (tiles: gridElement[], grid: gridElement[]) => {
-  const directions: string[] = ['northWest', 'north', 'southWest', 'south', 'southEast']
+const validMovementsAvailable = (tiles: gridElement[], grid: gridElement[], directions?: string[]) => {
+  const directionsArr: string[] = directions ? directions: ['northWest', 'north', 'southWest', 'south', 'southEast']
 
-  const isValidMovementsLeft = tiles.some(tile => {
-    return [...directions].some(direction => {
+  const isValidMovementsAvailable = tiles.some(tile => {
+    return [...directionsArr].some(direction => {
       const nextBlock = findNextBlock(tile, direction, grid)
       if (!nextBlock) return false;
       if(nextBlock.value === 0) return true;
@@ -145,7 +150,7 @@ const validMovementsLeft = (tiles: gridElement[], grid: gridElement[]) => {
     })
   })
 
-  return isValidMovementsLeft
+  return isValidMovementsAvailable
 }
 
 /**
@@ -181,6 +186,6 @@ export {
   findNextBlock,
   addIds,
   hardcodedGrid,
-  validMovementsLeft,
-  sortTileSetById
+  validMovementsAvailable,
+  sortTileSetById,
 };

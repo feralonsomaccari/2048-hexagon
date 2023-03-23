@@ -4,7 +4,7 @@ import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
-import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsLeft, sortTileSetById } from "./utils";
+import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsAvailable, sortTileSetById } from "./utils";
 import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
@@ -60,7 +60,7 @@ export const App: React.FC = () => {
     setGrid(updatedGrid);
       
     // We must check if it is possible to keep moving on the grid
-    if(!validMovementsLeft(tileSet, grid)) setIsGameOver(true);
+    if(!validMovementsAvailable(tileSet, grid)) setIsGameOver(true);
 
   }, [tileSet]);
 
@@ -76,7 +76,7 @@ export const App: React.FC = () => {
     setTileSet(updatedTileSet);
   };
 
-  const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): gridElement => {
+  const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): any => {
     const nextBlock = findNextBlock(tile, direction, grid);
     if (nextBlock === false || tile.merged) return tile;
 
@@ -120,6 +120,8 @@ export const App: React.FC = () => {
   };
 
   const updateTilesPos = (direction: string) => {
+    if(!validMovementsAvailable(tileSet, grid, [direction])) return;
+
     setIsMovementBlocked(true);
 
     const tilesToBeRemoved: number[] = [];
@@ -128,12 +130,12 @@ export const App: React.FC = () => {
       return updateTile(tile, direction, [...grid], tilesToBeRemoved);
     });
 
+    // After merge two tiles of the same value we must remove one of them
     tilesToBeRemoved.forEach((tileId) => {
       updatedTileSet.splice(updatedTileSet.map((tile: gridElement) => tile.id).indexOf(tileId), 1);
     });
 
     setTileSet(updatedTileSet);
-
     setTimeout(() => {
       serverCall(updatedTileSet);
     }, 200);
