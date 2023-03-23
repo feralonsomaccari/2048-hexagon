@@ -123,7 +123,7 @@ export const App: React.FC = () => {
 
   const updateTilesPos = (direction: string) => {
     if(!validMovementsAvailable(tileSet, grid, [direction])) return;
-
+    
     setIsMovementBlocked(true);
 
     const clonedTileSet = structuredClone(tileSet)
