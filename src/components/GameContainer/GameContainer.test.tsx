@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { hardcodedGrid } from "../App/utils";
+import { hardcodedGrid } from "../../utils";
 
 import GameContainer from ".";
 

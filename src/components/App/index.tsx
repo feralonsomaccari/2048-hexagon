@@ -4,7 +4,7 @@ import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
-import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsAvailable, sortTileSetById } from "./utils";
+import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsAvailable, sortTileSetById } from "../../utils";
 import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
