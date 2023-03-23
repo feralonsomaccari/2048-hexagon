@@ -8,3 +8,4 @@ This is the Button component, meant to be used across the app
 | :--------------- | ---------- | :--------- | :------------------ |
 | **text**         | `string`   | `required` | Text of the button. |
 | **clickHandler** | `function` | `() => {}` | Text of the button. |
+| **disabled**     | `boolean`  | `false`    | Disables button.    |

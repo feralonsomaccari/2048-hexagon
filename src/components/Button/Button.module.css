@@ -13,3 +13,7 @@
   max-height: 40px;
   max-width: fit-content;
 }
+
+.disabled {
+  background-color: var(--color-disabled);
+}

@@ -8,9 +8,10 @@ type props = {
   score: number;
   resetGameHandler?: React.MouseEventHandler;
   undoHandler?: React.MouseEventHandler;
+  isUndoAvailable?: boolean
 };
 
-const GameMenu = ({ isGameOver, score, undoHandler, resetGameHandler }: props) => {
+const GameMenu = ({ isGameOver, score, undoHandler, resetGameHandler, isUndoAvailable = true }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
       <div>
@@ -26,7 +27,7 @@ const GameMenu = ({ isGameOver, score, undoHandler, resetGameHandler }: props) =
           <Score title="Score" score={score}/>
           <Score title="Best" score={0}/>
         </div>
-        <Button clickHandler={undoHandler} text='Undo'/>
+        <Button clickHandler={undoHandler} disabled={!isUndoAvailable} text='Undo'/>
         <Button clickHandler={resetGameHandler} text='Next Game'/>
       </div>
     </article>

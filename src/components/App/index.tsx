@@ -14,6 +14,7 @@ export const App: React.FC = () => {
   const [isMovementBlocked, setIsMovementBlocked] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
+  const [isUndoAvailable, setIsUndoAvailable] = useState(false)
   const [historyScore, setHistoryScore] = useState(0);
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
@@ -129,6 +130,7 @@ export const App: React.FC = () => {
     const clonedTileSet = structuredClone(tileSet)
     setHistoryTileSet(clonedTileSet)
     setHistoryScore(score)
+    setIsUndoAvailable(true)
 
     const tilesToBeRemoved: number[] = [];
     const sortedTileSet = sortTileSet(clonedTileSet, direction);
@@ -183,12 +185,14 @@ export const App: React.FC = () => {
   const resetGameHandler = useCallback(() => {
     setScore(0);
     setIsGameOver(false);
+    setIsUndoAvailable(false)
     serverCall([]);
   }, []);
   
   const undoHandler = useCallback(() => {
     setTileSet(historyTileSet);
     setScore(historyScore);
+    setIsUndoAvailable(false)
   }, [historyTileSet]);
 
   return (
@@ -196,7 +200,7 @@ export const App: React.FC = () => {
       {/* Dev Tools */}
       <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
       {/* Game Menu */}
-      <GameMenu isGameOver={isGameOver} score={score} resetGameHandler={resetGameHandler} undoHandler={undoHandler} />
+      <GameMenu isGameOver={isGameOver} score={score} resetGameHandler={resetGameHandler} undoHandler={undoHandler} isUndoAvailable={isUndoAvailable}/>
       {/* Game */}
       <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
       {/* Instructions */}
