@@ -13,7 +13,7 @@ type props = {
   showCoords?: boolean;
 };
 
-const GameContainer = ({ tileSet, grid, resetGameHandler, isGameOver, showCoords }: props) => {
+const GameContainer = ({ tileSet, grid, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
 
   return (
     <div className={styles.gameWrapper} id="game">
