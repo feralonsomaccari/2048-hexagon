@@ -18,7 +18,7 @@ const GameContainer = ({ tileSet, grid, resetGameHandler = () => {}, isGameOver,
   return (
     <div className={styles.gameWrapper} id="game">
       {isGameOver && (
-        <div className={styles.gameOverOverlay}>
+        <div className={styles.gameOverOverlay} data-testid="overlay">
           <h4>Game Over :(</h4>
           <Button clickHandler={resetGameHandler} text='Try Again'/>
         </div>
