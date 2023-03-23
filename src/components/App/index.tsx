@@ -10,9 +10,11 @@ import { fetchServer } from "./services";
 export const App: React.FC = () => {
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
+  const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
   const [isMovementBlocked, setIsMovementBlocked] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
+  const [historyScore, setHistoryScore] = useState(0);
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
   const [disableServer, setDisableServer] = useState(false);
@@ -124,10 +126,14 @@ export const App: React.FC = () => {
 
     setIsMovementBlocked(true);
 
+    const clonedTileSet = structuredClone(tileSet)
+    setHistoryTileSet(clonedTileSet)
+    setHistoryScore(score)
+
     const tilesToBeRemoved: number[] = [];
-    const sortedTileSet = sortTileSet([...tileSet], direction);
+    const sortedTileSet = sortTileSet(clonedTileSet, direction);
     const updatedTileSet: gridElement[] = sortedTileSet.map((tile) => {
-      return updateTile(tile, direction, [...grid], tilesToBeRemoved);
+      return updateTile(tile, direction, grid, tilesToBeRemoved);
     });
 
     // After merge two tiles of the same value we must remove one of them
@@ -178,14 +184,19 @@ export const App: React.FC = () => {
     setScore(0);
     setIsGameOver(false);
     serverCall([]);
-  }, [serverCall]);
+  }, []);
+  
+  const undoHandler = useCallback(() => {
+    setTileSet(historyTileSet);
+    setScore(historyScore);
+  }, [historyTileSet]);
 
   return (
     <div className={styles.wrapper} >
       {/* Dev Tools */}
       <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
       {/* Game Menu */}
-      <GameMenu resetGameHandler={resetGameHandler} isGameOver={isGameOver} score={score} />
+      <GameMenu isGameOver={isGameOver} score={score} resetGameHandler={resetGameHandler} undoHandler={undoHandler} />
       {/* Game */}
       <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
       {/* Instructions */}
