@@ -6,12 +6,13 @@ import Button from "../Button";
 type props = {
   isGameOver: boolean;
   score: number;
+  historyScore?: number;
   resetGameHandler?: React.MouseEventHandler;
   undoHandler?: React.MouseEventHandler;
   isUndoAvailable?: boolean
 };
 
-const GameMenu = ({ isGameOver, score, undoHandler, resetGameHandler, isUndoAvailable = true }: props) => {
+const GameMenu = ({ isGameOver, score, historyScore, undoHandler, resetGameHandler, isUndoAvailable = true }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
       <div>
@@ -24,7 +25,7 @@ const GameMenu = ({ isGameOver, score, undoHandler, resetGameHandler, isUndoAvai
       </div>
       <div className={styles.subMenu}>
         <div className={styles.scoreContainer}>
-          <Score title="Score" score={score}/>
+          <Score title="Score" score={score} historyScore={historyScore}/>
           <Score title="Best" score={0}/>
         </div>
         <Button clickHandler={undoHandler} disabled={!isUndoAvailable} text='Undo'/>

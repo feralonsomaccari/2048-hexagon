@@ -200,7 +200,7 @@ export const App: React.FC = () => {
       {/* Dev Tools */}
       <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
       {/* Game Menu */}
-      <GameMenu isGameOver={isGameOver} score={score} resetGameHandler={resetGameHandler} undoHandler={undoHandler} isUndoAvailable={isUndoAvailable}/>
+      <GameMenu isGameOver={isGameOver} score={score} historyScore={historyScore} resetGameHandler={resetGameHandler} undoHandler={undoHandler} isUndoAvailable={isUndoAvailable}/>
       {/* Game */}
       <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
       {/* Instructions */}

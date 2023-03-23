@@ -8,11 +8,33 @@
   text-align: center;
   width: fit-content;
   padding: 5px 20px;
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .scoreTitle {
   text-transform: uppercase;
   font-size: 12px;
   color: var(--bg-color-4);
+}
+
+
+.score::before{
+  content: attr(data-value);
+  position: absolute;
+  animation: slowMoveUp ease-out 1s;
+  opacity: 0;
+  color:var(--color-secondary);
+  font-size: 32px;
+}
+
+@keyframes slowMoveUp {
+  0% {
+    top: 0;
+    opacity: 1;
+  }
+  
+  100% {
+    top: -50px;
+    opacity: 0;
+  }
 }
