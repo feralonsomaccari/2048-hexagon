@@ -44,7 +44,10 @@ export const App: React.FC = () => {
     const updatedGrid = [...grid];
 
     // Me must clear and update the [data-values] on the grid 
-    updatedGrid.forEach((block) => (block.value = 0, block.merged = false));
+    updatedGrid.forEach((block) => {
+      block.value = 0; 
+      block.merged = false;
+    });
     tileSet.forEach((tile) => {
       updatedGrid.forEach((block) => {
         if (block.x === tile.x && block.y === tile.y && block.z === tile.z) {
@@ -173,7 +176,7 @@ export const App: React.FC = () => {
     setScore(0);
     setIsGameOver(false);
     serverCall([]);
-  }, []);
+  }, [serverCall]);
 
   return (
     <div className={styles.wrapper} >

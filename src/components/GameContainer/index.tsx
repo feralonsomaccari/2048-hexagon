@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import styles from "./GameContainer.module.css";
 import Block from "../Block";
 import Tile from "../Tile";
