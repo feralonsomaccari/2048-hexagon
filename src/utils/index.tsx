@@ -98,13 +98,13 @@ const sortTileSet = (tileSet: gridElement[], direction: string) => {
  * @returns {gridElement[] | boolean } Returns the same tileSet sorted by id
  */
 const sortTileSetById = (tileSet: gridElement[]) => {
-  return tileSet.sort((a,b) => {
-    if(a.id && b.id){
-      return a.id - b.id
+  return tileSet.sort((a, b) => {
+    if (a.id && b.id) {
+      return a.id - b.id;
     }
-    return a.x - b.x
-  })
-}
+    return a.x - b.x;
+  });
+};
 
 /**
  * Takes a Tile element and returns the next Block and its properties in the grid in a particular direction.
@@ -114,17 +114,9 @@ const sortTileSetById = (tileSet: gridElement[]) => {
  * @param {string} grid Game Grid
  * @returns {gridElement[] | boolean } Returns the next block and its properties or false if non has been found
  */
-const findNextBlock = (
-  tile: gridElement,
-  direction: string,
-  grid: gridElement[]
-) => {
+const findNextBlock = (tile: gridElement, direction: string, grid: gridElement[]) => {
   const tempTilePos = moveTile({ ...tile }, direction);
-  const checkGridBlock = grid.filter((block) =>
-      tempTilePos.x === block.x &&
-      tempTilePos.y === block.y &&
-      tempTilePos.z === block.z
-  );
+  const checkGridBlock = grid.filter((block) => tempTilePos.x === block.x && tempTilePos.y === block.y && tempTilePos.z === block.z);
 
   if (checkGridBlock.length) return checkGridBlock[0];
   return false;
@@ -138,20 +130,20 @@ const findNextBlock = (
  * @returns { boolean } Returns true if there are still valid movements and false if is not possible to move further
  */
 const validMovementsAvailable = (tiles: gridElement[], grid: gridElement[], directions?: string[]) => {
-  const directionsArr: string[] = directions ? directions: ['northWest', 'north', 'southWest', 'south', 'southEast']
+  const directionsArr: string[] = directions ? directions : ["northWest", "north", "southWest", "south", "southEast"];
 
-  const isValidMovementsAvailable = tiles.some(tile => {
-    return [...directionsArr].some(direction => {
-      const nextBlock = findNextBlock(tile, direction, grid)
+  const isValidMovementsAvailable = tiles.some((tile) => {
+    return [...directionsArr].some((direction) => {
+      const nextBlock = findNextBlock(tile, direction, grid);
       if (!nextBlock) return false;
-      if(nextBlock.value === 0) return true;
-      if(nextBlock.value === tile.value) return true
+      if (nextBlock.value === 0) return true;
+      if (nextBlock.value === tile.value) return true;
       return false;
-    })
-  })
+    });
+  });
 
-  return isValidMovementsAvailable
-}
+  return isValidMovementsAvailable;
+};
 
 /**
  * Given an Array of gridElements this function will add a random ID into every element
@@ -166,26 +158,42 @@ const addIds = (dataSet: gridElement[]) => {
       id: Math.random(),
     };
   });
-  return dataWithIds
-}
-
-const hardcodedGrid = [
-  { x: 0, y: 1, z: -1, value: 0, merged: false },
-  { x: -1, y: 1, z: 0, value: 0, merged: false },
-  { x: 1, y: 0, z: -1, value: 0, merged: false },
-  { x: 0, y: 0, z: 0, value: 0, merged: false },
-  { x: -1, y: 0, z: 1, value: 0, merged: false },
-  { x: -0, y: -1, z: 1, value: 0, merged: false },
-  { x: 1, y: -1, z: 0, value: 0, merged: false },
-];
-
-export {
-  getPositionFromCoordinates,
-  moveTile,
-  sortTileSet,
-  findNextBlock,
-  addIds,
-  hardcodedGrid,
-  validMovementsAvailable,
-  sortTileSetById,
+  return dataWithIds;
 };
+
+/**
+ * Given set of cube coordinates it creates a hexagon block component
+ * @param {number} x x axis
+ * @param {number} y y axis
+ * @param {number} z z axis
+ * @returns {gridElement } Returns a hexagon block component
+ */
+const createHexBlock = (x: number, y: number, z: number): gridElement => ({
+  x: x,
+  y: y,
+  z: z,
+  value: 0,
+});
+
+/**
+ * Given a radius it returns a hexagon grid
+ * @param {number} radius radius
+ * @returns {gridElement[] } Returns a hexagon grid
+ */
+const createHexGrid = (radius: number) => {
+  const grid: gridElement[] = [];
+
+  for (let i = -radius; i <= radius; i++) {
+    for (let j = -radius; j <= radius; j++) {
+      for (let k = -radius; k <= radius; k++) {
+        if (i + j + k == 0) {
+          grid.push(createHexBlock(i, j, k));
+        }
+      }
+    }
+  }
+
+  return grid;
+};
+
+export { getPositionFromCoordinates, moveTile, sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid };

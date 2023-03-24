@@ -4,7 +4,7 @@ import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
-import { sortTileSet, findNextBlock, addIds, hardcodedGrid, validMovementsAvailable, sortTileSetById } from "../../utils";
+import { sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid } from "../../utils";
 import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
@@ -24,7 +24,7 @@ export const App: React.FC = () => {
     Initial component mount
   */
     useEffect(() => {
-      setGrid(hardcodedGrid);
+      setGrid(createHexGrid(1));
       serverCall();
     }, []);
 
@@ -71,7 +71,7 @@ export const App: React.FC = () => {
   const serverCall = async (tileSet: gridElement[] = []) => {
     if (disableServer) return setIsMovementBlocked(false);
       
-    const serverResponseData = await fetchServer(tileSet);
+    const serverResponseData = await fetchServer(tileSet, 2);
     setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
     

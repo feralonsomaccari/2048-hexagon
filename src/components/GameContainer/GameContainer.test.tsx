@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import { hardcodedGrid } from "../../utils";
 
 import GameContainer from ".";
 
@@ -27,7 +26,50 @@ const props = {
       id: 0.41289545040663955,
     },
   ],
-  grid: hardcodedGrid,
+  grid: [
+    {
+      x: -1,
+      y: 0,
+      z: 1,
+      value: 0,
+    },
+    {
+      x: -1,
+      y: 1,
+      z: 0,
+      value: 0,
+    },
+    {
+      x: 0,
+      y: -1,
+      z: 1,
+      value: 0,
+    },
+    {
+      x: 0,
+      y: 0,
+      z: 0,
+      value: 0,
+    },
+    {
+      x: 0,
+      y: 1,
+      z: -1,
+      value: 0,
+    },
+    {
+      x: 1,
+      y: -1,
+      z: 0,
+      value: 0,
+    },
+    {
+      x: 1,
+      y: 0,
+      z: -1,
+      value: 0,
+    },
+  ],
   isGameOver: false,
 };
 
