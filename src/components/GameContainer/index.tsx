@@ -16,7 +16,7 @@ type props = {
 const GameContainer = ({ tileSet, grid, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
 
   return (
-    <div className={styles.gameWrapper} id="game">
+    <main className={styles.gameWrapper} id="game">
       {isGameOver && (
         <div className={styles.gameOverOverlay} data-testid="overlay">
           <h4>Game Over :(</h4>
@@ -31,7 +31,7 @@ const GameContainer = ({ tileSet, grid, resetGameHandler = () => {}, isGameOver,
           <Block key={index} {...getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
         ))}
       </div>
-    </div>
+    </main>
   );
 };
 

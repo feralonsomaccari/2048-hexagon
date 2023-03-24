@@ -4,11 +4,12 @@ type props = {
   text: string;
   clickHandler?: React.MouseEventHandler;
   disabled?: boolean;
+  extraProps?: object
 };
 
-const Button = ({ text, clickHandler, disabled = false }: props) => {
+const Button = ({ text, clickHandler, disabled = false, extraProps }: props) => {
   return (
-    <button className={`${styles.button} ${disabled && styles.disabled}`} onClick={clickHandler} disabled={disabled}>
+    <button {...extraProps} className={`${styles.button} ${disabled && styles.disabled}`} onClick={clickHandler} disabled={disabled}>
       {text}
     </button>
   );

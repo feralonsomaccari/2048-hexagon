@@ -14,7 +14,7 @@ const DevTools = ({
   setDisableServer,
 }: props) => {
   return (
-    <div className={styles.devTools}>
+    <aside className={styles.devTools}>
       <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>
         ⚠️ {showCoords ? "Hide Coords" : "Show Coords"}
       </button>
@@ -24,7 +24,7 @@ const DevTools = ({
       >
         ⚠️ {disableServer ? "Enable Server" : "Disable Server"}
       </button>
-    </div>
+    </aside>
   );
 };
 
