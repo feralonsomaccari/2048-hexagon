@@ -8,6 +8,7 @@ import { sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSe
 import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
+  const [radius, setRadius] = useState<number>(1)
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
@@ -24,7 +25,7 @@ export const App: React.FC = () => {
     Initial component mount
   */
     useEffect(() => {
-      setGrid(createHexGrid(1));
+      setGrid(createHexGrid(radius));
       serverCall();
     }, []);
 
@@ -71,7 +72,7 @@ export const App: React.FC = () => {
   const serverCall = async (tileSet: gridElement[] = []) => {
     if (disableServer) return setIsMovementBlocked(false);
       
-    const serverResponseData = await fetchServer(tileSet, 2);
+    const serverResponseData = await fetchServer(tileSet, radius);
     setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
     
@@ -202,7 +203,7 @@ export const App: React.FC = () => {
       {/* Game Menu */}
       <GameMenu isGameOver={isGameOver} score={score} historyScore={historyScore} resetGameHandler={resetGameHandler} undoHandler={undoHandler} isUndoAvailable={isUndoAvailable}/>
       {/* Game */}
-      <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
+      <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} radius={radius} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
       {/* Instructions */}
       <Instructions />
     </div>

@@ -8,12 +8,13 @@ import Button from "../Button";
 type props = {
   tileSet: gridElement[];
   grid: gridElement[];
+  radius: number;
   resetGameHandler?: React.MouseEventHandler;
   isGameOver: boolean;
   showCoords?: boolean;
 };
 
-const GameContainer = ({ tileSet, grid, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
+const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
 
   return (
     <main className={styles.gameWrapper} id="game">
@@ -25,10 +26,10 @@ const GameContainer = ({ tileSet, grid, resetGameHandler = () => {}, isGameOver,
       )}
       <div className={styles.gameContainer}>
         {tileSet.map((tile) => (
-          <Tile key={tile.id} {...getPositionFromCoordinates(tile)} value={tile.value} />
+          <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value} radius={radius}/>
         ))}
         {grid.map((coords, index) => (
-          <Block key={index} {...getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
+          <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} radius={radius} showCoords={showCoords} />
         ))}
       </div>
     </main>

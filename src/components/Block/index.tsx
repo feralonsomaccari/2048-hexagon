@@ -1,5 +1,6 @@
-import React from 'react'
+import React from "react";
 import styles from "./Block.module.css";
+import {getGridElementSizeFromRadius} from "../../utils"
 
 type props = {
   x: number;
@@ -8,13 +9,14 @@ type props = {
   value?: number;
   left?: number;
   top?: number;
+  radius?: number;
   showCoords?: boolean;
-  id?: string;
 };
 
-const Block = ({ x, y, z, value = 0, left, top, showCoords, id }: props): JSX.Element => {
+const Block = ({ x, y, z, value = 0, left, top, radius = 1, showCoords }: props): JSX.Element => {
+
   return (
-    <div data-testid="block" style={{left: left, top: top}} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value} data-id={id}>
+    <div data-testid="block" style={{ left: left, top: top, ...getGridElementSizeFromRadius(radius) }} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value}>
       {showCoords && (
         <>
           x: {x} y: {y} z: {z} value: {value}

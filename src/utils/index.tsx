@@ -3,12 +3,12 @@
  * @param {gridElement} block A block component
  * @returns {object} Returns an object with the position of the element in pixels
  */
-const getPositionFromCoordinates = (block: gridElement): any => {
-  let edgeLength = 95;
+const getPositionFromCoordinates = (block: gridElement, radius: number): any => {
+  let edgeLength = 95 / radius
   let edgeW = (edgeLength * 3) / 2;
   let edgeH = (edgeLength * Math.sqrt(3)) / 2;
-  const width = 0;
-  const height = 0;
+  const width =  200 /2;
+  const height = 173;
 
   const [x, y, z] = [block.x, block.y, block.z];
   const posX = x * edgeW + width;
@@ -21,6 +21,18 @@ const getPositionFromCoordinates = (block: gridElement): any => {
     top: newPosY,
   };
 };
+
+const getGridElementSizeFromRadius = (radius: number) => {
+  //3 - 74.1428571429
+  // 2.69
+  const width = 200 / radius  
+  const height = 173 / radius
+  return {
+    width: width,
+    height: height,
+  };
+};
+
 
 /**
  * Takes a Tile and a Direction and return a new tile with the position updated in that direction whitin the Grid
@@ -196,4 +208,4 @@ const createHexGrid = (radius: number) => {
   return grid;
 };
 
-export { getPositionFromCoordinates, moveTile, sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid };
+export { getPositionFromCoordinates, getGridElementSizeFromRadius, moveTile, sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid };

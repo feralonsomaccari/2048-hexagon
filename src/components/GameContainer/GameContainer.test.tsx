@@ -7,6 +7,7 @@ const props = {
   tileSet: tileSet,
   grid: grid,
   isGameOver: false,
+  radius: 1
 };
 
 describe("<GameContainer/>", () => {

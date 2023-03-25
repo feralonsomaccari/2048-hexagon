@@ -10,11 +10,11 @@
 }
 
 .gameContainer {
-    height: 200px;
+    /* height: 200px;
     width: 400px;
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: center; */
 }
 
 .gameOverOverlay{
