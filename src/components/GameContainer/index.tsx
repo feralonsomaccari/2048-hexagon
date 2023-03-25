@@ -17,14 +17,14 @@ type props = {
 const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
 
   return (
-    <main className={styles.gameWrapper} id="game">
+    <main className={styles.gameWrapper} style={{margin: `${radius*40}px 0` }} id="game">
       {isGameOver && (
         <div className={styles.gameOverOverlay} data-testid="overlay">
           <h4>Game Over :(</h4>
           <Button clickHandler={resetGameHandler} text='Try Again'/>
         </div>
       )}
-      <div className={styles.gameContainer}>
+      <div className={styles.gameContainer} style={{transform: `scale(${(10-radius)/10})`}}>
         {tileSet.map((tile) => (
           <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value} radius={radius}/>
         ))}

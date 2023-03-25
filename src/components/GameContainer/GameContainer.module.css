@@ -6,15 +6,12 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    scroll-margin-top: 100px;
+    scroll-margin-top: 125px;
 }
 
 .gameContainer {
-    /* height: 200px;
-    width: 400px;
-    position: relative;
-    display: flex;
-    justify-content: center; */
+  width: 100%;
+  height: 100%;
 }
 
 .gameOverOverlay{

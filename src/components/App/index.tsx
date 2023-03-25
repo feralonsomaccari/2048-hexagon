@@ -8,7 +8,7 @@ import { sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSe
 import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
-  const [radius, setRadius] = useState<number>(1)
+  const [radius, setRadius] = useState<number>(2)
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
@@ -72,7 +72,7 @@ export const App: React.FC = () => {
   const serverCall = async (tileSet: gridElement[] = []) => {
     if (disableServer) return setIsMovementBlocked(false);
       
-    const serverResponseData = await fetchServer(tileSet, radius);
+    const serverResponseData = await fetchServer(tileSet, radius+1);
     setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
     
