@@ -18,9 +18,9 @@ const Block = ({ x, y, z, value = 0, left, top, radius = 1, showCoords }: props)
   return (
     <div data-testid="block" style={{ left: left, top: top, ...getGridElementSizeFromRadius(radius) }} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value}>
       {showCoords && (
-        <>
+        <span className={styles.coordinates}>
           x: {x} y: {y} z: {z} value: {value}
-        </>
+        </span>
       )}
     </div>
   );
