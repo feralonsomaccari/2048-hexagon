@@ -9,7 +9,7 @@ import { fetchServer } from "./services";
 import Score from "../Score";
 
 export const App: React.FC = () => {
-  const [radius, setRadius] = useState<number>(2)
+  const [radius, setRadius] = useState<number>(1)
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);

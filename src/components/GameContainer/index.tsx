@@ -17,7 +17,7 @@ type props = {
 const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
 
   return (
-    <main className={styles.gameWrapper} style={{margin: `${radius*40}px 0` }} id="game">
+    <main className={styles.gameWrapper} id="game">
       {isGameOver && (
         <div className={styles.gameOverOverlay} data-testid="overlay">
           <h4>Game Over :(</h4>
