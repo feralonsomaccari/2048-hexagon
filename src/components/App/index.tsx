@@ -6,6 +6,7 @@ import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
 import { sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid } from "../../utils";
 import { fetchServer } from "./services";
+import Score from "../Score";
 
 export const App: React.FC = () => {
   const [radius, setRadius] = useState<number>(2)
@@ -198,6 +199,12 @@ export const App: React.FC = () => {
 
   return (
     <div className={styles.wrapper} >
+      <section className={styles.scoreWrapper}>
+        <div className={styles.scoreContainer}>
+          <Score title="Score" score={score} historyScore={historyScore}/>
+          <Score title="Best" score={0}/>
+        </div>
+        </section>
       {/* Dev Tools */}
       <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
       {/* Game Menu */}

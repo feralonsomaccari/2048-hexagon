@@ -24,10 +24,7 @@ const GameMenu = ({ isGameOver, score, historyScore, undoHandler, resetGameHandl
         <GameStatus isGameOver={isGameOver} />
       </div>
       <div className={styles.subMenu}>
-        <section className={styles.scoreContainer}>
-          <Score title="Score" score={score} historyScore={historyScore}/>
-          <Score title="Best" score={0}/>
-        </section>
+        
         <Button clickHandler={undoHandler} disabled={!isUndoAvailable} text='Undo' extraProps={{title: "Undo last action"}}/>
         <Button clickHandler={resetGameHandler} text='Next Game' extraProps={{title: "Start a new game"}}/>
       </div>

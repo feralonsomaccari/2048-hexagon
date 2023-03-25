@@ -9,16 +9,8 @@
 
 .subMenu {
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.scoreContainer {
-  display: flex;
-  justify-content: space-between;
   column-gap: 20px;
+  align-items: flex-end;
 }
 
 .title {

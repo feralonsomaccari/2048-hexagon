@@ -11,6 +11,7 @@
   border-radius: 3px;
   max-height: 40px;
   max-width: fit-content;
+  cursor: pointer;
 }
 
 .disabled {

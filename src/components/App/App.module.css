@@ -6,3 +6,25 @@
   height: 100%;
   margin: 0 auto;
 }
+
+.scoreWrapper {
+  position: absolute;
+  width: 560px;
+  height: 100%;
+  top: 80px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.scoreContainer{
+  position: sticky;
+  top: 10px;
+  display: flex;
+  column-gap: 20px;
+  padding: 10px 0;
+  width: 100%;
+  justify-content: end;
+}
