@@ -28,7 +28,8 @@
     "start-server": "node rng-server/index.js",
     "test:unit": "react-scripts test",
     "test:local": "jest --runInBand --config jest.e2e.config.js",
-    "test": "react-scripts build && JEST_PUPPETEER_CONFIG=jest-puppeteer.ci.js jest --runInBand --config jest.e2e.config.js"
+    "test": "react-scripts build && JEST_PUPPETEER_CONFIG=jest-puppeteer.ci.js jest --runInBand --config jest.e2e.config.js",
+    "deploy": "npm run build && cp build/index.html build/200.html && surge build yummy-number.surge.sh"
   },
   "eslintConfig": {
     "extends": [
