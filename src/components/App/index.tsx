@@ -14,8 +14,11 @@ import {
   validMovementsAvailable,
   sortTileSetById,
   createHexGrid,
+  isValidSavedGame
 } from "../../utils";
 import { fetchServer } from "./services";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import { createKeywordTypeNode } from "typescript";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -29,6 +32,8 @@ export const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
+  const [savedGame, setSavedGame] = useLocalStorage('savedGame', {tileSet: [], grid: [], score: 0, radius: 1})
+  
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
   const [disableServer, setDisableServer] = useState(false);
@@ -37,6 +42,13 @@ export const App: React.FC = () => {
     Initial component mount
   */
   useEffect(() => {
+    if(isValidSavedGame(savedGame)){
+      setTileSet(savedGame.tileSet)
+      setGrid(savedGame.grid)
+      setScore(savedGame.score)
+      setRadius(savedGame.radius)
+      return;
+    }
     setGrid(createHexGrid(radius));
     serverCall();
   }, []);
@@ -50,7 +62,17 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown]);
+  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown, savedGame, radius]);
+
+  /* 
+    Side-effect on Score and Radius
+  */
+  useEffect(() => {
+    setSavedGame({...savedGame,
+      radius: radius,
+      score: score,
+    })
+  }, [score, radius])
 
   /* 
     Side-effect on Tile Set
@@ -76,18 +98,29 @@ export const App: React.FC = () => {
     setGrid(updatedGrid);
 
     // We must check if it is possible to keep moving on the grid
-    if (!validMovementsAvailable(tileSet, grid)) setIsGameOver(true);
+    if (!validMovementsAvailable(tileSet, grid)) {
+      setIsGameOver(true);
+      setIsUndoAvailable(false)
+    };
   }, [tileSet]);
 
-  const serverCall = async (tileSet: gridElement[] = []) => {
+  const serverCall = async (tileSet: gridElement[] = [], initialGame: boolean = true, newRadius: number = 1) => {
     if (disableServer) return setIsMovementBlocked(false);
 
-    const serverResponseData = await fetchServer(tileSet, radius + 1);
+    console.log(newRadius)
+    const serverResponseData = await fetchServer(tileSet, newRadius + 1);
     setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
 
     const updatedTileSet = [...addIds(serverResponseData), ...tileSet];
     setTileSet(updatedTileSet);
+
+    if(!initialGame) {
+      setSavedGame({...savedGame, 
+        tileSet: updatedTileSet,
+        grid: grid,
+      })
+    }
   };
 
   const updateTile = (
@@ -171,7 +204,7 @@ export const App: React.FC = () => {
 
     setTileSet(updatedTileSet);
     setTimeout(() => {
-      serverCall(updatedTileSet);
+      serverCall(updatedTileSet, false, radius);
     }, 200);
   };
 
@@ -208,15 +241,21 @@ export const App: React.FC = () => {
     }
   };
 
-  const resetGameHandler = (newRadius: number): void => {
+  const resetGameHandler = (radius: number): void => {
     setScore(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
-    setRadius(newRadius ? newRadius : radius);
-    setGrid(createHexGrid(newRadius ? newRadius : radius));
+    setRadius(radius);
+    setGrid(createHexGrid(radius));
     setIsWin(false);
     setIsModalShown(false);
-    serverCall()
+    setSavedGame({ 
+      tileSet: [],
+      grid: [],
+      score: 0,
+      radius: radius
+    })
+    serverCall([], true, radius)
   };
 
   const dismissOverlay = useCallback(() => {

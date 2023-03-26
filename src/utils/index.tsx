@@ -3,12 +3,15 @@
  * @param {gridElement} block A block component
  * @returns {object} Returns an object with the position of the element in pixels
  */
-const getPositionFromCoordinates = (block: gridElement, radius: number): any => {
-  let edgeLength = 66.5
+const getPositionFromCoordinates = (
+  block: gridElement,
+  radius: number
+): any => {
+  let edgeLength = 66.5;
   let edgeW = (edgeLength * 3) / 2;
   let edgeH = (edgeLength * Math.sqrt(3)) / 2;
-  const width =  3/4 * 190;
-  const height = 121.1*2;
+  const width = (3 / 4) * 190;
+  const height = 121.1 * 2;
 
   const [x, y, z] = [block.x, block.y, block.z];
   const posX = x * edgeW + width;
@@ -23,14 +26,13 @@ const getPositionFromCoordinates = (block: gridElement, radius: number): any => 
 };
 
 const getGridElementSizeFromRadius = (radius: number) => {
-  const width = 140  
-  const height = 121.1
+  const width = 140;
+  const height = 121.1;
   return {
     width: width,
     height: height,
   };
 };
-
 
 /**
  * Takes a Tile and a Direction and return a new tile with the position updated in that direction whitin the Grid
@@ -124,9 +126,18 @@ const sortTileSetById = (tileSet: gridElement[]) => {
  * @param {string} grid Game Grid
  * @returns {gridElement[] | boolean } Returns the next block and its properties or false if non has been found
  */
-const findNextBlock = (tile: gridElement, direction: string, grid: gridElement[]) => {
+const findNextBlock = (
+  tile: gridElement,
+  direction: string,
+  grid: gridElement[]
+) => {
   const tempTilePos = moveTile({ ...tile }, direction);
-  const checkGridBlock = grid.filter((block) => tempTilePos.x === block.x && tempTilePos.y === block.y && tempTilePos.z === block.z);
+  const checkGridBlock = grid.filter(
+    (block) =>
+      tempTilePos.x === block.x &&
+      tempTilePos.y === block.y &&
+      tempTilePos.z === block.z
+  );
 
   if (checkGridBlock.length) return checkGridBlock[0];
   return false;
@@ -139,8 +150,14 @@ const findNextBlock = (tile: gridElement, direction: string, grid: gridElement[]
  * @param {string[]} directions an Array of directions if non is given it will check all directions
  * @returns { boolean } Returns true if there are still valid movements and false if is not possible to move further
  */
-const validMovementsAvailable = (tiles: gridElement[], grid: gridElement[], directions?: string[]) => {
-  const directionsArr: string[] = directions ? directions : ["northWest", "north", "southWest", "south", "southEast"];
+const validMovementsAvailable = (
+  tiles: gridElement[],
+  grid: gridElement[],
+  directions?: string[]
+) => {
+  const directionsArr: string[] = directions
+    ? directions
+    : ["northWest", "north", "southWest", "south", "southEast"];
 
   const isValidMovementsAvailable = tiles.some((tile) => {
     return [...directionsArr].some((direction) => {
@@ -206,4 +223,25 @@ const createHexGrid = (radius: number) => {
   return grid;
 };
 
-export { getPositionFromCoordinates, getGridElementSizeFromRadius, moveTile, sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid };
+const isValidSavedGame = (savedGame: savedGame) => {
+  return (
+    savedGame &&
+    savedGame?.tileSet?.length &&
+    savedGame?.grid?.length &&
+    "score" in savedGame &&
+    "radius" in savedGame
+  );
+};
+
+export {
+  getPositionFromCoordinates,
+  getGridElementSizeFromRadius,
+  moveTile,
+  sortTileSet,
+  findNextBlock,
+  addIds,
+  validMovementsAvailable,
+  sortTileSetById,
+  createHexGrid,
+  isValidSavedGame,
+};

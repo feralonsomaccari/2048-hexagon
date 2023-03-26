@@ -9,4 +9,11 @@ declare global {
     id?: number;
     merged?: boolean
   };
+
+  type savedGame = {
+    tileSet: gridElement[],
+    grid: gridElement[],
+    score: number,
+    radius: number
+  }
 }
