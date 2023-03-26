@@ -20,7 +20,7 @@ const NewGameMenu = ({ resetGameHandler }: props) => {
     <>
       <section className={styles.section}>
         <span>Choose a level (radius)</span>
-        <select className={styles.select} ref={selectRef}>
+        <select className={styles.select} ref={selectRef} data-testid="new-game-select">
           <option value="1">2</option>
           <option value="2">3</option>
           <option value="3">4</option>
