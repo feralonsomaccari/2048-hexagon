@@ -77,6 +77,15 @@ export const App: React.FC = () => {
     setSavedGame({ ...savedGame, radius: radius, score: score });
   }, [score, radius]);
 
+  useEffect(() => {
+    setMaxScore((prevState: any) => ({
+      value:
+        score > prevState.value
+          ? score
+          : prevState.value,
+    }));
+  }, [score])
+
   /* 
     Side-effect on Tile Set
   */
@@ -151,12 +160,6 @@ export const App: React.FC = () => {
         }
         const newValue = tile.value + nextBlock.value;
         setScore((prevScore) => prevScore + newValue);
-        setMaxScore((prevState: any) => ({
-          value:
-            score + newValue > prevState.value
-              ? prevState.value + newValue
-              : prevState.value,
-        }));
         if (newValue >= 2048) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
