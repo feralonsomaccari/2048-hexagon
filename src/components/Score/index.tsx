@@ -6,12 +6,17 @@ type props = {
   historyScore?: number;
 };
 
-const Score = ({ title, score, historyScore = 0}: props) => {
-
+const Score = ({ title, score, historyScore = 0 }: props) => {
+  const totalScore = score - historyScore;
   return (
     <div data-testid="score" className={styles.scoreWrapper}>
       <h3 className={styles.scoreTitle}>{title}</h3>
-      <p className={`${score > 0 ? styles.score : ''}`} key={score} data-value={`+${score - historyScore}`}>{score}</p>
+      <p
+        className={`${totalScore > 0 ? styles.score : ""}`}
+        key={score}
+        data-value={`+${totalScore}`}>
+        {score}
+      </p>
     </div>
   );
 };

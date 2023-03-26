@@ -2,7 +2,7 @@ import styles from "./Button.module.css";
 
 type props = {
   text: string;
-  clickHandler?: React.MouseEventHandler;
+  clickHandler?: () => void;
   disabled?: boolean;
   extraProps?: object
 };

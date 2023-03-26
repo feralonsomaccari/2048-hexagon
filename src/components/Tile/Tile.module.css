@@ -2,15 +2,15 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 200px;
-  height: 173px;
+  width: 140px;
+  height: 121.1px;
   mask-image: url("./tile-hexagon.svg");
   mask-repeat: no-repeat;
   mask-size: cover;
   justify-content: center;
   align-items: center;
   display: flex;
-  font-size: 55px;
+  font-size: 42px;
   font-weight: bold;
   text-align: center;
   color: var(--color-text-main);

@@ -5,14 +5,12 @@ import Button from "../Button";
 
 type props = {
   isGameOver: boolean;
-  score: number;
-  historyScore?: number;
-  resetGameHandler?: React.MouseEventHandler;
-  undoHandler?: React.MouseEventHandler;
+  onNewGameHandler?: () => void;
+  undoHandler?: () => void;
   isUndoAvailable?: boolean
 };
 
-const GameMenu = ({ isGameOver, score, historyScore, undoHandler, resetGameHandler, isUndoAvailable = true }: props) => {
+const GameMenu = ({ isGameOver, undoHandler, onNewGameHandler, isUndoAvailable = true }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
       <div>
@@ -26,7 +24,7 @@ const GameMenu = ({ isGameOver, score, historyScore, undoHandler, resetGameHandl
       <div className={styles.subMenu}>
         
         <Button clickHandler={undoHandler} disabled={!isUndoAvailable} text='Undo' extraProps={{title: "Undo last action"}}/>
-        <Button clickHandler={resetGameHandler} text='Next Game' extraProps={{title: "Start a new game"}}/>
+        <Button clickHandler={onNewGameHandler} text='Next Game' extraProps={{title: "Start a new game"}}/>
       </div>
     </article>
   );

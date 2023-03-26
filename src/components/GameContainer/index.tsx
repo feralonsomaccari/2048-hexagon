@@ -9,7 +9,7 @@ type props = {
   tileSet: gridElement[];
   grid: gridElement[];
   radius: number;
-  resetGameHandler?: React.MouseEventHandler;
+  resetGameHandler?: (radius: number) => void;
   isGameOver: boolean;
   showCoords?: boolean;
 };
@@ -21,7 +21,7 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
       {isGameOver && (
         <div className={styles.gameOverOverlay} data-testid="overlay">
           <h4>Game Over :(</h4>
-          <Button clickHandler={resetGameHandler} text='Try Again'/>
+          <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
         </div>
       )}
       <div className={styles.gameContainer} style={{transform: `scale(${(10-radius)/10})`}}>

@@ -56,3 +56,7 @@ html, body, #root {
   font-weight: bold;
   color: var(--color-text-main);
 }
+
+.block-scroll {
+  overflow-y: hidden;
+}

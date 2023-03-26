@@ -4,19 +4,28 @@ import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
-import { sortTileSet, findNextBlock, addIds, validMovementsAvailable, sortTileSetById, createHexGrid } from "../../utils";
-import { fetchServer } from "./services";
 import Score from "../Score";
+import IntroMenu from "../IntroMenu";
+import {
+  sortTileSet,
+  findNextBlock,
+  addIds,
+  validMovementsAvailable,
+  sortTileSetById,
+  createHexGrid,
+} from "../../utils";
+import { fetchServer } from "./services";
 
 export const App: React.FC = () => {
-  const [radius, setRadius] = useState<number>(1)
+  const [isModalShown, setIsModalShown] = useState(false);
+  const [radius, setRadius] = useState(1);
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
   const [isMovementBlocked, setIsMovementBlocked] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(true);
   const [score, setScore] = useState(0);
-  const [isUndoAvailable, setIsUndoAvailable] = useState(false)
+  const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
@@ -25,10 +34,10 @@ export const App: React.FC = () => {
   /* 
     Initial component mount
   */
-    useEffect(() => {
-      setGrid(createHexGrid(radius));
-      serverCall();
-    }, []);
+  useEffect(() => {
+    setGrid(createHexGrid(radius));
+    serverCall();
+  }, []);
 
   /* 
     Add event listener to the document
@@ -39,7 +48,7 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver]);
+  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown]);
 
   /* 
     Side-effect on Tile Set
@@ -48,9 +57,9 @@ export const App: React.FC = () => {
     if (!grid.length) return;
     const updatedGrid = [...grid];
 
-    // Me must clear and update the [data-values] on the grid 
+    // Me must clear and update the [data-values] on the grid
     updatedGrid.forEach((block) => {
-      block.value = 0; 
+      block.value = 0;
       block.merged = false;
     });
     tileSet.forEach((tile) => {
@@ -60,35 +69,41 @@ export const App: React.FC = () => {
           block.id = tile.id;
         }
       });
-      tile.merged = false
+      tile.merged = false;
     });
     setGrid(updatedGrid);
-      
+
     // We must check if it is possible to keep moving on the grid
-    if(!validMovementsAvailable(tileSet, grid)) setIsGameOver(true);
-
+    if (!validMovementsAvailable(tileSet, grid)) setIsGameOver(true);
   }, [tileSet]);
-
 
   const serverCall = async (tileSet: gridElement[] = []) => {
     if (disableServer) return setIsMovementBlocked(false);
-      
-    const serverResponseData = await fetchServer(tileSet, radius+1);
+
+    const serverResponseData = await fetchServer(tileSet, radius + 1);
     setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
-    
-    const updatedTileSet = [...addIds(serverResponseData), ...tileSet]
+
+    const updatedTileSet = [...addIds(serverResponseData), ...tileSet];
     setTileSet(updatedTileSet);
   };
 
-  const updateTile = (tile: gridElement, direction: string, grid: gridElement[], removeTiles: number[]): any => {
+  const updateTile = (
+    tile: gridElement,
+    direction: string,
+    grid: gridElement[],
+    removeTiles: number[]
+  ): any => {
     const nextBlock = findNextBlock(tile, direction, grid);
     if (nextBlock === false || tile.merged) return tile;
 
     if (nextBlock && nextBlock.value) {
       if (nextBlock.value === tile.value && !nextBlock.merged) {
-        const currentBlock = grid.find((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
-        if(currentBlock){
+        const currentBlock = grid.find(
+          (block) =>
+            tile.x === block.x && tile.y === block.y && tile.z === block.z
+        );
+        if (currentBlock) {
           currentBlock.value = 0;
           delete currentBlock.id;
         }
@@ -98,19 +113,22 @@ export const App: React.FC = () => {
         tile.z = nextBlock.z;
         tile.merged = true;
         tile.value = tile.value + nextBlock.value;
-        
+
         if (nextBlock.id) removeTiles.push(nextBlock.id);
         nextBlock.value = tile.value;
         nextBlock.id = tile.id;
         nextBlock.merged = true;
-       
+
         return updateTile(tile, direction, grid, removeTiles);
       } else {
         return tile;
       }
     } else {
-      const currentBlock = grid.find((block) => tile.x === block.x && tile.y === block.y && tile.z === block.z);
-      if(currentBlock){
+      const currentBlock = grid.find(
+        (block) =>
+          tile.x === block.x && tile.y === block.y && tile.z === block.z
+      );
+      if (currentBlock) {
         currentBlock.value = 0;
         delete currentBlock.id;
       }
@@ -119,20 +137,20 @@ export const App: React.FC = () => {
       tile.z = nextBlock.z;
       nextBlock.value = tile.value;
       nextBlock.id = tile.id;
-      
+
       return updateTile(tile, direction, grid, removeTiles);
     }
   };
 
   const updateTilesPos = (direction: string) => {
-    if(!validMovementsAvailable(tileSet, grid, [direction])) return;
-    
+    if (!validMovementsAvailable(tileSet, grid, [direction])) return;
+
     setIsMovementBlocked(true);
 
-    const clonedTileSet = structuredClone(tileSet)
-    setHistoryTileSet(clonedTileSet)
-    setHistoryScore(score)
-    setIsUndoAvailable(true)
+    const clonedTileSet = structuredClone(tileSet);
+    setHistoryTileSet(clonedTileSet);
+    setHistoryScore(score);
+    setIsUndoAvailable(true);
 
     const tilesToBeRemoved: number[] = [];
     const sortedTileSet = sortTileSet(clonedTileSet, direction);
@@ -142,7 +160,10 @@ export const App: React.FC = () => {
 
     // After merge two tiles of the same value we must remove one of them
     tilesToBeRemoved.forEach((tileId) => {
-      updatedTileSet.splice(updatedTileSet.map((tile: gridElement) => tile.id).indexOf(tileId), 1);
+      updatedTileSet.splice(
+        updatedTileSet.map((tile: gridElement) => tile.id).indexOf(tileId),
+        1
+      );
     });
 
     setTileSet(updatedTileSet);
@@ -152,7 +173,7 @@ export const App: React.FC = () => {
   };
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || isMovementBlocked || isGameOver) return;
+    if (event.repeat || isMovementBlocked || isGameOver || isModalShown) return;
     switch (event.key) {
       case "q":
       case "Q":
@@ -184,35 +205,64 @@ export const App: React.FC = () => {
     }
   };
 
-  const resetGameHandler = useCallback(() => {
+  const resetGameHandler = (newRadius: number): void => {
     setScore(0);
     setIsGameOver(false);
-    setIsUndoAvailable(false)
-    serverCall([]);
-  }, []);
-  
+    setIsUndoAvailable(false);
+    setRadius(newRadius ? newRadius : radius);
+    setGrid(createHexGrid(newRadius ? newRadius : radius));
+    serverCall()
+  };
+
   const undoHandler = useCallback(() => {
     setTileSet(historyTileSet);
     setScore(historyScore);
-    setIsUndoAvailable(false)
+    setIsUndoAvailable(false);
   }, [historyTileSet]);
 
+  const onNewGameHandler = useCallback(() => {
+    setIsModalShown(true);
+  }, [isModalShown]);
+
+
   return (
-    <div className={styles.wrapper} >
-      <section className={styles.scoreWrapper}>
-        <div className={styles.scoreContainer}>
-          <Score title="Score" score={score} historyScore={historyScore}/>
-          <Score title="Best" score={0}/>
-        </div>
+    <>
+      {isModalShown && (
+        <IntroMenu setIsModalShown={setIsModalShown} resetGameHandler={resetGameHandler}/>
+      )}
+      <div className={styles.wrapper}>
+        <section className={styles.scoreWrapper}>
+          <div className={styles.scoreContainer}>
+            <Score title="Score" score={score} historyScore={historyScore} />
+            <Score title="Best" score={0} />
+          </div>
         </section>
-      {/* Dev Tools */}
-      <DevTools showCoords={showCoords} setShowCoords={setShowCoords} disableServer={disableServer} setDisableServer={setDisableServer}/>
-      {/* Game Menu */}
-      <GameMenu isGameOver={isGameOver} score={score} historyScore={historyScore} resetGameHandler={resetGameHandler} undoHandler={undoHandler} isUndoAvailable={isUndoAvailable}/>
-      {/* Game */}
-      <GameContainer tileSet={sortTileSetById(tileSet)} grid={grid} radius={radius} resetGameHandler={resetGameHandler} isGameOver={isGameOver} showCoords={showCoords} />
-      {/* Instructions */}
-      <Instructions />
-    </div>
+        {/* Dev Tools */}
+        <DevTools
+          showCoords={showCoords}
+          setShowCoords={setShowCoords}
+          disableServer={disableServer}
+          setDisableServer={setDisableServer}
+        />
+        {/* Game Menu */}
+        <GameMenu
+          isGameOver={isGameOver}
+          onNewGameHandler={onNewGameHandler}
+          undoHandler={undoHandler}
+          isUndoAvailable={isUndoAvailable}
+        />
+        {/* Game */}
+        <GameContainer
+          tileSet={sortTileSetById(tileSet)}
+          grid={grid}
+          radius={radius}
+          resetGameHandler={resetGameHandler}
+          isGameOver={isGameOver}
+          showCoords={showCoords}
+        />
+        {/* Instructions */}
+        <Instructions />
+      </div>
+    </>
   );
 };

@@ -4,11 +4,11 @@
  * @returns {object} Returns an object with the position of the element in pixels
  */
 const getPositionFromCoordinates = (block: gridElement, radius: number): any => {
-  let edgeLength = 95
+  let edgeLength = 66.5
   let edgeW = (edgeLength * 3) / 2;
   let edgeH = (edgeLength * Math.sqrt(3)) / 2;
-  const width =  3/4 * 200/2;
-  const height = 173;
+  const width =  3/4 * 190;
+  const height = 121.1*2;
 
   const [x, y, z] = [block.x, block.y, block.z];
   const posX = x * edgeW + width;
@@ -23,8 +23,8 @@ const getPositionFromCoordinates = (block: gridElement, radius: number): any => 
 };
 
 const getGridElementSizeFromRadius = (radius: number) => {
-  const width = 200  
-  const height = 173
+  const width = 140  
+  const height = 121.1
   return {
     width: width,
     height: height,
