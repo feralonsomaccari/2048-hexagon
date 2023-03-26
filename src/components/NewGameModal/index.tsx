@@ -1,5 +1,5 @@
-import { useRef, useEffect } from "react";
-import styles from "./IntroMenu.module.css";
+import { useRef } from "react";
+import styles from "./NewGameModal.module.css";
 import Button from "../Button";
 
 type props = {
@@ -7,11 +7,7 @@ type props = {
   resetGameHandler: (radius: number) => void;
 };
 
-const IntroMenu = ({ setIsModalShown, resetGameHandler }: props) => {
-  useEffect(() => {
-    
-  }, []);
-
+const NewGameModal = ({ setIsModalShown, resetGameHandler }: props) => {
   const selectRef = useRef<HTMLSelectElement>(null);
 
   const chooseLevelHandler = () => {
@@ -23,9 +19,9 @@ const IntroMenu = ({ setIsModalShown, resetGameHandler }: props) => {
   };
 
   return (
-    <div className={styles.introMenuWrapper}>
+    <div className={styles.newGameModalWrapper}>
       <div className={styles.overlay}></div>
-      <section className={styles.introMenuModal}>
+      <section className={styles.modal}>
         <header className={styles.section}>
           <h3>Start New Game</h3>
           <button
@@ -35,10 +31,8 @@ const IntroMenu = ({ setIsModalShown, resetGameHandler }: props) => {
             x
           </button>
         </header>
-
         <section className={styles.section}>
           <span>Choose a level (radius)</span>
-
           <select className={styles.select} ref={selectRef}>
             <option value="1">2</option>
             <option value="2">3</option>
@@ -60,4 +54,4 @@ const IntroMenu = ({ setIsModalShown, resetGameHandler }: props) => {
   );
 };
 
-export default IntroMenu;
+export default NewGameModal;

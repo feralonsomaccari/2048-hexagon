@@ -5,7 +5,7 @@ import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
 import Score from "../Score";
-import IntroMenu from "../IntroMenu";
+import NewGameModal from "../NewGameModal";
 import {
   sortTileSet,
   findNextBlock,
@@ -235,7 +235,7 @@ export const App: React.FC = () => {
   return (
     <>
       {isModalShown && (
-        <IntroMenu setIsModalShown={setIsModalShown} resetGameHandler={resetGameHandler}/>
+        <NewGameModal setIsModalShown={setIsModalShown} resetGameHandler={resetGameHandler}/>
       )}
       <div className={styles.wrapper}>
         <section className={styles.scoreWrapper}>
