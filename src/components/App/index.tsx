@@ -14,11 +14,10 @@ import {
   validMovementsAvailable,
   sortTileSetById,
   createHexGrid,
-  isValidSavedGame
+  isValidSavedGame,
 } from "../../utils";
 import { fetchServer } from "./services";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { createKeywordTypeNode } from "typescript";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -32,8 +31,14 @@ export const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
-  const [savedGame, setSavedGame] = useLocalStorage('savedGame', {tileSet: [], grid: [], score: 0, radius: 1})
-  
+  const [savedGame, setSavedGame] = useLocalStorage("savedGame", {
+    tileSet: [],
+    grid: [],
+    score: 0,
+    radius: 1,
+  });
+  const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
+
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
   const [disableServer, setDisableServer] = useState(false);
@@ -42,11 +47,11 @@ export const App: React.FC = () => {
     Initial component mount
   */
   useEffect(() => {
-    if(isValidSavedGame(savedGame)){
-      setTileSet(savedGame.tileSet)
-      setGrid(savedGame.grid)
-      setScore(savedGame.score)
-      setRadius(savedGame.radius)
+    if (isValidSavedGame(savedGame)) {
+      setTileSet(savedGame.tileSet);
+      setGrid(savedGame.grid);
+      setScore(savedGame.score);
+      setRadius(savedGame.radius);
       return;
     }
     setGrid(createHexGrid(radius));
@@ -62,17 +67,23 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown, savedGame, radius]);
+  }, [
+    tileSet,
+    isMovementBlocked,
+    disableServer,
+    score,
+    isGameOver,
+    isModalShown,
+    savedGame,
+    radius,
+  ]);
 
   /* 
     Side-effect on Score and Radius
   */
   useEffect(() => {
-    setSavedGame({...savedGame,
-      radius: radius,
-      score: score,
-    })
-  }, [score, radius])
+    setSavedGame({ ...savedGame, radius: radius, score: score });
+  }, [score, radius]);
 
   /* 
     Side-effect on Tile Set
@@ -100,14 +111,17 @@ export const App: React.FC = () => {
     // We must check if it is possible to keep moving on the grid
     if (!validMovementsAvailable(tileSet, grid)) {
       setIsGameOver(true);
-      setIsUndoAvailable(false)
-    };
+      setIsUndoAvailable(false);
+    }
   }, [tileSet]);
 
-  const serverCall = async (tileSet: gridElement[] = [], initialGame: boolean = true, newRadius: number = 1) => {
+  const serverCall = async (
+    tileSet: gridElement[] = [],
+    initialGame: boolean = true,
+    newRadius: number = 1
+  ) => {
     if (disableServer) return setIsMovementBlocked(false);
 
-    console.log(newRadius)
     const serverResponseData = await fetchServer(tileSet, newRadius + 1);
     setIsMovementBlocked(false);
     if (!serverResponseData?.length) return;
@@ -115,11 +129,12 @@ export const App: React.FC = () => {
     const updatedTileSet = [...addIds(serverResponseData), ...tileSet];
     setTileSet(updatedTileSet);
 
-    if(!initialGame) {
-      setSavedGame({...savedGame, 
+    if (!initialGame) {
+      setSavedGame((prevState: any) => ({
+        ...prevState,
         tileSet: updatedTileSet,
         grid: grid,
-      })
+      }));
     }
   };
 
@@ -142,13 +157,20 @@ export const App: React.FC = () => {
           currentBlock.value = 0;
           delete currentBlock.id;
         }
-        setScore((prevScore) => prevScore + (tile.value + nextBlock.value));
-        if(tile.value + nextBlock.value >= 2048) setIsWin(true)
+        const newValue = tile.value + nextBlock.value;
+        setScore((prevScore) => prevScore + newValue);
+        setMaxScore((prevState: any) => ({
+          value:
+            score + newValue > prevState.value
+              ? prevState.value + newValue
+              : prevState.value,
+        }));
+        if (newValue >= 2048) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
         tile.z = nextBlock.z;
         tile.merged = true;
-        tile.value = tile.value + nextBlock.value;
+        tile.value = newValue;
 
         if (nextBlock.id) removeTiles.push(nextBlock.id);
         nextBlock.value = tile.value;
@@ -249,17 +271,17 @@ export const App: React.FC = () => {
     setGrid(createHexGrid(radius));
     setIsWin(false);
     setIsModalShown(false);
-    setSavedGame({ 
+    setSavedGame({
       tileSet: [],
       grid: [],
       score: 0,
-      radius: radius
-    })
-    serverCall([], true, radius)
+      radius: radius,
+    });
+    serverCall([], true, radius);
   };
 
   const dismissOverlay = useCallback(() => {
-    setIsWin(false)
+    setIsWin(false);
   }, [isWin]);
 
   const undoHandler = useCallback(() => {
@@ -272,19 +294,18 @@ export const App: React.FC = () => {
     setIsModalShown(true);
   }, [isModalShown]);
 
-
   return (
     <>
       {isModalShown && (
         <Modal setIsModalShown={setIsModalShown}>
-          <NewGameModal resetGameHandler={resetGameHandler}/>
+          <NewGameModal resetGameHandler={resetGameHandler} />
         </Modal>
       )}
       <div className={styles.wrapper}>
         <section className={styles.scoreWrapper}>
           <div className={styles.scoreContainer}>
             <Score title="Score" score={score} historyScore={historyScore} />
-            <Score title="Best" score={0} />
+            <Score title="Best" score={maxScore?.value} />
           </div>
         </section>
         {/* Dev Tools */}

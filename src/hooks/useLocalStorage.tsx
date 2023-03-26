@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 
 const getStoredValued = (key: string, initialValue: any) => {
-  const localStoraItem = localStorage?.getItem(key);
-  if (!localStoraItem) return;
-  const storedValue = JSON.parse(localStoraItem);
+  const storedValue = JSON.parse(localStorage?.getItem(key) || '{}');
+  if (storedValue && Object.keys(storedValue).length) return storedValue;
 
-  if (storedValue) return storedValue;
   return initialValue;
 };
 
