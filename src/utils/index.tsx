@@ -3,10 +3,7 @@
  * @param {gridElement} block A block component
  * @returns {object} Returns an object with the position of the element in pixels
  */
-const getPositionFromCoordinates = (
-  block: gridElement,
-  radius: number
-): any => {
+const getPositionFromCoordinates = (block: gridElement): any => {
   let edgeLength = 66.5;
   let edgeW = (edgeLength * 3) / 2;
   let edgeH = (edgeLength * Math.sqrt(3)) / 2;
@@ -25,7 +22,11 @@ const getPositionFromCoordinates = (
   };
 };
 
-const getGridElementSizeFromRadius = (radius: number) => {
+/**
+ * Returns width and height of the grid element
+ * @returns {boolean} Returns width and height of the grid element
+ */
+const getGridElementSizeFromRadius = () => {
   const width = 140;
   const height = 121.1;
   return {
@@ -223,6 +224,11 @@ const createHexGrid = (radius: number) => {
   return grid;
 };
 
+/**
+ * Function that check if the Saved Game object is valid
+ * @param {number} savedGame saved game object
+ * @returns {boolean} Returns true if the saved game object is valid
+ */
 const isValidSavedGame = (savedGame: savedGame) => {
   return (
     savedGame &&

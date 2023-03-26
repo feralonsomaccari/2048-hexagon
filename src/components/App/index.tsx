@@ -31,14 +31,13 @@ export const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
+  const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
   const [savedGame, setSavedGame] = useLocalStorage("savedGame", {
     tileSet: [],
     grid: [],
     score: 0,
     radius: 1,
   });
-  const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
-
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
   const [disableServer, setDisableServer] = useState(false);
@@ -68,14 +67,7 @@ export const App: React.FC = () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
   }, [
-    tileSet,
-    isMovementBlocked,
-    disableServer,
-    score,
-    isGameOver,
-    isModalShown,
-    savedGame,
-    radius,
+    tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown
   ]);
 
   /* 

@@ -16,7 +16,7 @@ type props = {
 const Block = ({ x, y, z, value = 0, left, top, radius = 1, showCoords }: props): JSX.Element => {
 
   return (
-    <div data-testid="block" style={{ left: left, top: top, ...getGridElementSizeFromRadius(radius) }} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value}>
+    <div data-testid="block" style={{ left: left, top: top, ...getGridElementSizeFromRadius() }} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value}>
       {showCoords && (
         <span className={styles.coordinates}>
           x: {x} y: {y} z: {z} value: {value}

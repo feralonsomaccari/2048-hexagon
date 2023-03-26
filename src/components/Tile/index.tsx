@@ -14,7 +14,7 @@ const Tile = ({ value, left, top, radius = 1 }: props): JSX.Element => {
   const height = 173 / (radius); // 173px divided by 70% of radius
   const color = `color-${value}`;
   return (
-    <div data-testid="tile" style={{left: left, top: top, ...getGridElementSizeFromRadius(radius)}} className={`${styles.tile} ${styles[color]}`}>
+    <div data-testid="tile" style={{left: left, top: top, ...getGridElementSizeFromRadius()}} className={`${styles.tile} ${styles[color]}`}>
       {value}
     </div>
   );
