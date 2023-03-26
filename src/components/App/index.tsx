@@ -307,8 +307,6 @@ export const App: React.FC = () => {
         <DevTools
           showCoords={showCoords}
           setShowCoords={setShowCoords}
-          disableServer={disableServer}
-          setDisableServer={setDisableServer}
         />
         {/* Game Menu */}
         <GameMenu
