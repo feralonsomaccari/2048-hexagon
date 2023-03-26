@@ -10,14 +10,12 @@ import Modal from "../Modal";
 import {
   sortTileSet,
   findNextBlock,
-  addIds,
   validMovementsAvailable,
   sortTileSetById,
   createHexGrid,
-  isValidSavedGame,
 } from "../../utils";
-import { fetchServer } from "./services";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import useFetchServer from "../../hooks/useFetchServer";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -31,21 +29,21 @@ export const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
+  const [showCoords, setShowCoords] = useState(false);
   const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
+  const [serverResponse, setError, fetchTiles] = useFetchServer([], 1);
   // const [savedGame, setSavedGame] = useLocalStorage("savedGame", {
   //   tileSet: [],
   //   grid: [],
   //   score: 0,
   //   radius: 1,
   // });
-  // Dev States
-  const [showCoords, setShowCoords] = useState(false);
-  const [disableServer] = useState(false);
 
   /* 
     Initial component mount
   */
   useEffect(() => {
+    setGrid(createHexGrid(radius));
     // if (isValidSavedGame(savedGame)) {
     //   setTileSet(savedGame.tileSet);
     //   setGrid(savedGame.grid);
@@ -53,9 +51,20 @@ export const App: React.FC = () => {
     //   setRadius(savedGame.radius);
     //   return;
     // }
-    setGrid(createHexGrid(radius));
-    serverCall();
   }, []);
+
+  useEffect(() => {
+    setTileSet(serverResponse);
+    setIsMovementBlocked(false);
+
+    // if (!initialGame) {
+    //   setSavedGame((prevState: any) => ({
+    //     ...prevState,
+    //     tileSet: updatedTileSet,
+    //     grid: grid,
+    //   }));
+    // }
+  }, [serverResponse])
 
   /* 
     Add event listener to the document
@@ -66,10 +75,10 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown]);
+  }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
 
   /* 
-    Side-effect on Score and Radius
+    Side-effect on Score and Radius (Saved Game)
   */
   // useEffect(() => {
   //   setSavedGame({ ...savedGame, radius: radius, score: score });
@@ -77,18 +86,15 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     setMaxScore((prevState: any) => ({
-      value:
-        score > prevState.value
-          ? score
-          : prevState.value,
+      value: score > prevState.value ? score : prevState.value,
     }));
-  }, [score])
+  }, [score]);
 
   /* 
     Side-effect on Tile Set
   */
   useEffect(() => {
-    if (!grid.length) return;
+    if (!grid.length || !tileSet.length) return;
     const updatedGrid = [...grid];
 
     // Me must clear and update the [data-values] on the grid
@@ -113,25 +119,6 @@ export const App: React.FC = () => {
       setIsUndoAvailable(false);
     }
   }, [tileSet]);
-
-  const serverCall = async ( tileSet: gridElement[] = [], newRadius: number = 1 ) => {
-    if (disableServer) return setIsMovementBlocked(false);
-
-    const serverResponseData = await fetchServer(tileSet, newRadius + 1);
-    setIsMovementBlocked(false);
-    if (!serverResponseData?.length) return;
-
-    const updatedTileSet = [...addIds(serverResponseData), ...tileSet];
-    setTileSet(updatedTileSet);
-
-    // if (!initialGame) {
-    //   setSavedGame((prevState: any) => ({
-    //     ...prevState,
-    //     tileSet: updatedTileSet,
-    //     grid: grid,
-    //   }));
-    // }
-  };
 
   const updateTile = (
     tile: gridElement,
@@ -215,7 +202,7 @@ export const App: React.FC = () => {
 
     setTileSet(updatedTileSet);
     setTimeout(() => {
-      serverCall(updatedTileSet, radius);
+      fetchTiles(updatedTileSet, radius);
     }, 200);
   };
 
@@ -266,7 +253,7 @@ export const App: React.FC = () => {
     //   score: 0,
     //   radius: radius,
     // });
-    serverCall([], radius);
+    fetchTiles([]);
   };
 
   const dismissOverlay = useCallback(() => {
@@ -299,10 +286,7 @@ export const App: React.FC = () => {
           </div>
         </section>
         {/* Dev Tools */}
-        <DevTools
-          showCoords={showCoords}
-          setShowCoords={setShowCoords}
-        />
+        <DevTools showCoords={showCoords} setShowCoords={setShowCoords} />
         {/* Game Menu */}
         <GameMenu
           isGameOver={isGameOver}

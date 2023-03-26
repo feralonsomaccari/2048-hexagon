@@ -4,14 +4,14 @@
  * @param {number} radius radius of the grid 
  * @returns {Promise<gridElement[]>} 
  */
-const fetchServer = async (tileSet: gridElement[] = [], radius: number ) : Promise<gridElement[]>  => {
+async function fetchServer<TResponse>(tileSet: gridElement[] = [], radius: number ): Promise<TResponse> {
   const serverResponse = await fetch(`http://localhost:13337/${radius}`, {
     method: "POST",
     body: JSON.stringify(tileSet),
   });
   const data: gridElement[] = await serverResponse.json();
 
-  return data
+  return data as TResponse
 };
 
 export { fetchServer };
