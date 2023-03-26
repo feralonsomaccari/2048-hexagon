@@ -214,7 +214,7 @@ const createHexGrid = (radius: number) => {
   for (let i = -radius; i <= radius; i++) {
     for (let j = -radius; j <= radius; j++) {
       for (let k = -radius; k <= radius; k++) {
-        if (i + j + k == 0) {
+        if (i + j + k === 0) {
           grid.push(createHexBlock(i, j, k));
         }
       }

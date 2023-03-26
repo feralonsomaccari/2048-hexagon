@@ -26,5 +26,5 @@
   column-gap: 20px;
   padding: 10px 0;
   width: 100%;
-  justify-content: end;
+  justify-content: flex-end;
 }

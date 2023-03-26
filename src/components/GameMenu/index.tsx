@@ -1,6 +1,5 @@
 import styles from "./GameMenu.module.css";
 import GameStatus from "../GameStatus";
-import Score from "../Score";
 import Button from "../Button";
 
 type props = {

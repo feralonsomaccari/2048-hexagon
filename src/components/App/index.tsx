@@ -40,7 +40,7 @@ export const App: React.FC = () => {
   });
   // Dev States
   const [showCoords, setShowCoords] = useState(false);
-  const [disableServer, setDisableServer] = useState(false);
+  const [disableServer] = useState(false);
 
   /* 
     Initial component mount
@@ -66,9 +66,7 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [
-    tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown
-  ]);
+  }, [tileSet, isMovementBlocked, disableServer, score, isGameOver, isModalShown]);
 
   /* 
     Side-effect on Score and Radius
@@ -283,14 +281,15 @@ export const App: React.FC = () => {
     setTileSet(historyTileSet);
     setScore(historyScore);
     setIsUndoAvailable(false);
-  }, [historyTileSet]);
+  }, [historyTileSet, historyScore]);
 
   const onNewGameHandler = useCallback(() => {
     setIsModalShown(true);
-  }, [isModalShown]);
+  }, []);
 
   return (
     <>
+      {/* New Game Modal */}
       {isModalShown && (
         <Modal setIsModalShown={setIsModalShown}>
           <NewGameModal resetGameHandler={resetGameHandler} />

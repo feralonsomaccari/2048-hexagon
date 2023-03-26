@@ -29,10 +29,10 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
       )}
       <div className={styles.gameContainer} style={{transform: `scale(${(10-radius)/10})`}}>
         {tileSet.map((tile) => (
-          <Tile key={tile.id} {...getPositionFromCoordinates(tile)} value={tile.value} radius={radius}/>
+          <Tile key={tile.id} {...getPositionFromCoordinates(tile)} value={tile.value}/>
         ))}
         {grid.map((coords, index) => (
-          <Block key={index} {...getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} radius={radius} showCoords={showCoords} />
+          <Block key={index} {...getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
         ))}
       </div>
     </main>
