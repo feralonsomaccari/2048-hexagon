@@ -14,7 +14,7 @@ const Modal = ({ setIsModalShown, children }: props) => {
           <h3>Start New Game</h3>
           <button data-testid="close-btn" className={styles.closeButton} onClick={() => setIsModalShown(false)}>x</button>
         </header>
-        <section>
+        <section className={styles.children}>
           {children}
         </section>
       </section>

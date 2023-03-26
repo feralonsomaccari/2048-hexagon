@@ -28,7 +28,7 @@
     justify-content: space-between;
 }
 
-.header{
+.header {
     display: flex;
     justify-content: space-between;
 }
@@ -37,4 +37,9 @@
     border: none;
     cursor: pointer;
     background: none;
+}
+
+.children {
+    height: 100%;
+    padding: 10px 0;
 }

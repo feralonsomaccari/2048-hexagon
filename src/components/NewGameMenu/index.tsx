@@ -17,7 +17,7 @@ const NewGameMenu = ({ resetGameHandler }: props) => {
   };
 
   return (
-    <>
+    <div className={styles.newGameMenuWrapper}>
       <section className={styles.section}>
         <span>Choose a level (radius)</span>
         <select className={styles.select} ref={selectRef} data-testid="new-game-select">
@@ -35,7 +35,7 @@ const NewGameMenu = ({ resetGameHandler }: props) => {
           text="Start new Game"
         />
       </footer>
-    </>
+    </div>
   );
 };
 
