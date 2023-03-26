@@ -8,13 +8,15 @@ type props = {
 const Modal = ({ setIsModalShown, children }: props) => {
   return (
     <div className={styles.modalWrapper}>
-      <div className={styles.modalOverlay}></div>
+      <div className={styles.modalOverlay} />
       <section className={styles.modalContent}>
         <header className={styles.header}>
           <h3>Start New Game</h3>
-          <button className={styles.closeButton} onClick={() => setIsModalShown(false)}>x</button>
+          <button data-testid="close-btn" className={styles.closeButton} onClick={() => setIsModalShown(false)}>x</button>
         </header>
-        {children}
+        <section>
+          {children}
+        </section>
       </section>
     </div>
   );
