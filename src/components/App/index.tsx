@@ -23,7 +23,8 @@ export const App: React.FC = () => {
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
   const [isMovementBlocked, setIsMovementBlocked] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(true);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isWin, setIsWin] = useState(false);
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
@@ -108,6 +109,7 @@ export const App: React.FC = () => {
           delete currentBlock.id;
         }
         setScore((prevScore) => prevScore + (tile.value + nextBlock.value));
+        if(tile.value + nextBlock.value >= 2048) setIsWin(true)
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
         tile.z = nextBlock.z;
@@ -211,8 +213,13 @@ export const App: React.FC = () => {
     setIsUndoAvailable(false);
     setRadius(newRadius ? newRadius : radius);
     setGrid(createHexGrid(newRadius ? newRadius : radius));
+    setIsWin(false);
     serverCall()
   };
+
+  const dismissOverlay = useCallback(() => {
+    setIsWin(false)
+  }, [isWin]);
 
   const undoHandler = useCallback(() => {
     setTileSet(historyTileSet);
@@ -258,7 +265,9 @@ export const App: React.FC = () => {
           radius={radius}
           resetGameHandler={resetGameHandler}
           isGameOver={isGameOver}
+          isWin={isWin}
           showCoords={showCoords}
+          dismissOverlay={dismissOverlay}
         />
         {/* Instructions */}
         <Instructions />

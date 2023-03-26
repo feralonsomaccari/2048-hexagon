@@ -11,17 +11,20 @@ type props = {
   radius: number;
   resetGameHandler?: (radius: number) => void;
   isGameOver: boolean;
+  isWin: boolean;
   showCoords?: boolean;
+  dismissOverlay?: () => void;
 };
 
-const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, showCoords = false }: props) => {
+const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, showCoords = false, dismissOverlay = () => {} }: props) => {
 
   return (
     <main className={styles.gameWrapper} id="game">
-      {isGameOver && (
-        <div className={styles.gameOverOverlay} data-testid="overlay">
-          <h4>Game Over :(</h4>
+      {(isGameOver || isWin) && (
+        <div className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`} data-testid="overlay">
+          <h4>{isWin ? "You Win!" : "Game Over :("}</h4>
           <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
+          {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
         </div>
       )}
       <div className={styles.gameContainer} style={{transform: `scale(${(10-radius)/10})`}}>

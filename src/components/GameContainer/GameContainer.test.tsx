@@ -7,6 +7,7 @@ const props = {
   tileSet: tileSet,
   grid: grid,
   isGameOver: false,
+  isWin: false,
   radius: 1
 };
 

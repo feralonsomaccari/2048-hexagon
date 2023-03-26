@@ -4,6 +4,8 @@
   --color-secondary: #8f7a66;
   --color-tertiary: #bbada0;
   --color-disabled: #d6cec5;
+  --color-bg-overlay-gameover: rgba(238, 228, 218, 0.73);
+  --color-bg-overlay-win: rgba(220, 213, 88, 0.73);
   
   --bg-color-2: #eae8dc;
   --bg-color-4: #ede0c8;
