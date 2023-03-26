@@ -1,0 +1,11 @@
+.select {
+    padding: 10px;
+    width: 100px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.footer {
+    display: flex;
+    justify-content: end;
+}

@@ -1,4 +1,4 @@
-.overlay {
+.modalOverlay {
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -8,12 +8,12 @@
     justify-content: center;
 }
 
-.newGameModalWrapper {
+.modalWrapper {
     display: flex;
     justify-content: center;
 }
 
-.modal {
+.modalContent {
     position: fixed;
     width: 350px;
     height: 200px;
@@ -28,25 +28,13 @@
     justify-content: space-between;
 }
 
-.section {
+.header{
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
-.closeButton{
+.closeButton {
     border: none;
     cursor: pointer;
-}
-
-.select {
-    padding: 10px;
-    width: 100px;
-    cursor: pointer;
-    margin-left: 20px;
-}
-
-.footer {
-    display: flex;
-    justify-content: space-between;
+    background: none;
 }

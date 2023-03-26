@@ -5,7 +5,8 @@ import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import DevTools from "../DevTools";
 import Score from "../Score";
-import NewGameModal from "../NewGameModal";
+import NewGameModal from "../NewGameMenu";
+import Modal from "../Modal";
 import {
   sortTileSet,
   findNextBlock,
@@ -214,6 +215,7 @@ export const App: React.FC = () => {
     setRadius(newRadius ? newRadius : radius);
     setGrid(createHexGrid(newRadius ? newRadius : radius));
     setIsWin(false);
+    setIsModalShown(false);
     serverCall()
   };
 
@@ -235,7 +237,9 @@ export const App: React.FC = () => {
   return (
     <>
       {isModalShown && (
-        <NewGameModal setIsModalShown={setIsModalShown} resetGameHandler={resetGameHandler}/>
+        <Modal setIsModalShown={setIsModalShown}>
+          <NewGameModal resetGameHandler={resetGameHandler}/>
+        </Modal>
       )}
       <div className={styles.wrapper}>
         <section className={styles.scoreWrapper}>
