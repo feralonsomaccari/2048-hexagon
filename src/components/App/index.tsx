@@ -31,39 +31,21 @@ export const App: React.FC = () => {
   const [historyScore, setHistoryScore] = useState(0);
   const [showCoords, setShowCoords] = useState(false);
   const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
-  const [serverResponse, setError, fetchTiles] = useFetchServer([], 1);
-  // const [savedGame, setSavedGame] = useLocalStorage("savedGame", {
-  //   tileSet: [],
-  //   grid: [],
-  //   score: 0,
-  //   radius: 1,
-  // });
+  const [serverResponse, fetchTiles ] = useFetchServer([], 1);
 
   /* 
     Initial component mount
   */
   useEffect(() => {
     setGrid(createHexGrid(radius));
-    // if (isValidSavedGame(savedGame)) {
-    //   setTileSet(savedGame.tileSet);
-    //   setGrid(savedGame.grid);
-    //   setScore(savedGame.score);
-    //   setRadius(savedGame.radius);
-    //   return;
-    // }
   }, []);
 
+  /* 
+    Side-effect on serverResponse
+  */
   useEffect(() => {
     setTileSet(serverResponse);
     setIsMovementBlocked(false);
-
-    // if (!initialGame) {
-    //   setSavedGame((prevState: any) => ({
-    //     ...prevState,
-    //     tileSet: updatedTileSet,
-    //     grid: grid,
-    //   }));
-    // }
   }, [serverResponse])
 
   /* 
@@ -76,14 +58,10 @@ export const App: React.FC = () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
   }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
-
+  
   /* 
-    Side-effect on Score and Radius (Saved Game)
+    Side-effect on Score
   */
-  // useEffect(() => {
-  //   setSavedGame({ ...savedGame, radius: radius, score: score });
-  // }, [score, radius]);
-
   useEffect(() => {
     setMaxScore((prevState: any) => ({
       value: score > prevState.value ? score : prevState.value,
@@ -247,18 +225,12 @@ export const App: React.FC = () => {
     setGrid(createHexGrid(radius));
     setIsWin(false);
     setIsModalShown(false);
-    // setSavedGame({
-    //   tileSet: [],
-    //   grid: [],
-    //   score: 0,
-    //   radius: radius,
-    // });
     fetchTiles([]);
   };
 
   const dismissOverlay = useCallback(() => {
     setIsWin(false);
-  }, [isWin]);
+  }, []);
 
   const undoHandler = useCallback(() => {
     setTileSet(historyTileSet);

@@ -19,7 +19,7 @@ const useFetchServer = (tileSet: gridElement[], radius: number) => {
     fetchTiles();
   }, []);
 
-  return [response, error, fetchTiles];
+  return [response, fetchTiles, error];
 };
 
 export default useFetchServer;
