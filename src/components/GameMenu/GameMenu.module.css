@@ -1,0 +1,32 @@
+.gameMenu {
+  width: 100%;
+  color: var(--color-text-main);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 50px auto;
+}
+
+.subMenu {
+  display: flex;
+  column-gap: 20px;
+  align-items: flex-end;
+}
+
+.title {
+  font-size: 55px;
+  line-height: 48px;
+}
+
+.subtitle {
+  font-size: 24px;
+}
+
+.text {
+  margin-top: 20px;
+}
+
+.howTo {
+  font-weight: bold;
+  color: var(--color-text-main);
+}
