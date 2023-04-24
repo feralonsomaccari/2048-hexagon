@@ -9,7 +9,7 @@ describe("<Score/>", () => {
     render(<Score title={title} score={value} />);
     const scoreEl = screen.getByTestId("score");
     const titleEl = scoreEl.querySelector("h3");
-    const valueEl = scoreEl.querySelector("h4");
+    const valueEl = scoreEl.querySelector("p");
     expect(titleEl).toHaveTextContent(title);
     expect(valueEl).toHaveTextContent(value.toString());
   });
