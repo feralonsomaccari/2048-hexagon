@@ -1,6 +1,5 @@
 # Hexagonal 2048
 
-This is a [2048](https://play2048.co/) clone game on a Hexagonal grid made with Typescript and React.
 This is a clone of the classic [2048 game](https://play2048.co/) presented on a Hexagonal grid, created using Typescript and React.
 
 Play it here: https://feralonsomaccari.github.io/2048-hexagon/
