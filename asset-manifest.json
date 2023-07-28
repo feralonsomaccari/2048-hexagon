@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/2048-hexagon/static/css/main.f348c029.css",
+    "main.js": "/2048-hexagon/static/js/main.5eddf751.js",
+    "index.html": "/2048-hexagon/index.html",
+    "static/media/hexagon.svg": "/2048-hexagon/static/media/hexagon.89e8306b1bfb206b2c64.svg",
+    "static/media/tile-hexagon.svg": "/2048-hexagon/static/media/tile-hexagon.2826ddb4ba2238be4ab9.svg",
+    "main.f348c029.css.map": "/2048-hexagon/static/css/main.f348c029.css.map",
+    "main.5eddf751.js.map": "/2048-hexagon/static/js/main.5eddf751.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f348c029.css",
+    "static/js/main.5eddf751.js"
+  ]
+}
