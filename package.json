@@ -23,9 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "start-server": "node rng-server/index.js",
-    "test": "react-scripts test",
-    "deploy": "npm run build && cp build/index.html build/200.html && surge build yummy-number.surge.sh"
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [

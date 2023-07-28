@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchServer } from "../services";
+import { getRNGPoints } from "../services/generateTiles";
 import { addIds } from "../utils";
 
 const useFetchServer = (tileSet: gridElement[], radius: number) => {
@@ -8,10 +8,10 @@ const useFetchServer = (tileSet: gridElement[], radius: number) => {
 
    const fetchTiles = async (newTileSet: gridElement[] = tileSet, newRadius: number = radius) => {
     try {
-      const serverResponseData = await fetchServer<gridElement[]>(newTileSet, newRadius + 1);
-      setResponse([...addIds(serverResponseData), ...newTileSet]);
+      const response = getRNGPoints(newRadius + 1, newTileSet);
+      setResponse([...addIds(response), ...newTileSet]);
     } catch (error) {
-      // setError(error);
+      setError(error);
     }
   };
 

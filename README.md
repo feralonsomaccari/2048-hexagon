@@ -1,11 +1,8 @@
 # Hexagonal 2048
 
-This is a [2048](https://play2048.co/) clone game on a Hexagonal grid.
-
-Game URL hosted in Surge: https://yummy-number.surge.sh/
+This is a [2048](https://play2048.co/) clone game on a Hexagonal grid made with Typescript and React.
 
 ## Description
-No external libraries have been used to make this game. For CSS I decided to go with CSS Modules for its simplicity since it doesn't require any set up. Although, I would have liked to have set it up to support BEM convention.
 
 Features:
 - Different game sizes (up to 6) you can choose the levels by pressing the button "New Game"
