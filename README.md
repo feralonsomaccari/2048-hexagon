@@ -1,15 +1,20 @@
 # Hexagonal 2048
 
 This is a [2048](https://play2048.co/) clone game on a Hexagonal grid made with Typescript and React.
+This is a clone of the classic [2048 game](https://play2048.co/) presented on a Hexagonal grid, created using Typescript and React.
+
+Play it here: https://feralonsomaccari.github.io/2048-hexagon/
+
+![gameplay](./game.png)
 
 ## Description
 
 Features:
-- Different game sizes (up to 6) you can choose the levels by pressing the button "New Game"
-- Animations
-- Styles based on original 2048 game
-- A Score tracking system
-- A Max Score tracking system
+- Various game sizes (up to 6) that you can choose by clicking the "New Game" button
+- Smooth animations
+- Styling inspired by the original 2048 game
+- Score tracking system
+- Max Score tracking system
 - Undo functionality
 - Unit Tests
 
