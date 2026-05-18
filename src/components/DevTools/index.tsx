@@ -14,12 +14,6 @@ const DevTools = ({
       <button title="dev button" onClick={() => setShowCoords((prev) => !prev)}>
         ⚠️ {showCoords ? "Hide Coords" : "Show Coords"}
       </button>
-      {/* <button
-        title="dev button"
-        onClick={() => setDisableServer((prev) => !prev)}
-      >
-        ⚠️ {disableServer ? "Enable Server" : "Disable Server"}
-      </button> */}
     </aside>
   );
 };

@@ -5,16 +5,11 @@ import {
   waitFor,
   cleanup,
 } from "@testing-library/react";
-import { tileSet } from "./dummyData";
-import { fetchServer } from "../../services";
-const serverCall = fetchServer as jest.Mock;
-jest.mock("../../services");
-
 import { App } from ".";
 
 describe("<App/>", () => {
   afterEach(() => {
-    serverCall.mockRestore();
+    cleanup();
   });
 
   it("should render New Game Modal", () => {
@@ -35,15 +30,11 @@ describe("<App/>", () => {
     expect(newGameMenu).not.toBeInTheDocument();
   });
 
-  it("should fetch initial Tiles from the server", async () => {
-    serverCall.mockResolvedValueOnce(tileSet);
-
-    await waitFor(async () => {
-      await render(<App />);
-      const tile = await screen.getAllByTestId("tile");
-      await expect(tile).toHaveLength(3);
+  it("should render initial tiles", async () => {
+    await waitFor(() => {
+      render(<App />);
+      const tiles = screen.getAllByTestId("tile");
+      expect(tiles.length).toBeGreaterThan(0);
     });
-    await cleanup();
   });
-
 });

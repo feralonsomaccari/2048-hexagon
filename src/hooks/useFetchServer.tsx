@@ -15,9 +15,8 @@ const useFetchServer = (tileSet: gridElement[], radius: number) => {
     }
   };
 
-  useEffect(() => {
-    fetchTiles();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchTiles(); }, []);
 
   return [response, fetchTiles, error];
 };

@@ -33,24 +33,15 @@ export const App: React.FC = () => {
   const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
   const [serverResponse, fetchTiles ] = useFetchServer([], 1);
 
-  /* 
-    Initial component mount
-  */
   useEffect(() => {
     setGrid(createHexGrid(radius));
   }, []);
 
-  /* 
-    Side-effect on serverResponse
-  */
   useEffect(() => {
     setTileSet(serverResponse);
     setIsMovementBlocked(false);
-  }, [serverResponse])
+  }, [serverResponse]);
 
-  /* 
-    Add event listener to the document
-  */
   useEffect(() => {
     document.addEventListener("keydown", keyPressHandler);
 
@@ -58,24 +49,17 @@ export const App: React.FC = () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
   }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
-  
-  /* 
-    Side-effect on Score
-  */
+
   useEffect(() => {
     setMaxScore((prevState: any) => ({
       value: score > prevState.value ? score : prevState.value,
     }));
   }, [score]);
 
-  /* 
-    Side-effect on Tile Set
-  */
   useEffect(() => {
     if (!grid.length || !tileSet.length) return;
     const updatedGrid = [...grid];
 
-    // Me must clear and update the [data-values] on the grid
     updatedGrid.forEach((block) => {
       block.value = 0;
       block.merged = false;
@@ -91,7 +75,6 @@ export const App: React.FC = () => {
     });
     setGrid(updatedGrid);
 
-    // We must check if it is possible to keep moving on the grid
     if (!validMovementsAvailable(tileSet, grid)) {
       setIsGameOver(true);
       setIsUndoAvailable(false);
@@ -170,7 +153,6 @@ export const App: React.FC = () => {
       return updateTile(tile, direction, grid, tilesToBeRemoved);
     });
 
-    // After merge two tiles of the same value we must remove one of them
     tilesToBeRemoved.forEach((tileId) => {
       updatedTileSet.splice(
         updatedTileSet.map((tile: gridElement) => tile.id).indexOf(tileId),
@@ -211,9 +193,6 @@ export const App: React.FC = () => {
       case "D":
         updateTilesPos("southEast");
         break;
-      case "f":
-      case "F":
-        break;
     }
   };
 
@@ -244,7 +223,6 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* New Game Modal */}
       {isModalShown && (
         <Modal setIsModalShown={setIsModalShown}>
           <NewGameModal resetGameHandler={resetGameHandler} />
@@ -257,16 +235,13 @@ export const App: React.FC = () => {
             <Score title="Best" score={maxScore?.value} />
           </div>
         </section>
-        {/* Dev Tools */}
         <DevTools showCoords={showCoords} setShowCoords={setShowCoords} />
-        {/* Game Menu */}
         <GameMenu
           isGameOver={isGameOver}
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
         />
-        {/* Game */}
         <GameContainer
           tileSet={sortTileSetById(tileSet)}
           grid={grid}
@@ -277,7 +252,6 @@ export const App: React.FC = () => {
           showCoords={showCoords}
           dismissOverlay={dismissOverlay}
         />
-        {/* Instructions */}
         <Instructions />
       </div>
     </>

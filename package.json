@@ -9,20 +9,16 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.4",
-    "@types/ramda": "^0.28.18",
     "@types/react": "^18.0.22",
     "@types/react-dom": "^18.0.7",
     "classnames": "^2.3.2",
-    "ramda": "^0.28.0",
     "react": "^18.0.22",
     "react-dom": "^18.0.22",
     "react-scripts": "5.0.1",
-    "serve": "^14.0.1",
-    "tree-kill": "^1.2.2",
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "predeploy": "npm run build",
@@ -51,6 +47,8 @@
     "npm": ">=7.3.0"
   },
   "devDependencies": {
-    "gh-pages": "^5.0.0"
+    "gh-pages": "^5.0.0",
+    "serve": "^14.0.1",
+    "tree-kill": "^1.2.2"
   }
 }
