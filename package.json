@@ -2,6 +2,22 @@
   "name": "2048-hexagon",
   "version": "0.1.0",
   "private": true,
+  "description": "A hexagonal twist on the classic 2048 puzzle game, built with React and TypeScript.",
+  "author": "feralonsomaccari",
+  "license": "MIT",
+  "keywords": [
+    "2048",
+    "hexagon",
+    "hex",
+    "puzzle",
+    "game",
+    "react",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/feralonsomaccari/2048-hexagon.git"
+  },
   "homepage": "https://feralonsomaccari.github.io/2048-hexagon",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
