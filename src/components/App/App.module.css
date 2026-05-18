@@ -7,3 +7,22 @@
   display: flex;
   flex-direction: column;
 }
+
+.footer {
+  margin-top: auto;
+  padding-top: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-main);
+}
+
+.footer a {
+  color: var(--color-secondary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer a:hover,
+.footer a:focus {
+  text-decoration: underline;
+}

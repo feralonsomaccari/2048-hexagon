@@ -16,6 +16,8 @@ const Tile = ({ value, left, top, merged }: props): JSX.Element => {
       data-testid="tile"
       style={{ left, top, ...getGridElementSizeFromRadius() }}
       className={`${styles.tile} ${styles[color]} ${merged ? styles.merged : ""}`}
+      role="img"
+      aria-label={`Tile ${value}`}
     >
       {value}
     </div>

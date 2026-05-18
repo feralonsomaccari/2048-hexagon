@@ -267,6 +267,16 @@ export const App: React.FC = () => {
           dismissOverlay={dismissOverlay}
           windowScale={windowScale}
         />
+        <footer className={styles.footer}>
+          Made by{" "}
+          <a
+            href="https://feralonsomaccari.github.io/my-portfolio/"
+            target="_blank"
+            rel="author noopener"
+          >
+            feralonsomaccari
+          </a>
+        </footer>
       </div>
     </>
   );

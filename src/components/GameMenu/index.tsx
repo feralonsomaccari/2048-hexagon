@@ -21,8 +21,13 @@ const GameMenu = ({
     <article data-testid="game-menu" className={styles.gameMenu}>
       <div className={styles.top}>
         <div className={styles.titleBlock}>
-          <h1 className={styles.title}>2048 ⬡</h1>
+          <h1 className={styles.title} aria-label="2048 Hexagon">
+            <span aria-hidden="true">2048 ⬡</span>
+          </h1>
           <span className={styles.subtitle}>hexagon version</span>
+          <p className={styles.srOnly}>
+            A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048.
+          </p>
         </div>
         {scores && <div className={styles.scores}>{scores}</div>}
       </div>

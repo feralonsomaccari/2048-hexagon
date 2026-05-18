@@ -33,10 +33,20 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
   const marginBottom = natural * (scale - 1);
 
   return (
-    <main className={styles.gameWrapper} id="game" style={{ height: `${natural * scale}px` }}>
+    <main
+      className={styles.gameWrapper}
+      id="game"
+      style={{ height: `${natural * scale}px` }}
+      aria-label={`Hexagonal 2048 board, ${tileSet.length} tile${tileSet.length === 1 ? "" : "s"} in play`}
+    >
       {(isGameOver || isWin) && (
-        <div className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`} data-testid="overlay">
-          <h4>{isWin ? "You Win!" : "Game Over :("}</h4>
+        <div
+          className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`}
+          data-testid="overlay"
+          role="alertdialog"
+          aria-labelledby="overlay-title"
+        >
+          <h2 id="overlay-title">{isWin ? "You Win!" : "Game Over :("}</h2>
           <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
           {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
         </div>

@@ -14,7 +14,10 @@ const Score = ({ title, score, historyScore = 0 }: props) => {
       <p
         className={`${totalScore > 0 ? styles.score : ""}`}
         key={score}
-        data-value={`+${totalScore}`}>
+        data-value={`+${totalScore}`}
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label={`${title}: ${score}`}>
         {score}
       </p>
     </div>

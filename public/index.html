@@ -19,10 +19,33 @@
     <meta property="og:description" content="A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048." />
     <meta property="og:url" content="https://feralonsomaccari.github.io/2048-hexagon/" />
     <meta property="og:site_name" content="2048 Hexagon" />
+    <meta property="og:image" content="https://feralonsomaccari.github.io/2048-hexagon/og-image.png" />
+    <meta property="og:image:alt" content="Screenshot of 2048 Hexagon gameplay" />
 
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="2048 Hexagon" />
     <meta name="twitter:description" content="A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048." />
+    <meta name="twitter:image" content="https://feralonsomaccari.github.io/2048-hexagon/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "2048 Hexagon",
+        "url": "https://feralonsomaccari.github.io/2048-hexagon/",
+        "image": "https://feralonsomaccari.github.io/2048-hexagon/og-image.png",
+        "description": "A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048.",
+        "author": {
+          "@type": "Person",
+          "name": "feralonsomaccari",
+          "url": "https://feralonsomaccari.github.io/my-portfolio/"
+        },
+        "genre": ["Puzzle", "Logic"],
+        "applicationCategory": "Game",
+        "operatingSystem": "Web",
+        "playMode": "SinglePlayer"
+      }
+    </script>
 
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
@@ -42,7 +65,15 @@
     <title>2048 Hexagon</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <h1>2048 Hexagon</h1>
+      <p>
+        2048 Hexagon is a free, browser-based puzzle game — a hexagonal twist on the classic 2048.
+        Slide and merge numbered tiles on a hex grid using Q, W, E, A, S, D or the arrow keys.
+        When two tiles with the same number touch, they merge into one. Keep merging until you reach 2048.
+      </p>
+      <p>You need to enable JavaScript to play.</p>
+    </noscript>
     <div id="root"></div>
     <!--
       This HTML file is a template.
