@@ -5,6 +5,8 @@
   scroll-margin-top: 50px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
 .gameContainer {
