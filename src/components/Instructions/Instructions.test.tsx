@@ -1,17 +1,24 @@
 import { render, screen } from "@testing-library/react";
-
 import Instructions from ".";
 
 describe("<Instructions/>", () => {
-  it("should have 'howtoplay' in the how to play section", () => {
+  it("should render the instructions section", () => {
     render(<Instructions />);
-    const instructionsEl = screen.getByTestId("instructions");
-    expect(instructionsEl).toHaveAttribute("id", "howtoplay");
+    expect(screen.getByTestId("instructions")).toBeInTheDocument();
   });
 
-  it("should get the User to the 'Game' section", () => {
+  it("should mention the movement keys", () => {
     render(<Instructions />);
-    const anchorEl = screen.getByRole("link");
-    expect(anchorEl).toHaveAttribute("href", "#game");
+    expect(screen.getByTestId("instructions")).toHaveTextContent("q, w, e, a, s, d");
+  });
+
+  it("should mention arrow keys", () => {
+    render(<Instructions />);
+    expect(screen.getByTestId("instructions")).toHaveTextContent("arrow keys");
+  });
+
+  it("should mention 2048 as the target", () => {
+    render(<Instructions />);
+    expect(screen.getByTestId("instructions")).toHaveTextContent("2048");
   });
 });

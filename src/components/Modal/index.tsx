@@ -8,7 +8,7 @@ type props = {
 const Modal = ({ setIsModalShown, children }: props) => {
   return (
     <>
-      <div className={styles.modalOverlay} onClick={() => setIsModalShown(false)} />
+      <div data-testid="modal-overlay" className={styles.modalOverlay} onClick={() => setIsModalShown(false)} />
       <div className={styles.modalWrapper}>
         <section className={styles.modalContent}>
           <header className={styles.header}>
