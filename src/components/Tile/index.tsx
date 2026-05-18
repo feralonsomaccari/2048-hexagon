@@ -15,11 +15,13 @@ const Tile = ({ value, left, top, merged }: props): JSX.Element => {
     <div
       data-testid="tile"
       style={{ left, top, ...getGridElementSizeFromRadius() }}
-      className={`${styles.tile} ${styles[color]} ${merged ? styles.merged : ""}`}
+      className={styles.tile}
       role="img"
       aria-label={`Tile ${value}`}
     >
-      {value}
+      <div className={`${styles.tileInner} ${styles[color]} ${merged ? styles.merged : ""}`}>
+        {value}
+      </div>
     </div>
   );
 };

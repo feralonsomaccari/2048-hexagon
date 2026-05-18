@@ -15,7 +15,7 @@ describe("<Tile/>", () => {
     it(`should render a Tile component with color of value ${value}`, () => {
       render(<Tile value={value} />);
       const tileEl = screen.getByTestId("tile");
-      expect(tileEl).toHaveClass(`color-${value}`);
+      expect(tileEl.firstElementChild).toHaveClass(`color-${value}`);
     })
   );
 });

@@ -4,19 +4,27 @@
   top: 0;
   width: 140px;
   height: 121.1px;
-  mask-image: url("./tile-hexagon.svg");
-  mask-repeat: no-repeat;
-  mask-size: cover;
+  overflow: hidden;
+  -webkit-mask-image: url("./tile-hexagon.svg");
+          mask-image: url("./tile-hexagon.svg");
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: cover;
+          mask-size: cover;
+  transition: left 120ms cubic-bezier(0.25, 0.46, 0.45, 1.4),
+              top  120ms cubic-bezier(0.25, 0.46, 0.45, 1.4);
+}
+
+.tileInner {
+  width: 100%;
+  height: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
-  display: flex;
   font-size: 42px;
   font-weight: bold;
   text-align: center;
   color: var(--color-text-main);
-  /* spring-like movement: slight overshoot on arrival */
-  transition: left 120ms cubic-bezier(0.25, 0.46, 0.45, 1.4),
-              top  120ms cubic-bezier(0.25, 0.46, 0.45, 1.4);
   animation: popin 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 
