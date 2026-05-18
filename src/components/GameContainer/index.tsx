@@ -25,7 +25,7 @@ const TILE_HEIGHT = 121.1;
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, windowScale = 1 }: props) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, windowScale = 1 }, ref) => {
   const radiusScale = (10 - radius) / 10;
   const scale = radiusScale * windowScale;
   const natural = naturalGridHeight(radius);
@@ -34,6 +34,7 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
 
   return (
     <main
+      ref={ref}
       className={styles.gameWrapper}
       id="game"
       style={{ height: `${natural * scale}px` }}
@@ -61,6 +62,8 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
       </div>
     </main>
   );
-};
+});
+
+GameContainer.displayName = "GameContainer";
 
 export default React.memo(GameContainer);

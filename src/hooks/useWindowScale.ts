@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 
 const DESIGN_WIDTH = 600;
+const HORIZONTAL_PADDING = 24;
 
-const getScale = () => Math.min(1, window.innerWidth / DESIGN_WIDTH);
+const getScale = () =>
+  Math.min(1, (window.innerWidth - HORIZONTAL_PADDING) / DESIGN_WIDTH);
 
 const useWindowScale = () => {
   const [scale, setScale] = useState(getScale);

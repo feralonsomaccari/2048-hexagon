@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import styles from "./App.module.css";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
@@ -16,6 +16,7 @@ import {
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useGameTiles from "../../hooks/useGameTiles";
 import useWindowScale from "../../hooks/useWindowScale";
+import useSwipe from "../../hooks/useSwipe";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
   const [serverResponse, fetchTiles] = useGameTiles([], 1);
   const windowScale = useWindowScale();
+  const boardRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setGrid(createHexGrid(radius));
@@ -175,6 +177,11 @@ export const App: React.FC = () => {
     }, 200);
   };
 
+  useSwipe(boardRef, (direction) => {
+    if (isMovementBlocked || isGameOver || isModalShown) return;
+    updateTilesPos(direction);
+  });
+
   const keyPressHandler = (event: KeyboardEvent): void => {
     if (event.repeat || isMovementBlocked || isGameOver || isModalShown) return;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
@@ -267,6 +274,7 @@ export const App: React.FC = () => {
         />
         <Instructions />
         <GameContainer
+          ref={boardRef}
           tileSet={sortTileSetById(tileSet)}
           grid={grid}
           radius={radius}

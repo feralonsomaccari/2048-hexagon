@@ -14,7 +14,7 @@
 
 .titleBlock {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
 }
 
@@ -24,7 +24,6 @@
   font-weight: 800;
   letter-spacing: -1px;
   color: var(--color-text-main);
-  margin-bottom: 13px;
 }
 
 .subtitle {
@@ -33,6 +32,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--color-tertiary);
+  margin-top: 10px;
 }
 
 .srOnly {
@@ -74,25 +74,45 @@
 
 @media (max-width: 480px) {
   .title {
-    font-size: 38px;
+    font-size: 40px;
+    margin-bottom: 0;
   }
 
   .top {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 12px;
+  }
+
+  .titleBlock {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .subtitle {
+    margin-bottom: 0;
+    font-size: 11px;
   }
 
   .scores {
     width: 100%;
+    column-gap: 8px;
+    align-items: stretch;
+  }
+
+  .scores>* {
+    flex: 1;
+    min-width: 0;
   }
 
   .bottom {
     flex-wrap: wrap;
     gap: 10px;
+    margin-bottom: 12px;
   }
 
-  .subtitle {
-    margin-bottom: 9px;
+  .actions {
+    flex: 1;
+    justify-content: flex-end;
   }
 }

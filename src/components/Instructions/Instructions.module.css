@@ -8,3 +8,16 @@
   font-size: 13px;
   color: var(--color-text-main);
 }
+
+.touchOnly {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .keyboardOnly {
+    display: none;
+  }
+  .touchOnly {
+    display: block;
+  }
+}

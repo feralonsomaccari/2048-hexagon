@@ -4,8 +4,15 @@
   max-width: 600px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 12px;
+  }
 }
 
 .footer {
