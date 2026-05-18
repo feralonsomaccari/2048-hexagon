@@ -1,7 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { vi } from "vitest";
 import { tileSet, grid } from "./dummyData";
 import { createHexGrid } from "../../utils/gameLogic";
 import GameContainer from ".";
+import useSwipe from "../../hooks/useSwipe";
 
 const props = {
   tileSet: tileSet,
@@ -63,5 +66,41 @@ describe("<GameContainer/>", () => {
     render(<GameContainer {...props} />);
     const gameContainerEl = screen.queryByTestId("overlay");
     expect(gameContainerEl).not.toBeInTheDocument();
+  });
+
+  it("should call resetGameHandler with the current radius when Try Again is clicked", () => {
+    const resetGameHandler = vi.fn();
+    render(
+      <GameContainer
+        {...props}
+        radius={3}
+        isGameOver={true}
+        resetGameHandler={resetGameHandler}
+      />
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Try Again" }));
+    expect(resetGameHandler).toHaveBeenCalledWith(3);
+  });
+
+  it("should not consume taps on the Try Again button via swipe gestures", () => {
+    const TestHarness = () => {
+      const ref = React.useRef<HTMLElement>(null);
+      const onSwipe = vi.fn();
+      useSwipe(ref, onSwipe);
+      return (
+        <GameContainer
+          {...props}
+          ref={ref}
+          isGameOver={true}
+          resetGameHandler={vi.fn()}
+        />
+      );
+    };
+    render(<TestHarness />);
+    const tryAgain = screen.getByRole("button", { name: "Try Again" });
+    fireEvent.pointerDown(tryAgain, { pointerId: 1, clientX: 100, clientY: 100 });
+    const wrapper = tryAgain.closest("main");
+    expect(wrapper).not.toBeNull();
+    expect(wrapper!.hasPointerCapture?.(1) ?? false).toBe(false);
   });
 });

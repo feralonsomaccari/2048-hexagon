@@ -48,6 +48,8 @@ const useSwipe = (
 
     const onPointerDown = (e: PointerEvent) => {
       if (activePointerId !== null) return;
+      const target = e.target as Element | null;
+      if (target?.closest("button, a, input, textarea, select, [role='button']")) return;
       activePointerId = e.pointerId;
       startX = e.clientX;
       startY = e.clientY;

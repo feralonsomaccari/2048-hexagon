@@ -227,15 +227,15 @@ export const App: React.FC = () => {
     }
   };
 
-  const resetGameHandler = (radius: number): void => {
+  const resetGameHandler = (newRadius: number): void => {
     setScore(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
-    setRadius(radius);
-    setGrid(createHexGrid(radius));
+    setRadius(newRadius);
+    setGrid(createHexGrid(newRadius));
     setIsWin(false);
     setIsModalShown(false);
-    fetchTiles([]);
+    fetchTiles([], newRadius);
   };
 
   const dismissOverlay = useCallback(() => {

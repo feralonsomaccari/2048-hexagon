@@ -30,23 +30,28 @@
 }
 
 
-.score::before{
+.score::before {
   content: attr(data-value);
   position: absolute;
   animation: slowMoveUp ease-out 1s;
   opacity: 0;
-  color:var(--color-secondary);
+  color: var(--color-score-gain);
   font-size: 32px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  pointer-events: none;
 }
 
 @keyframes slowMoveUp {
   0% {
     top: 0;
     opacity: 1;
+    transform: scale(0.9);
   }
-  
+
   100% {
     top: -50px;
     opacity: 0;
+    transform: scale(1.15);
   }
 }

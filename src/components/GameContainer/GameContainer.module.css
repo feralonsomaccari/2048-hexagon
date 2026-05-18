@@ -41,8 +41,8 @@
   font-weight: bold;
   color: var(--color-text-main);
   opacity: 0;
-  animation: slowFadeIn 1s;
-  animation-delay: 1s;
+  animation: slowFadeIn 0.5s;
+  animation-delay: 0.3s;
   animation-fill-mode: forwards;
   transform: translateY(-30px);
 }
