@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Block.module.css";
-import { getGridElementSizeFromRadius } from "../../utils";
+import { getGridElementSizeFromRadius } from "../../utils/gameLogic";
 
 type props = {
   x: number;

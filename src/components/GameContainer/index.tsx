@@ -2,7 +2,7 @@ import React from 'react'
 import styles from "./GameContainer.module.css";
 import Block from "../Block";
 import Tile from "../Tile";
-import { getPositionFromCoordinates } from "../../utils";
+import { getPositionFromCoordinates } from "../../utils/gameLogic";
 import Button from "../Button";
 
 type props = {

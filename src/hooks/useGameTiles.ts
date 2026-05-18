@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { getRNGPoints } from "../services/generateTiles";
-import { addIds } from "../utils";
+import { getRNGPoints } from "../utils/generateTiles";
+import { addIds } from "../utils/gameLogic";
 
-const useFetchServer = (tileSet: gridElement[], radius: number) => {
+const useGameTiles = (tileSet: gridElement[], radius: number) => {
   const [response, setResponse] = useState<gridElement[]>([]);
   const [error, setError] = useState<Error | null>(null);
 
@@ -21,4 +21,4 @@ const useFetchServer = (tileSet: gridElement[], radius: number) => {
   return [response, fetchTiles, error] as const;
 };
 
-export default useFetchServer;
+export default useGameTiles;

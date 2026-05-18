@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { tileSet, grid } from "./dummyData";
-import { createHexGrid } from "../../utils";
+import { createHexGrid } from "../../utils/gameLogic";
 import GameContainer from ".";
 
 const props = {

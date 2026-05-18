@@ -12,9 +12,9 @@ import {
   validMovementsAvailable,
   sortTileSetById,
   createHexGrid,
-} from "../../utils";
+} from "../../utils/gameLogic";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import useFetchServer from "../../hooks/useFetchServer";
+import useGameTiles from "../../hooks/useGameTiles";
 import useWindowScale from "../../hooks/useWindowScale";
 
 export const App: React.FC = () => {
@@ -30,7 +30,7 @@ export const App: React.FC = () => {
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<{ value: number }>("maxScore", { value: 0 });
-  const [serverResponse, fetchTiles ] = useFetchServer([], 1);
+  const [serverResponse, fetchTiles] = useGameTiles([], 1);
   const windowScale = useWindowScale();
 
   useEffect(() => {
