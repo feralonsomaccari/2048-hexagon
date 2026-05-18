@@ -31,13 +31,9 @@ Combine tiles of the same number by sliding the board in one of six directions. 
 Requires Node ≥ 20.19 and npm ≥ 9.
 
 ```bash
-npm install
-npm run dev        # start dev server at http://localhost:3000
-npm test           # run the test suite (CI mode)
+npm i
+npm run dev
 npm run test:watch # run tests in watch mode
-npm run build      # production build into ./dist
-npm run preview    # preview the production build locally
-npm run deploy     # publish ./dist to GitHub Pages
 ```
 
 ## Notes on the hex math
