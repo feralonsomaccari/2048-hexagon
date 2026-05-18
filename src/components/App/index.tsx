@@ -256,7 +256,7 @@ export const App: React.FC = () => {
     <>
       {isModalShown && (
         <Modal setIsModalShown={setIsModalShown}>
-          <NewGameModal resetGameHandler={resetGameHandler} />
+          <NewGameModal resetGameHandler={resetGameHandler} currentRadius={radius} />
         </Modal>
       )}
       <div className={styles.wrapper}>

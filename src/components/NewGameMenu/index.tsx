@@ -4,6 +4,7 @@ import Button from "../Button";
 
 type props = {
   resetGameHandler: (radius: number) => void;
+  currentRadius?: number;
 };
 
 const sizes = [
@@ -13,8 +14,8 @@ const sizes = [
   { radius: 4, label: "XL", description: "61 cells" },
 ];
 
-const NewGameMenu = ({ resetGameHandler }: props) => {
-  const [selected, setSelected] = useState(1);
+const NewGameMenu = ({ resetGameHandler, currentRadius = 1 }: props) => {
+  const [selected, setSelected] = useState(currentRadius);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const focusAt = (index: number) => {
