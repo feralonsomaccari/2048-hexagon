@@ -24,6 +24,7 @@
   font-weight: 800;
   letter-spacing: -1px;
   color: var(--color-text-main);
+  margin-bottom: 13px;
 }
 
 .subtitle {
@@ -89,5 +90,9 @@
   .bottom {
     flex-wrap: wrap;
     gap: 10px;
+  }
+
+  .subtitle {
+    margin-bottom: 9px;
   }
 }
