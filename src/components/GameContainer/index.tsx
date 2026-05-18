@@ -14,12 +14,14 @@ type props = {
   isWin: boolean;
   showCoords?: boolean;
   dismissOverlay?: () => void;
+  windowScale?: number;
 };
 
-const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, showCoords = false, dismissOverlay = () => {} }: props) => {
+const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, showCoords = false, dismissOverlay = () => {}, windowScale = 1 }: props) => {
+  const scale = ((10 - radius) / 10) * windowScale;
 
   return (
-    <main className={styles.gameWrapper} id="game">
+    <main className={styles.gameWrapper} id="game" style={{ height: `${500 * scale}px` }}>
       {(isGameOver || isWin) && (
         <div className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`} data-testid="overlay">
           <h4>{isWin ? "You Win!" : "Game Over :("}</h4>
@@ -27,7 +29,7 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
           {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
         </div>
       )}
-      <div className={styles.gameContainer} style={{transform: `scale(${(10-radius)/10})`}}>
+      <div className={styles.gameContainer} style={{transform: `scale(${scale})`}}>
         {tileSet.map((tile) => (
           <Tile key={tile.id} {...getPositionFromCoordinates(tile)} value={tile.value}/>
         ))}

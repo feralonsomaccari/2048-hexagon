@@ -7,6 +7,7 @@ type props = {
   onNewGameHandler?: () => void;
   undoHandler?: () => void;
   isUndoAvailable?: boolean;
+  scores?: React.ReactNode;
 };
 
 const GameMenu = ({
@@ -14,6 +15,7 @@ const GameMenu = ({
   undoHandler,
   onNewGameHandler,
   isUndoAvailable = true,
+  scores,
 }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
@@ -23,26 +25,26 @@ const GameMenu = ({
         <p className={styles.text}>
           Join the tiles, get to <b>2048</b>
         </p>
-        <a className="link" href="#howtoplay">
-          How to play →
-        </a>
         <p className={styles.text}>
           <b>Game Status:</b>
         </p>
         <GameStatus isGameOver={isGameOver} />
       </div>
-      <div className={styles.subMenu}>
-        <Button
-          clickHandler={undoHandler}
-          disabled={!isUndoAvailable}
-          text="Undo"
-          extraProps={{ title: "Undo last action", "data-testid": "undo-btn" }}
-        />
-        <Button
-          clickHandler={onNewGameHandler}
-          text="New Game"
-          extraProps={{ title: "Start a new game", "data-testid": "new-game-btn" }}
-        />
+      <div className={styles.right}>
+        {scores && <div className={styles.scores}>{scores}</div>}
+        <div className={styles.subMenu}>
+          <Button
+            clickHandler={undoHandler}
+            disabled={!isUndoAvailable}
+            text="Undo"
+            extraProps={{ title: "Undo last action", "data-testid": "undo-btn" }}
+          />
+          <Button
+            clickHandler={onNewGameHandler}
+            text="New Game"
+            extraProps={{ title: "Start a new game", "data-testid": "new-game-btn" }}
+          />
+        </div>
       </div>
     </article>
   );

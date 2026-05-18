@@ -16,6 +16,7 @@ import {
 } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useFetchServer from "../../hooks/useFetchServer";
+import useWindowScale from "../../hooks/useWindowScale";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   const [showCoords, setShowCoords] = useState(false);
   const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
   const [serverResponse, fetchTiles ] = useFetchServer([], 1);
+  const windowScale = useWindowScale();
 
   useEffect(() => {
     setGrid(createHexGrid(radius));
@@ -229,19 +231,20 @@ export const App: React.FC = () => {
         </Modal>
       )}
       <div className={styles.wrapper}>
-        <section className={styles.scoreWrapper}>
-          <div className={styles.scoreContainer}>
-            <Score title="Score" score={score} historyScore={historyScore} />
-            <Score title="Best" score={maxScore?.value} />
-          </div>
-        </section>
         <DevTools showCoords={showCoords} setShowCoords={setShowCoords} />
         <GameMenu
+          scores={
+            <>
+              <Score title="Score" score={score} historyScore={historyScore} />
+              <Score title="Best" score={maxScore?.value} />
+            </>
+          }
           isGameOver={isGameOver}
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
         />
+        <Instructions />
         <GameContainer
           tileSet={sortTileSetById(tileSet)}
           grid={grid}
@@ -251,8 +254,8 @@ export const App: React.FC = () => {
           isWin={isWin}
           showCoords={showCoords}
           dismissOverlay={dismissOverlay}
+          windowScale={windowScale}
         />
-        <Instructions />
       </div>
     </>
   );
