@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Modal from ".";
 
 const props = {
-  setIsModalShown: jest.fn(),
+  setIsModalShown: vi.fn(),
 };
 
 describe("<Modal/>", () => {
@@ -17,14 +17,14 @@ describe("<Modal/>", () => {
   });
 
   it("should call setIsModalShown when close button is clicked", () => {
-    const setIsModalShown = jest.fn();
+    const setIsModalShown = vi.fn();
     render(<Modal setIsModalShown={setIsModalShown} />);
     fireEvent.click(screen.getByTestId("close-btn"));
     expect(setIsModalShown).toHaveBeenCalledWith(false);
   });
 
   it("should call setIsModalShown when overlay is clicked", () => {
-    const setIsModalShown = jest.fn();
+    const setIsModalShown = vi.fn();
     render(<Modal setIsModalShown={setIsModalShown} />);
     fireEvent.click(screen.getByTestId("modal-overlay"));
     expect(setIsModalShown).toHaveBeenCalledWith(false);

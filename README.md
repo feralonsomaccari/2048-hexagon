@@ -10,17 +10,6 @@ A hexagonal twist on the classic [2048](https://play2048.co/) puzzle game. Slide
 
 Combine tiles of the same number by sliding the board in one of six directions. When two matching tiles meet, they merge into one with double the value. Keep merging to reach **2048**.
 
-### Controls
-
-| Direction  | Keys                  |
-| ---------- | --------------------- |
-| Up-left    | `Q` &nbsp;/&nbsp; `←` |
-| Up         | `W` &nbsp;/&nbsp; `↑` |
-| Up-right   | `E`                   |
-| Down-left  | `A`                   |
-| Down       | `S` &nbsp;/&nbsp; `↓` |
-| Down-right | `D` &nbsp;/&nbsp; `→` |
-
 ### Features
 
 - Four board sizes (7, 19, 37, or 61 cells) selectable from the **New Game** menu
@@ -32,21 +21,23 @@ Combine tiles of the same number by sliding the board in one of six directions. 
 ## Tech stack
 
 - **React 18** + **TypeScript**
+- **Vite** as the build tool and dev server
 - **CSS Modules** for scoped styling
-- **Jest** + **React Testing Library** for unit tests
-- **Create React App** (react-scripts 5)
+- **Vitest** + **React Testing Library** for unit tests
 - Deployed to **GitHub Pages** via `gh-pages`
 
 ## Local development
 
-Requires Node ≥ 15.5 and npm ≥ 7.3.
+Requires Node ≥ 20.19 and npm ≥ 9.
 
 ```bash
 npm install
-npm run dev      # start dev server at http://localhost:3000
-npm test         # run the test suite
-npm run build    # production build into ./build
-npm run deploy   # publish ./build to GitHub Pages
+npm run dev        # start dev server at http://localhost:3000
+npm test           # run the test suite (CI mode)
+npm run test:watch # run tests in watch mode
+npm run build      # production build into ./dist
+npm run preview    # preview the production build locally
+npm run deploy     # publish ./dist to GitHub Pages
 ```
 
 ## Notes on the hex math

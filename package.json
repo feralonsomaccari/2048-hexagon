@@ -2,6 +2,7 @@
   "name": "2048-hexagon",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "A hexagonal twist on the classic 2048 puzzle game, built with React and TypeScript.",
   "author": "feralonsomaccari",
   "license": "MIT",
@@ -19,52 +20,36 @@
     "url": "https://github.com/feralonsomaccari/2048-hexagon.git"
   },
   "homepage": "https://feralonsomaccari.github.io/2048-hexagon",
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "^29.2.0",
-    "@types/node": "^18.11.4",
-    "@types/react": "^18.0.22",
-    "@types/react-dom": "^18.0.7",
-    "classnames": "^2.3.2",
-    "react": "^18.0.22",
-    "react-dom": "^18.0.22",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.8.4"
-  },
   "scripts": {
-    "dev": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "engines": {
-    "node": ">=15.5.1",
-    "npm": ">=7.3.0"
+  "dependencies": {
+    "classnames": "2.5.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "gh-pages": "^5.0.0",
-    "serve": "^14.0.1",
-    "tree-kill": "^1.2.2"
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "14.3.1",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "20.19.0",
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "5.2.0",
+    "gh-pages": "6.3.0",
+    "jsdom": "26.1.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.3",
+    "vitest": "3.2.4"
+  },
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
   }
 }

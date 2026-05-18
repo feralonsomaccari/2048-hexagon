@@ -22,14 +22,14 @@ describe("<GameMenu/>", () => {
   });
 
   it("should call onNewGameHandler when new game is clicked", () => {
-    const onNewGameHandler = jest.fn();
+    const onNewGameHandler = vi.fn();
     render(<GameMenu {...props} onNewGameHandler={onNewGameHandler} />);
     fireEvent.click(screen.getByTestId("new-game-btn"));
     expect(onNewGameHandler).toHaveBeenCalledTimes(1);
   });
 
   it("should call undoHandler when undo is clicked and available", () => {
-    const undoHandler = jest.fn();
+    const undoHandler = vi.fn();
     render(<GameMenu {...props} undoHandler={undoHandler} isUndoAvailable={true} />);
     fireEvent.click(screen.getByTestId("undo-btn"));
     expect(undoHandler).toHaveBeenCalledTimes(1);

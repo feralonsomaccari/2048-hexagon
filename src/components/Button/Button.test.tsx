@@ -13,14 +13,14 @@ describe("<Button/>", () => {
   });
 
   it("should call clickHandler when clicked", () => {
-    const clickHandler = jest.fn();
+    const clickHandler = vi.fn();
     render(<Button text="New Game" clickHandler={clickHandler} />);
     fireEvent.click(screen.getByRole("button"));
     expect(clickHandler).toHaveBeenCalledTimes(1);
   });
 
   it("should not call clickHandler when disabled", () => {
-    const clickHandler = jest.fn();
+    const clickHandler = vi.fn();
     render(<Button text="New Game" disabled={true} clickHandler={clickHandler} />);
     fireEvent.click(screen.getByRole("button"));
     expect(clickHandler).not.toHaveBeenCalled();

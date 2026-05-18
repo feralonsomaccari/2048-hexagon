@@ -1,5 +1,8 @@
-import ReactDOM from "react-dom"
-import "./index.css"
-import { App } from "./components/App"
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import { App } from "./components/App";
 
-ReactDOM.render(<App />, document.getElementById("root"))
+const container = document.getElementById("root");
+if (!container) throw new Error("Root container not found");
+
+createRoot(container).render(<App />);
