@@ -168,6 +168,9 @@ export const App: React.FC = () => {
 
   const keyPressHandler = (event: KeyboardEvent): void => {
     if (event.repeat || isMovementBlocked || isGameOver || isModalShown) return;
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+      event.preventDefault();
+    }
     switch (event.key) {
       case "q":
       case "Q":
@@ -191,6 +194,18 @@ export const App: React.FC = () => {
         break;
       case "d":
       case "D":
+        updateTilesPos("southEast");
+        break;
+      case "ArrowUp":
+        updateTilesPos("north");
+        break;
+      case "ArrowDown":
+        updateTilesPos("south");
+        break;
+      case "ArrowLeft":
+        updateTilesPos("northWest");
+        break;
+      case "ArrowRight":
         updateTilesPos("southEast");
         break;
     }
