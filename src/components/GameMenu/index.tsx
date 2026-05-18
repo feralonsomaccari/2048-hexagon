@@ -19,16 +19,17 @@ const GameMenu = ({
 }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
-      <div>
-        <h1 className={styles.title}>2048 (Hexagon Version!)</h1>
-        <p className={styles.text}>
-          <b>Game Status:</b>
-        </p>
-        <GameStatus isGameOver={isGameOver} />
-      </div>
-      <div className={styles.right}>
+      <div className={styles.top}>
+        <div className={styles.titleBlock}>
+          <h1 className={styles.title}>2048 ⬡</h1>
+          <span className={styles.subtitle}>hexagon version</span>
+        </div>
         {scores && <div className={styles.scores}>{scores}</div>}
-        <div className={styles.subMenu}>
+      </div>
+      <div className={styles.divider} />
+      <div className={styles.bottom}>
+        <GameStatus isGameOver={isGameOver} />
+        <div className={styles.actions}>
           <Button
             clickHandler={undoHandler}
             disabled={!isUndoAvailable}

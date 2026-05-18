@@ -1,7 +1,16 @@
 .gamestatus {
-  color: green;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background-color: #d4edda;
+  color: #2d6a4f;
 }
 
 .gameOver {
-  color: red;
+  background-color: #f8d7da;
+  color: #842029;
 }
