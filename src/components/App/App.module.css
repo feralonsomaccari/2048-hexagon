@@ -13,6 +13,10 @@
   .wrapper {
     padding: 12px;
   }
+
+  .footer {
+    display: none;
+  }
 }
 
 .footer {

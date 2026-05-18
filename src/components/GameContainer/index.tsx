@@ -13,7 +13,7 @@ type props = {
   isGameOver: boolean;
   isWin: boolean;
   dismissOverlay?: () => void;
-  windowScale?: number;
+  viewport?: { width: number; isMobile: boolean };
 };
 
 const EDGE_LENGTH = 66.5;
@@ -21,15 +21,19 @@ const EDGE_W = (EDGE_LENGTH * 3) / 2;
 const EDGE_H = (EDGE_LENGTH * Math.sqrt(3)) / 2;
 const TILE_WIDTH = 140;
 const TILE_HEIGHT = 121.1;
+const DEFAULT_VIEWPORT = { width: 576, isMobile: false };
 
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, windowScale = 1 }, ref) => {
-  const radiusScale = (10 - radius) / 10;
-  const scale = radiusScale * windowScale;
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT }, ref) => {
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
+  const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
+  const targetWidth = viewport.isMobile
+    ? Math.min(viewport.width, naturalWidth)
+    : desktopDesignWidth;
+  const scale = targetWidth / naturalWidth;
   const marginBottom = natural * (scale - 1);
 
   return (

@@ -15,7 +15,7 @@ import {
 } from "../../utils/gameLogic";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useGameTiles from "../../hooks/useGameTiles";
-import useWindowScale from "../../hooks/useWindowScale";
+import useViewport from "../../hooks/useWindowScale";
 import useSwipe from "../../hooks/useSwipe";
 
 export const App: React.FC = () => {
@@ -32,7 +32,7 @@ export const App: React.FC = () => {
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
   const [serverResponse, fetchTiles] = useGameTiles([], 1);
-  const windowScale = useWindowScale();
+  const viewport = useViewport();
   const boardRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -282,7 +282,7 @@ export const App: React.FC = () => {
           isGameOver={isGameOver}
           isWin={isWin}
           dismissOverlay={dismissOverlay}
-          windowScale={windowScale}
+          viewport={viewport}
         />
         <footer className={styles.footer}>
           Made by{" "}

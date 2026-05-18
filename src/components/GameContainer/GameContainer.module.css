@@ -15,6 +15,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+@media (max-width: 480px) {
+  .gameWrapper {
+    padding: 10px 0;
+  }
+}
+
 .gameContainer {
   flex-shrink: 0;
   transform-origin: top center;

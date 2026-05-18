@@ -14,7 +14,12 @@
 @media (max-width: 480px) {
   .scoreWrapper {
     width: 100%;
-    padding: 6px 10px;
+    padding: 4px 10px;
+    font-size: 20px;
+  }
+
+  .scoreTitle {
+    font-size: 10px;
   }
 }
 
