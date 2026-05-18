@@ -43,7 +43,7 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
       )}
       <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
         {tileSet.map((tile) => (
-          <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value}/>
+          <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value} merged={tile.merged} />
         ))}
         {grid.map((coords, index) => (
           <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
