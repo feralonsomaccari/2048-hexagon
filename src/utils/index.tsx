@@ -1,12 +1,14 @@
-const getPositionFromCoordinates = (block: gridElement): { left: number; top: number } => {
+const getPositionFromCoordinates = (block: gridElement, radius: number = 2): { left: number; top: number } => {
   const edgeLength = 66.5;
   const edgeW = (edgeLength * 3) / 2;
   const edgeH = (edgeLength * Math.sqrt(3)) / 2;
-  const width = (3 / 4) * 190;
-  const height = 121.1 * 2;
 
-  const posX = block.x * edgeW + width + edgeLength;
-  const posY = (-block.y + block.z) * edgeH + height;
+  // Zero-base both axes so content starts at (0,0) for any radius
+  const leftOffset = radius * edgeW;
+  const topOffset = 2 * radius * edgeH;
+
+  const posX = block.x * edgeW + leftOffset;
+  const posY = (-block.y + block.z) * edgeH + topOffset;
 
   return { left: posX, top: posY };
 };

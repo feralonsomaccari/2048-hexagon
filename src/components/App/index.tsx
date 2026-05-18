@@ -231,7 +231,7 @@ export const App: React.FC = () => {
         </Modal>
       )}
       <div className={styles.wrapper}>
-        <DevTools showCoords={showCoords} setShowCoords={setShowCoords} />
+        {/* <DevTools showCoords={showCoords} setShowCoords={setShowCoords} /> */}
         <GameMenu
           scores={
             <>

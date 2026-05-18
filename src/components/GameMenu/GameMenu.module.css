@@ -4,14 +4,12 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 50px auto;
 }
 
 @media (max-width: 480px) {
   .gameMenu {
     flex-direction: column;
     gap: 16px;
-    margin: 24px auto;
   }
 
   .right {

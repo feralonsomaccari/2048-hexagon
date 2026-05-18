@@ -17,11 +17,24 @@ type props = {
   windowScale?: number;
 };
 
+const EDGE_LENGTH = 66.5;
+const EDGE_W = (EDGE_LENGTH * 3) / 2;
+const EDGE_H = (EDGE_LENGTH * Math.sqrt(3)) / 2;
+const TILE_WIDTH = 140;
+const TILE_HEIGHT = 121.1;
+
+const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
+const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
+
 const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, showCoords = false, dismissOverlay = () => {}, windowScale = 1 }: props) => {
-  const scale = ((10 - radius) / 10) * windowScale;
+  const radiusScale = (10 - radius) / 10;
+  const scale = radiusScale * windowScale;
+  const natural = naturalGridHeight(radius);
+  const naturalWidth = naturalGridWidth(radius);
+  const marginBottom = natural * (scale - 1);
 
   return (
-    <main className={styles.gameWrapper} id="game" style={{ height: `${500 * scale}px` }}>
+    <main className={styles.gameWrapper} id="game" style={{ height: `${natural * scale}px` }}>
       {(isGameOver || isWin) && (
         <div className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`} data-testid="overlay">
           <h4>{isWin ? "You Win!" : "Game Over :("}</h4>
@@ -29,12 +42,12 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
           {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
         </div>
       )}
-      <div className={styles.gameContainer} style={{transform: `scale(${scale})`}}>
+      <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
         {tileSet.map((tile) => (
-          <Tile key={tile.id} {...getPositionFromCoordinates(tile)} value={tile.value}/>
+          <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value}/>
         ))}
         {grid.map((coords, index) => (
-          <Block key={index} {...getPositionFromCoordinates(coords)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
+          <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
         ))}
       </div>
     </main>
