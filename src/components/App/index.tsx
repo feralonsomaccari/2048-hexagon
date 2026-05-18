@@ -29,12 +29,19 @@ export const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
-  const [maxScore, setMaxScore] = useLocalStorage<{ value: number }>("maxScore", { value: 0 });
+  const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
   const [serverResponse, fetchTiles] = useGameTiles([], 1);
   const windowScale = useWindowScale();
 
   useEffect(() => {
     setGrid(createHexGrid(radius));
+  }, []);
+
+  useEffect(() => {
+    const legacyValue = (maxScore as unknown as { value?: number }).value;
+    if (typeof legacyValue === "number") {
+      setMaxScore({ 1: legacyValue });
+    }
   }, []);
 
   useEffect(() => {
@@ -51,10 +58,12 @@ export const App: React.FC = () => {
   }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
 
   useEffect(() => {
-    setMaxScore((prevState) => ({
-      value: score > prevState.value ? score : prevState.value,
-    }));
-  }, [score]);
+    setMaxScore((prevState) => {
+      const previousBest = prevState[radius] ?? 0;
+      if (score <= previousBest) return prevState;
+      return { ...prevState, [radius]: score };
+    });
+  }, [score, radius]);
 
   useEffect(() => {
     if (!grid.length || !tileSet.length) return;
@@ -248,7 +257,7 @@ export const App: React.FC = () => {
           scores={
             <>
               <Score title="Score" score={score} historyScore={historyScore} />
-              <Score title="Best" score={maxScore?.value} />
+              <Score title="Best" score={maxScore?.[radius] ?? 0} />
             </>
           }
           isGameOver={isGameOver}

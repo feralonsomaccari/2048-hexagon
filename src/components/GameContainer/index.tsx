@@ -46,7 +46,7 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
           role="alertdialog"
           aria-labelledby="overlay-title"
         >
-          <h2 id="overlay-title">{isWin ? "You Win!" : "Game Over :("}</h2>
+          <h2 id="overlay-title">{isWin ? "You Win!" : "Game Over"}</h2>
           <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
           {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
         </div>
