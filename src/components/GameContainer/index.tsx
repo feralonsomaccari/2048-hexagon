@@ -12,7 +12,6 @@ type props = {
   resetGameHandler?: (radius: number) => void;
   isGameOver: boolean;
   isWin: boolean;
-  showCoords?: boolean;
   dismissOverlay?: () => void;
   windowScale?: number;
 };
@@ -26,7 +25,7 @@ const TILE_HEIGHT = 121.1;
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, showCoords = false, dismissOverlay = () => {}, windowScale = 1 }: props) => {
+const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, windowScale = 1 }: props) => {
   const radiusScale = (10 - radius) / 10;
   const scale = radiusScale * windowScale;
   const natural = naturalGridHeight(radius);
@@ -47,7 +46,7 @@ const GameContainer = ({ tileSet, grid, radius, resetGameHandler = () => {}, isG
           <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value}/>
         ))}
         {grid.map((coords, index) => (
-          <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} showCoords={showCoords} />
+          <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
         ))}
       </div>
     </main>

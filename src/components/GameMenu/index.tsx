@@ -20,11 +20,7 @@ const GameMenu = ({
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
       <div>
-        <h1 className={styles.title}>2048</h1>
-        <h2 className={styles.subtitle}>(HEXAGON version!)</h2>
-        <p className={styles.text}>
-          Join the tiles, get to <b>2048</b>
-        </p>
+        <h1 className={styles.title}>2048 (Hexagon Version!)</h1>
         <p className={styles.text}>
           <b>Game Status:</b>
         </p>

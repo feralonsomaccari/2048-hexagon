@@ -3,7 +3,6 @@ import styles from "./App.module.css";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
-import DevTools from "../DevTools";
 import Score from "../Score";
 import NewGameModal from "../NewGameMenu";
 import Modal from "../Modal";
@@ -30,8 +29,7 @@ export const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
-  const [showCoords, setShowCoords] = useState(false);
-  const [maxScore, setMaxScore] = useLocalStorage("maxScore", { value: 0 });
+  const [maxScore, setMaxScore] = useLocalStorage<{ value: number }>("maxScore", { value: 0 });
   const [serverResponse, fetchTiles ] = useFetchServer([], 1);
   const windowScale = useWindowScale();
 
@@ -53,7 +51,7 @@ export const App: React.FC = () => {
   }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
 
   useEffect(() => {
-    setMaxScore((prevState: any) => ({
+    setMaxScore((prevState) => ({
       value: score > prevState.value ? score : prevState.value,
     }));
   }, [score]);
@@ -88,11 +86,11 @@ export const App: React.FC = () => {
     direction: string,
     grid: gridElement[],
     removeTiles: number[]
-  ): any => {
+  ): gridElement => {
     const nextBlock = findNextBlock(tile, direction, grid);
     if (nextBlock === false || tile.merged) return tile;
 
-    if (nextBlock && nextBlock.value) {
+    if (nextBlock.value > 0) {
       if (nextBlock.value === tile.value && !nextBlock.merged) {
         const currentBlock = grid.find(
           (block) =>
@@ -231,7 +229,6 @@ export const App: React.FC = () => {
         </Modal>
       )}
       <div className={styles.wrapper}>
-        {/* <DevTools showCoords={showCoords} setShowCoords={setShowCoords} /> */}
         <GameMenu
           scores={
             <>
@@ -252,7 +249,6 @@ export const App: React.FC = () => {
           resetGameHandler={resetGameHandler}
           isGameOver={isGameOver}
           isWin={isWin}
-          showCoords={showCoords}
           dismissOverlay={dismissOverlay}
           windowScale={windowScale}
         />
