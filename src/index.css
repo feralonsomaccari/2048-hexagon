@@ -6,7 +6,7 @@
   --color-disabled: #d6cec5;
   --color-bg-overlay-gameover: rgba(238, 228, 218, 0.73);
   --color-bg-overlay-win: rgba(220, 213, 88, 0.73);
-  --color-score-gain: #6b8e4e;
+  --color-score-gain: #2d6a4f;
   --color-bg-page: #faf8ef;
 
   --bg-color-2: #eae8dc;
@@ -32,6 +32,7 @@
   --color-bg-overlay-gameover: rgba(28, 26, 22, 0.78);
   --color-bg-overlay-win: rgba(120, 105, 30, 0.78);
   --color-bg-page: #1d1b17;
+  --color-score-gain: #95d5b2;
 
   --bg-color-2: #3a3631;
   --bg-color-4: #4a4239;

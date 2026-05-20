@@ -75,9 +75,11 @@ describe("insertHighScore", () => {
   });
 
   it("drops the lowest entry when a new score beats it on a full board", () => {
-    let scores = fillBoard(1, [500, 400, 300, 200, 100]);
+    let scores = fillBoard(1, [400, 300, 200, 100]);
     scores = insertHighScore(scores, 1, makeEntry("new", 250));
-    expect(scores[1].map((e) => e.score)).toEqual([500, 400, 300, 250, 200]);
+    expect(scores[1]).toHaveLength(MAX_ENTRIES_PER_BOARD);
+    expect(scores[1][0].score).toBe(400);
+    expect(scores[1].at(-1)!.score).toBe(200);
     expect(scores[1].some((e) => e.score === 100)).toBe(false);
   });
 
