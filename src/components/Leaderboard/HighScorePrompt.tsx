@@ -5,11 +5,12 @@ import Button from "../Button";
 type props = {
   score: number;
   onSubmit: (name: string) => void;
+  beatsHighScore?: boolean;
 };
 
 const MAX_NAME_LENGTH = 16;
 
-const HighScorePrompt = ({ score, onSubmit }: props) => {
+const HighScorePrompt = ({ score, onSubmit, beatsHighScore = false }: props) => {
   const [name, setName] = useState("");
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -22,7 +23,7 @@ const HighScorePrompt = ({ score, onSubmit }: props) => {
   return (
     <form className={styles.form} onSubmit={handleSubmit} data-testid="high-score-prompt">
       <label className={styles.formLabel} htmlFor="high-score-name">
-        New high score: {score}! Enter your name:
+        {beatsHighScore ? "New high score" : "You scored"}: {score}! Enter your name:
       </label>
       <input
         id="high-score-name"

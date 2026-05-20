@@ -369,6 +369,7 @@ export const App: React.FC = () => {
           pendingHighScore={pendingHighScore}
           score={score}
           onSubmitHighScore={submitHighScore}
+          beatsHighScore={score > (highScores[radius]?.[2]?.score ?? 0)}
         />
         <footer className={styles.footer}>
           Made by{" "}

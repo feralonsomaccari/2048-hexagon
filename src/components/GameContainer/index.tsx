@@ -18,6 +18,7 @@ type props = {
   pendingHighScore?: boolean;
   score?: number;
   onSubmitHighScore?: (name: string) => void;
+  beatsHighScore?: boolean;
 };
 
 const EDGE_LENGTH = 66.5;
@@ -30,7 +31,7 @@ const DEFAULT_VIEWPORT = { width: 576, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, onSubmitHighScore }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
   const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
@@ -57,7 +58,11 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
         >
           <h2 id="overlay-title">{isWin ? "You Win!" : "Game Over"}</h2>
           {pendingHighScore && onSubmitHighScore && (
-            <HighScorePrompt score={score} onSubmit={onSubmitHighScore} />
+            <HighScorePrompt
+              score={score}
+              onSubmit={onSubmitHighScore}
+              beatsHighScore={beatsHighScore}
+            />
           )}
           <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
           {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
