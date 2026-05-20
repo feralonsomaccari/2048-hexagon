@@ -17,6 +17,7 @@ import useLocalStorage from "../../hooks/useLocalStorage";
 import useGameTiles from "../../hooks/useGameTiles";
 import useViewport from "../../hooks/useWindowScale";
 import useSwipe from "../../hooks/useSwipe";
+import useTheme from "../../hooks/useTheme";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
   const [serverResponse, fetchTiles] = useGameTiles([], 1);
+  const [theme, toggleTheme] = useTheme();
   const viewport = useViewport();
   const boardRef = useRef<HTMLElement>(null);
 
@@ -271,6 +273,8 @@ export const App: React.FC = () => {
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
         <Instructions />
         <GameContainer

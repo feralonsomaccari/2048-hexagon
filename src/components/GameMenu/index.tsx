@@ -8,6 +8,8 @@ type props = {
   undoHandler?: () => void;
   isUndoAvailable?: boolean;
   scores?: React.ReactNode;
+  theme?: "light" | "dark";
+  onToggleTheme?: () => void;
 };
 
 const GameMenu = ({
@@ -16,6 +18,8 @@ const GameMenu = ({
   onNewGameHandler,
   isUndoAvailable = true,
   scores,
+  theme,
+  onToggleTheme,
 }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
@@ -46,6 +50,17 @@ const GameMenu = ({
             text="New Game"
             extraProps={{ title: "Start a new game", "data-testid": "new-game-btn" }}
           />
+          {onToggleTheme && (
+            <Button
+              clickHandler={onToggleTheme}
+              text={theme === "dark" ? "Light" : "Dark"}
+              extraProps={{
+                title: `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
+                "data-testid": "theme-toggle-btn",
+                "aria-label": `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
+              }}
+            />
+          )}
         </div>
       </div>
     </article>

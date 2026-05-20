@@ -7,7 +7,8 @@
   --color-bg-overlay-gameover: rgba(238, 228, 218, 0.73);
   --color-bg-overlay-win: rgba(220, 213, 88, 0.73);
   --color-score-gain: #6b8e4e;
-  
+  --color-bg-page: #faf8ef;
+
   --bg-color-2: #eae8dc;
   --bg-color-4: #ede0c8;
   --bg-color-8: #f2b179;
@@ -22,6 +23,20 @@
   --bg-color-final: #3c3a32;
 }
 
+[data-theme="dark"] {
+  --color-text-main: #ede0c8;
+  --color-text-secondary: #1d1b17;
+  --color-secondary: #d6cec5;
+  --color-tertiary: #8f7a66;
+  --color-disabled: #4a4640;
+  --color-bg-overlay-gameover: rgba(28, 26, 22, 0.78);
+  --color-bg-overlay-win: rgba(120, 105, 30, 0.78);
+  --color-bg-page: #1d1b17;
+
+  --bg-color-2: #3a3631;
+  --bg-color-4: #4a4239;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -29,7 +44,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #faf8ef;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  transition: background-color 0.2s, color 0.2s;
 }
 
 code {
