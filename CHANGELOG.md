@@ -6,7 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-05-20
+## [0.3.0] - 2026-05-20
+
+### Added
+- Cross-device leaderboard backed by Firebase Firestore: scores are stored remotely so players from different browsers and devices share a single leaderboard. Falls back to a loading state while the initial fetch is in flight.
+- Configurable undo budget per game: undo is now capped at `MAX_UNDO` uses per game.
+- Top-score legend below the "How to play" line showing the global #1 for the current board size; a fixed `min-height` reserves the row so the layout does not shift when scores load.
+- Win overlay now also triggers the high-score prompt (previously only game-over did), so reaching 2048 lets you submit your name.
+- Footer credits Gabriele Cirulli (creator of the original 2048).
+- Unit tests for the high-score utilities (`qualifiesForHighScore`, `insertHighScore`) and the `useRemoteHighScores` hook (with Firestore mocked), covering validation, dedup, error handling, and the no-Firebase fallback.
+
+### Changed
+- Leaderboard entries are deduplicated per player per board: documents use a deterministic ID (`{radius}_{lowercase-name}`) and submissions overwrite the existing doc only when the new score is higher.
+- Firestore security rules tightened to forbid lowering a score on update and to forbid moving a doc between boards.
+- Footer is softened (smaller font, 50% opacity) so it sits more quietly at the bottom of the page.
+- High-score submit prompt button is now a single `type="submit"`, eliminating a double-fire that produced duplicate entries.
+
+### Removed
+- localStorage as the source of truth for the leaderboard. Firestore is now the only source; any stale `highScores` key in localStorage is wiped on first load of this version. Personal-best (`maxScore`) is still stored locally per board size.
 
 ### Added
 - Dark mode: theme toggle in the menu, persisted in `localStorage` under `theme`. First-time visitors default to their system preference (`prefers-color-scheme`).
