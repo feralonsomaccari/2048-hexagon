@@ -19,6 +19,21 @@
   }
 }
 
+.topScoreLegend {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-main);
+  opacity: 0.6;
+  margin: 0;
+  padding: 4px 0 6px;
+  text-align: left;
+  min-height: 27px;
+}
+
+.topScoreLegend strong {
+  font-weight: 700;
+}
+
 .footer {
   margin-top: auto;
   padding-top: 24px;

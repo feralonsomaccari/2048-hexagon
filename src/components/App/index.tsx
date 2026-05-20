@@ -119,6 +119,12 @@ export const App: React.FC = () => {
     }
   }, [undoCount])
 
+  useEffect(() => {
+    if (isWin && qualifiesForHighScore(highScores, radius, score)) {
+      setPendingHighScore(true);
+    }
+  }, [isWin]);
+
   const updateTile = (
     tile: gridElement,
     direction: string,
@@ -341,6 +347,14 @@ export const App: React.FC = () => {
           onHighScoresHandler={openLeaderboard}
         />
         <Instructions />
+        <p className={styles.topScoreLegend}>
+          {highScores[radius]?.[0] && (
+            <>
+              Top score: <strong>{highScores[radius][0].score}</strong> by{" "}
+              <strong>{highScores[radius][0].name}</strong>
+            </>
+          )}
+        </p>
         <GameContainer
           ref={boardRef}
           tileSet={sortTileSetById(tileSet)}
