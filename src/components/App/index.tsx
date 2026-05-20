@@ -25,7 +25,7 @@ import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
 import useRemoteHighScores from "../../hooks/useRemoteHighScores";
 
-const MAX_UNDO = 3
+const MAX_UNDO_BY_RADIUS: Record<number, number> = { 1: 3, 2: 1, 3: 0, 4: 0 };
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -112,12 +112,13 @@ export const App: React.FC = () => {
     }
   }, [tileSet]);
 
-  useEffect(() => {
+  const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
 
-    if (undoCount >= MAX_UNDO) {
+  useEffect(() => {
+    if (undoCount >= maxUndo) {
       setIsMaxUndo(true)
     }
-  }, [undoCount])
+  }, [undoCount, maxUndo])
 
   useEffect(() => {
     if (isWin && qualifiesForHighScore(highScores, radius, score)) {
@@ -342,7 +343,8 @@ export const App: React.FC = () => {
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
-          remainingUndos={MAX_UNDO - undoCount}
+          remainingUndos={maxUndo - undoCount}
+          showUndo={maxUndo > 0}
           theme={theme}
           onToggleTheme={toggleTheme}
           onHighScoresHandler={openLeaderboard}

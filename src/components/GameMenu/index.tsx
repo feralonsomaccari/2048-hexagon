@@ -8,6 +8,7 @@ type props = {
   undoHandler?: () => void;
   isUndoAvailable?: boolean;
   remainingUndos?: number;
+  showUndo?: boolean;
   scores?: React.ReactNode;
   theme?: "light" | "dark";
   onToggleTheme?: () => void;
@@ -20,6 +21,7 @@ const GameMenu = ({
   onNewGameHandler,
   isUndoAvailable = true,
   remainingUndos,
+  showUndo = true,
   scores,
   theme,
   onToggleTheme,
@@ -43,12 +45,14 @@ const GameMenu = ({
       <div className={styles.bottom}>
         <GameStatus isGameOver={isGameOver} />
         <div className={styles.actions}>
-          <Button
-            clickHandler={undoHandler}
-            disabled={!isUndoAvailable || remainingUndos === 0}
-            text={remainingUndos !== undefined ? `Undo (${remainingUndos})` : "Undo"}
-            extraProps={{ title: "Undo last action", "data-testid": "undo-btn" }}
-          />
+          {showUndo && (
+            <Button
+              clickHandler={undoHandler}
+              disabled={!isUndoAvailable || remainingUndos === 0}
+              text={remainingUndos !== undefined ? `Undo (${remainingUndos})` : "Undo"}
+              extraProps={{ title: "Undo last action", "data-testid": "undo-btn" }}
+            />
+          )}
           <Button
             clickHandler={onNewGameHandler}
             text="New Game"
