@@ -6,7 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.4.3] - 2026-05-20
+## [0.4.4] - 2026-05-20
+
+### Added
+- Visible `:focus-visible` outlines for all interactive elements: primary `Button`, `NewGameMenu` size cards, the `Leaderboard` name input, and the `Modal` close button.
+- `aria-label`s on the Undo / New Game / Scores buttons (Undo includes the remaining-undo count, e.g. `"Undo last action, 2 remaining"`).
+- Screen-reader keyboard hint in `GameMenu`'s sr-only description: explicit Q/W/E/A/S/D and arrow-key controls plus the swipe alternative.
+- Keyboard controls also called out inline in the visible `Instructions` copy on touch devices.
+- `aria-live="polite"` on the leaderboard row currently highlighted as the player's entry, so assistive tech announces rank changes.
+
+### Changed
+- `GameMenu` root element is now a `<header>` (was `<article>`) so the page lands have a proper banner landmark.
+- Game-over / win overlay now sets `aria-modal="true"` and `aria-atomic="true"` so screen readers treat it as a true modal dialog.
+
+
 
 ### Changed
 - Leaderboard now lists the **top 3** per board (was top 4). Firestore listeners fetch fewer docs and the modal is more compact.
