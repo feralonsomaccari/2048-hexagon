@@ -4,7 +4,7 @@ A hexagonal twist on the classic [2048](https://play2048.co/) puzzle game. Slide
 
 **[Play it here →](https://feralonsomaccari.github.io/2048-hexagon/)**
 
-![Gameplay](./game.png)
+![Gameplay](./game2.png)
 
 ## How to play
 
