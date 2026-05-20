@@ -1,0 +1,47 @@
+import { useState } from "react";
+import styles from "./Leaderboard.module.css";
+import Button from "../Button";
+
+type props = {
+  score: number;
+  onSubmit: (name: string) => void;
+};
+
+const MAX_NAME_LENGTH = 16;
+
+const HighScorePrompt = ({ score, onSubmit }: props) => {
+  const [name, setName] = useState("");
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const trimmed = name.trim().slice(0, MAX_NAME_LENGTH);
+    if (!trimmed) return;
+    onSubmit(trimmed);
+  };
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit} data-testid="high-score-prompt">
+      <label className={styles.formLabel} htmlFor="high-score-name">
+        New high score: {score}! Enter your name:
+      </label>
+      <input
+        id="high-score-name"
+        className={styles.input}
+        type="text"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        maxLength={MAX_NAME_LENGTH}
+        autoFocus
+        autoComplete="off"
+      />
+      <div className={styles.formActions}>
+        <Button
+          text="Save"
+          clickHandler={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+        />
+      </div>
+    </form>
+  );
+};
+
+export default HighScorePrompt;

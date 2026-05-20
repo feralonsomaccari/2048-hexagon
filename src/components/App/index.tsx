@@ -293,6 +293,7 @@ export const App: React.FC = () => {
           >
             feralonsomaccari
           </a>
+          {" · v"}{__APP_VERSION__}
         </footer>
       </div>
     </>
