@@ -4,6 +4,7 @@ import Block from "../Block";
 import Tile from "../Tile";
 import { getPositionFromCoordinates } from "../../utils/gameLogic";
 import Button from "../Button";
+import HighScorePrompt from "../Leaderboard/HighScorePrompt";
 
 type props = {
   tileSet: gridElement[];
@@ -14,6 +15,9 @@ type props = {
   isWin: boolean;
   dismissOverlay?: () => void;
   viewport?: { width: number; isMobile: boolean };
+  pendingHighScore?: boolean;
+  score?: number;
+  onSubmitHighScore?: (name: string) => void;
 };
 
 const EDGE_LENGTH = 66.5;
@@ -26,7 +30,7 @@ const DEFAULT_VIEWPORT = { width: 576, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, onSubmitHighScore }, ref) => {
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
   const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
@@ -52,6 +56,9 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
           aria-labelledby="overlay-title"
         >
           <h2 id="overlay-title">{isWin ? "You Win!" : "Game Over"}</h2>
+          {pendingHighScore && onSubmitHighScore && (
+            <HighScorePrompt score={score} onSubmit={onSubmitHighScore} />
+          )}
           <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
           {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
         </div>

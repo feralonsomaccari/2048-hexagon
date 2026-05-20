@@ -118,7 +118,7 @@
   .bottom {
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .actions {

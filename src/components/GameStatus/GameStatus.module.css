@@ -14,3 +14,9 @@
   background-color: #f8d7da;
   color: #842029;
 }
+
+@media (max-width: 480px) {
+  .gamestatus:not(.gameOver) {
+    display: none;
+  }
+}

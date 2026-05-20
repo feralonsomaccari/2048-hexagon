@@ -6,6 +6,7 @@ import GameContainer from "../GameContainer";
 import Score from "../Score";
 import NewGameModal from "../NewGameMenu";
 import Modal from "../Modal";
+import Leaderboard from "../Leaderboard";
 import {
   sortTileSet,
   findNextBlock,
@@ -13,6 +14,12 @@ import {
   sortTileSetById,
   createHexGrid,
 } from "../../utils/gameLogic";
+import {
+  HighScoreEntry,
+  HighScores,
+  insertHighScore,
+  qualifiesForHighScore,
+} from "../../utils/highScores";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useGameTiles from "../../hooks/useGameTiles";
 import useViewport from "../../hooks/useWindowScale";
@@ -32,6 +39,11 @@ export const App: React.FC = () => {
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
+  const [highScores, setHighScores] = useLocalStorage<HighScores>("highScores", {});
+  const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
+  const [pendingHighScore, setPendingHighScore] = useState(false);
+  const [lastQualifyingEntry, setLastQualifyingEntry] = useState<HighScoreEntry | null>(null);
+  const [lastQualifyingRadius, setLastQualifyingRadius] = useState<number | null>(null);
   const [serverResponse, fetchTiles] = useGameTiles([], 1);
   const [theme, toggleTheme] = useTheme();
   const viewport = useViewport();
@@ -91,6 +103,9 @@ export const App: React.FC = () => {
     if (!validMovementsAvailable(tileSet, grid)) {
       setIsGameOver(true);
       setIsUndoAvailable(false);
+      if (qualifiesForHighScore(highScores, radius, score)) {
+        setPendingHighScore(true);
+      }
     }
   }, [tileSet]);
 
@@ -237,8 +252,31 @@ export const App: React.FC = () => {
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
     setIsModalShown(false);
+    setPendingHighScore(false);
+    setLastQualifyingEntry(null);
+    setLastQualifyingRadius(null);
     fetchTiles([], newRadius);
   };
+
+  const submitHighScore = useCallback(
+    (name: string) => {
+      const entry: HighScoreEntry = {
+        name,
+        score,
+        date: new Date().toISOString(),
+      };
+      setHighScores((prev) => insertHighScore(prev, radius, entry));
+      setLastQualifyingEntry(entry);
+      setLastQualifyingRadius(radius);
+      setPendingHighScore(false);
+      setIsLeaderboardShown(true);
+    },
+    [radius, score, setHighScores]
+  );
+
+  const openLeaderboard = useCallback(() => {
+    setIsLeaderboardShown(true);
+  }, []);
 
   const dismissOverlay = useCallback(() => {
     setIsWin(false);
@@ -261,6 +299,15 @@ export const App: React.FC = () => {
           <NewGameModal resetGameHandler={resetGameHandler} currentRadius={radius} />
         </Modal>
       )}
+      {isLeaderboardShown && (
+        <Modal setIsModalShown={setIsLeaderboardShown} title="High Scores">
+          <Leaderboard
+            scores={highScores}
+            highlightRadius={lastQualifyingRadius ?? undefined}
+            highlightEntry={lastQualifyingEntry}
+          />
+        </Modal>
+      )}
       <div className={styles.wrapper}>
         <GameMenu
           scores={
@@ -275,6 +322,7 @@ export const App: React.FC = () => {
           isUndoAvailable={isUndoAvailable}
           theme={theme}
           onToggleTheme={toggleTheme}
+          onHighScoresHandler={openLeaderboard}
         />
         <Instructions />
         <GameContainer
@@ -287,6 +335,9 @@ export const App: React.FC = () => {
           isWin={isWin}
           dismissOverlay={dismissOverlay}
           viewport={viewport}
+          pendingHighScore={pendingHighScore}
+          score={score}
+          onSubmitHighScore={submitHighScore}
         />
         <footer className={styles.footer}>
           Made by{" "}

@@ -4,9 +4,10 @@ import styles from "./Modal.module.css";
 type props = {
   setIsModalShown: React.Dispatch<React.SetStateAction<boolean>>;
   children?: React.ReactNode;
+  title?: string;
 };
 
-const Modal = ({ setIsModalShown, children }: props) => {
+const Modal = ({ setIsModalShown, children, title = "New Game" }: props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
@@ -58,7 +59,7 @@ const Modal = ({ setIsModalShown, children }: props) => {
       >
         <section className={styles.modalContent}>
           <header className={styles.header}>
-            <h3 id="modal-title">New Game</h3>
+            <h3 id="modal-title">{title}</h3>
             <button
               data-testid="close-btn"
               className={styles.closeButton}

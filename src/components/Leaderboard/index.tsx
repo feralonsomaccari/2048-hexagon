@@ -36,7 +36,6 @@ const Leaderboard = ({ scores, highlightRadius, highlightEntry }: props) => {
 
   return (
     <div className={styles.wrapper} data-testid="leaderboard">
-      <h3 className={styles.heading}>High Scores</h3>
       {radiusOrder.map((radius) => {
         const list = scores[radius] ?? [];
         return (

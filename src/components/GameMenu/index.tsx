@@ -10,6 +10,7 @@ type props = {
   scores?: React.ReactNode;
   theme?: "light" | "dark";
   onToggleTheme?: () => void;
+  onHighScoresHandler?: () => void;
 };
 
 const GameMenu = ({
@@ -20,6 +21,7 @@ const GameMenu = ({
   scores,
   theme,
   onToggleTheme,
+  onHighScoresHandler,
 }: props) => {
   return (
     <article data-testid="game-menu" className={styles.gameMenu}>
@@ -50,6 +52,13 @@ const GameMenu = ({
             text="New Game"
             extraProps={{ title: "Start a new game", "data-testid": "new-game-btn" }}
           />
+          {onHighScoresHandler && (
+            <Button
+              clickHandler={onHighScoresHandler}
+              text="Scores"
+              extraProps={{ title: "View high scores", "data-testid": "high-scores-btn" }}
+            />
+          )}
           {onToggleTheme && (
             <Button
               clickHandler={onToggleTheme}
