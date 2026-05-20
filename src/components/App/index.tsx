@@ -38,7 +38,7 @@ export const App: React.FC = () => {
   const [isWin, setIsWin] = useState(false);
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
-  const [undoCount, setUndoCount] = useState(1)
+  const [undoCount, setUndoCount] = useState(0)
   const [isMaxUndo, setIsMaxUndo] = useState(false)
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
@@ -266,7 +266,7 @@ export const App: React.FC = () => {
     setScore(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
-    setUndoCount(1)
+    setUndoCount(0)
     setIsMaxUndo(false)
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
@@ -342,6 +342,7 @@ export const App: React.FC = () => {
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
+          remainingUndos={MAX_UNDO - undoCount}
           theme={theme}
           onToggleTheme={toggleTheme}
           onHighScoresHandler={openLeaderboard}
