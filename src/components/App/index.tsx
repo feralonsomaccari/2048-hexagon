@@ -25,6 +25,8 @@ import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
 import useRemoteHighScores from "../../hooks/useRemoteHighScores";
 
+const MAX_UNDO = 3
+
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
   const [radius, setRadius] = useState(1);
@@ -36,6 +38,8 @@ export const App: React.FC = () => {
   const [isWin, setIsWin] = useState(false);
   const [score, setScore] = useState(0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
+  const [undoCount, setUndoCount] = useState(1)
+  const [isMaxUndo, setIsMaxUndo] = useState(false)
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading } = useRemoteHighScores();
@@ -108,6 +112,13 @@ export const App: React.FC = () => {
     }
   }, [tileSet]);
 
+  useEffect(() => {
+
+    if (undoCount >= MAX_UNDO) {
+      setIsMaxUndo(true)
+    }
+  }, [undoCount])
+
   const updateTile = (
     tile: gridElement,
     direction: string,
@@ -172,7 +183,9 @@ export const App: React.FC = () => {
     const clonedTileSet = structuredClone(tileSet);
     setHistoryTileSet(clonedTileSet);
     setHistoryScore(score);
-    setIsUndoAvailable(true);
+    if (!isMaxUndo) {
+      setIsUndoAvailable(true);
+    }
 
     const tilesToBeRemoved: number[] = [];
     const sortedTileSet = sortTileSet(clonedTileSet, direction);
@@ -247,6 +260,8 @@ export const App: React.FC = () => {
     setScore(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
+    setUndoCount(1)
+    setIsMaxUndo(false)
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
@@ -282,6 +297,7 @@ export const App: React.FC = () => {
     setTileSet(historyTileSet);
     setScore(historyScore);
     setIsUndoAvailable(false);
+    setUndoCount(prev => prev + 1)
   }, [historyTileSet, historyScore]);
 
   const onNewGameHandler = useCallback(() => {
