@@ -75,12 +75,18 @@ describe("insertHighScore", () => {
   });
 
   it("drops the lowest entry when a new score beats it on a full board", () => {
-    let scores = fillBoard(1, [400, 300, 200, 100]);
-    scores = insertHighScore(scores, 1, makeEntry("new", 250));
+    const baseScores = Array.from(
+      { length: MAX_ENTRIES_PER_BOARD },
+      (_, i) => (MAX_ENTRIES_PER_BOARD - i) * 100
+    );
+    const lowest = baseScores[baseScores.length - 1];
+    let scores = fillBoard(1, baseScores);
+    const newScore = lowest + 50;
+    scores = insertHighScore(scores, 1, makeEntry("new", newScore));
     expect(scores[1]).toHaveLength(MAX_ENTRIES_PER_BOARD);
-    expect(scores[1][0].score).toBe(400);
-    expect(scores[1].at(-1)!.score).toBe(200);
-    expect(scores[1].some((e) => e.score === 100)).toBe(false);
+    expect(scores[1][0].score).toBe(baseScores[0]);
+    expect(scores[1].at(-1)!.score).toBe(newScore);
+    expect(scores[1].some((e) => e.score === lowest)).toBe(false);
   });
 
   it("does not mutate the original scores object", () => {

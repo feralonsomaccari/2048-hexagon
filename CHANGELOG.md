@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-05-20
+
+### Changed
+- Leaderboard now lists the **top 3** per board (was top 4). Firestore listeners fetch fewer docs and the modal is more compact.
+- Leaderboard board sections now reserve a `min-height` of 88px (was 118px) to match the trimmed row count.
+
 ## [0.4.2] - 2026-05-20
 
 ### Changed
