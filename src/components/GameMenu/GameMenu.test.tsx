@@ -39,4 +39,20 @@ describe("<GameMenu/>", () => {
     render(<GameMenu {...props} isUndoAvailable={false} />);
     expect(screen.getByTestId("undo-btn")).toBeDisabled();
   });
+
+  it("should render the remaining undo count when provided", () => {
+    render(<GameMenu {...props} remainingUndos={3} />);
+    expect(screen.getByTestId("undo-btn")).toHaveTextContent("Undo (3)");
+  });
+
+  it("should label the undo button just 'Undo' when no remaining count is given", () => {
+    render(<GameMenu {...props} />);
+    expect(screen.getByTestId("undo-btn")).toHaveTextContent(/^Undo$/);
+  });
+
+  it("should disable the undo button when remainingUndos is 0 even if isUndoAvailable is true", () => {
+    render(<GameMenu {...props} remainingUndos={0} isUndoAvailable={true} />);
+    expect(screen.getByTestId("undo-btn")).toBeDisabled();
+    expect(screen.getByTestId("undo-btn")).toHaveTextContent("Undo (0)");
+  });
 });
