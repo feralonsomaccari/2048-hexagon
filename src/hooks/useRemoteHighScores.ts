@@ -3,8 +3,8 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
@@ -20,6 +20,7 @@ import {
 
 const COLLECTION = "highScores";
 const MAX_SCORE_SANITY = 10_000_000;
+const RADII = [1, 2, 3, 4] as const;
 
 const docIdFor = (radius: number, name: string): string =>
   `${radius}_${name.trim().toLowerCase()}`;
@@ -32,29 +33,17 @@ type RemoteState = {
   error: Error | null;
 };
 
-const fetchAllBoards = async (): Promise<HighScores> => {
-  const db = getDb();
-  if (!db) return {};
-  const result: HighScores = {};
-  for (const radius of [1, 2, 3, 4]) {
-    const q = query(
-      collection(db, COLLECTION),
-      where("boardRadius", "==", radius),
-      orderBy("score", "desc"),
-      limit(MAX_ENTRIES_PER_BOARD)
-    );
-    const snap = await getDocs(q);
-    result[radius] = snap.docs.map((doc) => {
-      const data = doc.data() as { name: string; score: number; createdAt?: { toDate: () => Date } };
-      return {
-        name: data.name,
-        score: data.score,
-        date: data.createdAt?.toDate().toISOString() ?? new Date().toISOString(),
-      };
-    });
-  }
-  return result;
+type FirestoreDocData = {
+  name: string;
+  score: number;
+  createdAt?: { toDate: () => Date };
 };
+
+const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
+  name: data.name,
+  score: data.score,
+  date: data.createdAt?.toDate().toISOString() ?? new Date().toISOString(),
+});
 
 const useRemoteHighScores = (): RemoteState => {
   const [scores, setScores] = useState<HighScores>({});
@@ -71,21 +60,35 @@ const useRemoteHighScores = (): RemoteState => {
 
   useEffect(() => {
     if (!db) return;
-    let cancelled = false;
+
     setIsLoading(true);
-    fetchAllBoards()
-      .then((next) => {
-        if (!cancelled) setScores(next);
-      })
-      .catch((err) => {
-        console.error("[highScores] initial fetch failed:", err);
-        if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
+    const received = new Set<number>();
+
+    const unsubscribers = RADII.map((radius) => {
+      const q = query(
+        collection(db, COLLECTION),
+        where("boardRadius", "==", radius),
+        orderBy("score", "desc"),
+        limit(MAX_ENTRIES_PER_BOARD)
+      );
+      return onSnapshot(
+        q,
+        (snap) => {
+          const entries = snap.docs.map((d) => docToEntry(d.data() as FirestoreDocData));
+          setScores((prev) => ({ ...prev, [radius]: entries }));
+          received.add(radius);
+          if (received.size === RADII.length) setIsLoading(false);
+        },
+        (err) => {
+          console.error(`[highScores] listener for radius=${radius} failed:`, err);
+          setError(err instanceof Error ? err : new Error(String(err)));
+          setIsLoading(false);
+        }
+      );
+    });
+
     return () => {
-      cancelled = true;
+      unsubscribers.forEach((unsub) => unsub());
     };
   }, [db]);
 
@@ -114,9 +117,6 @@ const useRemoteHighScores = (): RemoteState => {
             createdAt: serverTimestamp(),
           });
         }
-
-        const refreshed = await fetchAllBoards();
-        setScores(refreshed);
       } catch (err) {
         console.error("[highScores] write failed:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
