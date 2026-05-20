@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-05-20
+
+### Changed
+- High-score submit prompt now distinguishes between qualifying and topping: shows **"New high score"** when the player beats the current #3 entry (i.e., breaks into the top 3), and **"You scored"** when they qualify for the leaderboard (top 4) but don't crack the top 3.
+- `game-over` status pill is now also hidden on mobile (≤480px). Previously only the "playing" pill was hidden; the red pill remained visible.
+- Status pill on desktop is slightly smaller (font 12px → 11px, padding 3/10 → 2/8).
+- Score and Best pills now have a fixed `width: 100px` on desktop so they don't shift horizontally as the digit count changes.
+
 ## [0.4.0] - 2026-05-20
 
 ### Added
