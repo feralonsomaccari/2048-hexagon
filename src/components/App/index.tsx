@@ -13,6 +13,7 @@ import {
   validMovementsAvailable,
   sortTileSetById,
   createHexGrid,
+  isBlocked,
 } from "../../utils/gameLogic";
 import {
   HighScoreEntry,
@@ -89,7 +90,7 @@ export const App: React.FC = () => {
     const updatedGrid = [...grid];
 
     updatedGrid.forEach((block) => {
-      block.value = 0;
+      if (!isBlocked(block)) block.value = 0;
       block.merged = false;
     });
     tileSet.forEach((tile) => {

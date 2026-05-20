@@ -12,8 +12,9 @@ type props = {
 };
 
 const Block = ({ x, y, z, value = 0, left, top }: props): JSX.Element => {
+  const blocked = value === -1;
   return (
-    <div data-testid="block" style={{ left, top, ...getGridElementSizeFromRadius() }} className={styles.hexagon} data-x={x} data-y={y} data-z={z} data-value={value} aria-hidden="true" />
+    <div data-testid="block" style={{ left, top, ...getGridElementSizeFromRadius() }} className={`${styles.hexagon} ${blocked ? styles.blocked : ""}`} data-x={x} data-y={y} data-z={z} data-value={value} data-blocked={blocked || undefined} aria-hidden="true" />
   );
 };
 

@@ -24,8 +24,8 @@ const pickRandomN = <T>(array: T[], n: number): T[] =>
 const arePointsSame = (a: Point, b: Point): boolean =>
   !["x", "y", "z"].some((v) => a[v as keyof Point] !== b[v as keyof Point]);
 
-const fourProbabilityByRadius: Record<number, number> = { 2: 0.1, 3: 0.15, 4: 0.2, 5: 0.25 };
-const doubleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.25, 4: 0.6, 5: 0.75 };
+const fourProbabilityByRadius: Record<number, number> = { 2: 0.1, 3: 0.2, 4: 0.2, 5: 0.25 };
+const doubleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.5, 4: 0.6, 5: 0.75 };
 const tripleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0.1 };
 
 const pickSpawnCount = (radius: number): number => {
@@ -37,9 +37,14 @@ const pickSpawnCount = (radius: number): number => {
   return 1;
 };
 
-export function getRNGPoints(radius: number, userPoints: Point[] = []): (Point & { value: number })[] {
+export function getRNGPoints(
+  radius: number,
+  userPoints: Point[] = [],
+  blockedPoints: Point[] = []
+): (Point & { value: number })[] {
+  const excluded = [...userPoints, ...blockedPoints];
   const availablePositions = getFieldPoints(radius).filter((a) =>
-    userPoints.every((b) => !arePointsSame(a, b))
+    excluded.every((b) => !arePointsSame(a, b))
   );
   const fourProbability = fourProbabilityByRadius[radius] ?? 0.1;
   const pointsCount = Math.min(

@@ -79,7 +79,9 @@ const findNextBlock = (tile: gridElement, direction: string, grid: gridElement[]
       tempTilePos.y === block.y &&
       tempTilePos.z === block.z
   );
-  return match ?? false;
+  if (!match) return false;
+  if (isBlocked(match)) return false;
+  return match;
 };
 
 const validMovementsAvailable = (
@@ -101,6 +103,13 @@ const validMovementsAvailable = (
 const addIds = (dataSet: gridElement[]): gridElement[] =>
   dataSet.map((item) => ({ ...item, id: Math.random() }));
 
+const BLOCKED_VALUE = -1;
+
+const isBlocked = (cell: { value?: number } | undefined | false): boolean =>
+  !!cell && cell.value === BLOCKED_VALUE;
+
+const hasBlockedCenter = (radius: number): boolean => radius === 2;
+
 const createHexBlock = (x: number, y: number, z: number): gridElement => ({ x, y, z, value: 0 });
 
 const createHexGrid = (radius: number): gridElement[] => {
@@ -109,7 +118,13 @@ const createHexGrid = (radius: number): gridElement[] => {
   for (let i = -radius; i <= radius; i++) {
     for (let j = -radius; j <= radius; j++) {
       for (let k = -radius; k <= radius; k++) {
-        if (i + j + k === 0) grid.push(createHexBlock(i, j, k));
+        if (i + j + k === 0) {
+          const block = createHexBlock(i, j, k);
+          if (hasBlockedCenter(radius) && i === 0 && j === 0 && k === 0) {
+            block.value = BLOCKED_VALUE;
+          }
+          grid.push(block);
+        }
       }
     }
   }
@@ -135,4 +150,7 @@ export {
   sortTileSetById,
   createHexGrid,
   isValidSavedGame,
+  isBlocked,
+  hasBlockedCenter,
+  BLOCKED_VALUE,
 };

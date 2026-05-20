@@ -10,3 +10,9 @@
   text-align: center;
 }
 
+.blocked {
+  background-image: none;
+  background-color: #8a8a8a;
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
+}
+
