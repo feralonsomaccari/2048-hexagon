@@ -18,6 +18,11 @@
   background-color: var(--color-disabled);
 }
 
+.button:focus-visible {
+  outline: 3px solid var(--color-text-main);
+  outline-offset: 2px;
+}
+
 @media (max-width: 480px) {
   .button {
     max-width: none;

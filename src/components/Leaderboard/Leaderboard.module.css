@@ -97,8 +97,9 @@
   color: var(--color-text-main);
 }
 
-.input:focus {
-  outline: none;
+.input:focus-visible {
+  outline: 2px solid var(--color-text-main);
+  outline-offset: 1px;
   border-color: var(--color-secondary);
 }
 

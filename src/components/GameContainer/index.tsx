@@ -55,6 +55,8 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
           data-testid="overlay"
           role="alertdialog"
           aria-labelledby="overlay-title"
+          aria-atomic="true"
+          aria-modal="true"
         >
           <h2 id="overlay-title">{isWin ? "You Win!" : "Game Over"}</h2>
           {pendingHighScore && onSubmitHighScore && (

@@ -28,7 +28,7 @@ const GameMenu = ({
   onHighScoresHandler,
 }: props) => {
   return (
-    <article data-testid="game-menu" className={styles.gameMenu}>
+    <header data-testid="game-menu" className={styles.gameMenu}>
       <div className={styles.top}>
         <div className={styles.titleBlock}>
           <h1 className={styles.title} aria-label="2048 Hexagon">
@@ -37,6 +37,7 @@ const GameMenu = ({
           <span className={styles.subtitle}>hexagon version</span>
           <p className={styles.srOnly}>
             A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048.
+            Move tiles using the keys Q, W, E, A, S, D or the arrow keys. On touch devices, swipe in any of the six directions.
           </p>
         </div>
         {scores && <div className={styles.scores}>{scores}</div>}
@@ -50,19 +51,34 @@ const GameMenu = ({
               clickHandler={undoHandler}
               disabled={!isUndoAvailable || remainingUndos === 0}
               text={remainingUndos !== undefined ? `Undo (${remainingUndos})` : "Undo"}
-              extraProps={{ title: "Undo last action", "data-testid": "undo-btn" }}
+              extraProps={{
+                title: "Undo last action",
+                "data-testid": "undo-btn",
+                "aria-label":
+                  remainingUndos !== undefined
+                    ? `Undo last action, ${remainingUndos} remaining`
+                    : "Undo last action",
+              }}
             />
           )}
           <Button
             clickHandler={onNewGameHandler}
             text="New Game"
-            extraProps={{ title: "Start a new game", "data-testid": "new-game-btn" }}
+            extraProps={{
+              title: "Start a new game",
+              "data-testid": "new-game-btn",
+              "aria-label": "Start a new game",
+            }}
           />
           {onHighScoresHandler && (
             <Button
               clickHandler={onHighScoresHandler}
               text="Scores"
-              extraProps={{ title: "View high scores", "data-testid": "high-scores-btn" }}
+              extraProps={{
+                title: "View high scores",
+                "data-testid": "high-scores-btn",
+                "aria-label": "View high scores",
+              }}
             />
           )}
           {onToggleTheme && (
@@ -78,7 +94,7 @@ const GameMenu = ({
           )}
         </div>
       </div>
-    </article>
+    </header>
   );
 };
 

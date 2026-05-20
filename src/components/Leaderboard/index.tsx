@@ -48,20 +48,20 @@ const Leaderboard = ({ scores, highlightRadius, highlightEntry, isLoading = fals
               <p className={styles.empty}>No scores yet — be the first.</p>
             ) : (
               <ol className={styles.list}>
-                {list.slice(0, MAX_ENTRIES_PER_BOARD).map((entry, index) => (
+                {list.slice(0, MAX_ENTRIES_PER_BOARD).map((entry, index) => {
+                  const highlighted = isHighlighted(radius, entry, index, list);
+                  return (
                   <li
                     key={`${entry.name}-${entry.date}-${index}`}
-                    className={`${styles.row} ${
-                      isHighlighted(radius, entry, index, list)
-                        ? styles.highlighted
-                        : ""
-                    }`}
+                    className={`${styles.row} ${highlighted ? styles.highlighted : ""}`}
+                    aria-live={highlighted ? "polite" : undefined}
                   >
                     <span className={styles.rank}>{index + 1}.</span>
                     <span className={styles.name}>{entry.name}</span>
                     <span className={styles.score}>{entry.score}</span>
                   </li>
-                ))}
+                  );
+                })}
               </ol>
             )}
           </section>

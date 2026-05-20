@@ -37,6 +37,12 @@
   border-color: var(--color-tertiary);
 }
 
+.card:focus-visible {
+  outline: 3px solid var(--color-text-main);
+  outline-offset: 2px;
+  border-color: var(--color-text-main);
+}
+
 .selected {
   border-color: var(--color-secondary);
   background-color: var(--bg-color-4);

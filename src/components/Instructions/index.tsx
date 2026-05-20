@@ -11,7 +11,7 @@ const Instructions = () => {
       </p>
       <p className={`${styles.text} ${styles.touchOnly}`}>
         <strong> HOW TO PLAY:</strong> <strong>Swipe</strong> the board in any of the
-        <strong> 6 directions</strong> to move the tiles. Tiles with the same number
+        <strong> 6 directions</strong> — or use the <strong>arrow keys</strong> or <strong>Q, W, E, A, S, D</strong> on a keyboard — to move the tiles. Tiles with the same number
         <strong> merge into one</strong> when they touch. Add them up to reach
         <strong> 2048!</strong>
       </p>
