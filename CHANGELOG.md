@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-05-20
+
+### Changed
+- Undo budget now varies by board size to add pressure on larger boards:
+  - Small (radius 1): 3 undos (unchanged).
+  - Medium (radius 2): **1 undo**.
+  - Large (radius 3): **0 undos** — Undo button is hidden.
+  - XL (radius 4): **0 undos** — Undo button is hidden.
+
 ## [0.4.1] - 2026-05-20
 
 ### Changed
