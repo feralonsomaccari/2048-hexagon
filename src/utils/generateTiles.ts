@@ -24,14 +24,20 @@ const pickRandomN = <T>(array: T[], n: number): T[] =>
 const arePointsSame = (a: Point, b: Point): boolean =>
   !["x", "y", "z"].some((v) => a[v as keyof Point] !== b[v as keyof Point]);
 
+const fourProbabilityByRadius: Record<number, number> = { 2: 0.1, 3: 0.12, 4: 0.14, 5: 0.16 };
+const doubleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.15, 4: 0.3, 5: 0.45 };
+
 export function getRNGPoints(radius: number, userPoints: Point[] = []): (Point & { value: number })[] {
   const availablePositions = getFieldPoints(radius).filter((a) =>
     userPoints.every((b) => !arePointsSame(a, b))
   );
+  const fourProbability = fourProbabilityByRadius[radius] ?? 0.1;
+  const doubleSpawnProbability = doubleSpawnProbabilityByRadius[radius] ?? 0;
+  const spawnCount = 1 + (Math.random() < doubleSpawnProbability ? 1 : 0);
   const pointsCount = Math.min(
     availablePositions.length,
-    userPoints.length === 0 ? 3 : 1 + (Math.random() > 0.8 ? 1 : 0)
+    userPoints.length === 0 ? 3 : spawnCount
   );
-  const selectedValue = userPoints.length === 0 ? 2 : Math.random() > 0.5 ? 2 : 4;
+  const selectedValue = userPoints.length === 0 ? 2 : Math.random() < 1 - fourProbability ? 2 : 4;
   return pickRandomN(availablePositions, pointsCount).map((p) => ({ ...p, value: selectedValue }));
 }
