@@ -37,7 +37,7 @@ const HighScorePrompt = ({ score, onSubmit }: props) => {
       <div className={styles.formActions}>
         <Button
           text="Save"
-          clickHandler={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+          extraProps={{ type: "submit" }}
         />
       </div>
     </form>

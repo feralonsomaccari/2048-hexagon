@@ -29,7 +29,6 @@
   color: var(--bg-color-4);
 }
 
-
 .score::before {
   content: attr(data-value);
   position: absolute;

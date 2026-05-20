@@ -16,8 +16,6 @@ import {
 } from "../../utils/gameLogic";
 import {
   HighScoreEntry,
-  HighScores,
-  insertHighScore,
   qualifiesForHighScore,
 } from "../../utils/highScores";
 import useLocalStorage from "../../hooks/useLocalStorage";
@@ -25,6 +23,7 @@ import useGameTiles from "../../hooks/useGameTiles";
 import useViewport from "../../hooks/useWindowScale";
 import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
+import useRemoteHighScores from "../../hooks/useRemoteHighScores";
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
@@ -39,7 +38,7 @@ export const App: React.FC = () => {
   const [isUndoAvailable, setIsUndoAvailable] = useState(false);
   const [historyScore, setHistoryScore] = useState(0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
-  const [highScores, setHighScores] = useLocalStorage<HighScores>("highScores", {});
+  const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
   const [pendingHighScore, setPendingHighScore] = useState(false);
   const [lastQualifyingEntry, setLastQualifyingEntry] = useState<HighScoreEntry | null>(null);
@@ -259,19 +258,16 @@ export const App: React.FC = () => {
   };
 
   const submitHighScore = useCallback(
-    (name: string) => {
-      const entry: HighScoreEntry = {
-        name,
-        score,
-        date: new Date().toISOString(),
-      };
-      setHighScores((prev) => insertHighScore(prev, radius, entry));
-      setLastQualifyingEntry(entry);
-      setLastQualifyingRadius(radius);
+    async (name: string) => {
+      const entry = await submitRemoteHighScore(radius, score, name);
+      if (entry) {
+        setLastQualifyingEntry(entry);
+        setLastQualifyingRadius(radius);
+      }
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, score, setHighScores]
+    [radius, score, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -305,6 +301,7 @@ export const App: React.FC = () => {
             scores={highScores}
             highlightRadius={lastQualifyingRadius ?? undefined}
             highlightEntry={lastQualifyingEntry}
+            isLoading={isHighScoresLoading}
           />
         </Modal>
       )}
@@ -313,7 +310,10 @@ export const App: React.FC = () => {
           scores={
             <>
               <Score title="Score" score={score} historyScore={historyScore} />
-              <Score title="Best" score={maxScore?.[radius] ?? 0} />
+              <Score
+                title="Best"
+                score={highScores[radius]?.[0]?.score ?? maxScore?.[radius] ?? 0}
+              />
             </>
           }
           isGameOver={isGameOver}

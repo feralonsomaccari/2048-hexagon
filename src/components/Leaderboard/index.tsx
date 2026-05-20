@@ -10,11 +10,12 @@ type props = {
   scores: HighScores;
   highlightRadius?: number;
   highlightEntry?: HighScoreEntry | null;
+  isLoading?: boolean;
 };
 
 const radiusOrder = [1, 2, 3, 4];
 
-const Leaderboard = ({ scores, highlightRadius, highlightEntry }: props) => {
+const Leaderboard = ({ scores, highlightRadius, highlightEntry, isLoading = false }: props) => {
   const isHighlighted = (
     radius: number,
     entry: HighScoreEntry,
@@ -41,7 +42,9 @@ const Leaderboard = ({ scores, highlightRadius, highlightEntry }: props) => {
         return (
           <section key={radius} className={styles.boardSection}>
             <span className={styles.boardLabel}>{BOARD_LABELS[radius]}</span>
-            {list.length === 0 ? (
+            {isLoading ? (
+              <p className={styles.empty}>Loading…</p>
+            ) : list.length === 0 ? (
               <p className={styles.empty}>No scores yet — be the first.</p>
             ) : (
               <ol className={styles.list}>
