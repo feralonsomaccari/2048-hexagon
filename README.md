@@ -13,8 +13,10 @@ Combine tiles of the same number by sliding the board in one of six directions. 
 ### Features
 
 - Four board sizes (7, 19, 37, or 61 cells) selectable from the **New Game** menu
-- Per-size high-score tracking persisted in `localStorage`
-- One-step undo
+- Cross-device leaderboard backed by **Firebase Firestore**: top scores per board are shared across all players, deduplicated per name
+- Personal best per board persisted in `localStorage`
+- Light/dark theme with system-preference detection
+- Undo (capped per game)
 - Smooth tile movement and merge animations
 - Accessible: keyboard-first controls, ARIA live regions, dialog focus management
 
@@ -23,6 +25,7 @@ Combine tiles of the same number by sliding the board in one of six directions. 
 - **React 18** + **TypeScript**
 - **Vite** as the build tool and dev server
 - **CSS Modules** for scoped styling
+- **Firebase Firestore** for the global leaderboard (anon writes locked down via security rules)
 - **Vitest** + **React Testing Library** for unit tests
 - Deployed to **GitHub Pages** via `gh-pages`
 
@@ -39,3 +42,8 @@ npm run test:watch # run tests in watch mode
 ## Notes on the hex math
 
 The grid uses **cube coordinates** (`x + y + z = 0`) — three axes for the six neighbour directions instead of two for a square grid. Red Blob Games' [Hexagonal Grids guide](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) is an excellent reference and was the basis for the movement and merge logic here.
+
+## Credits
+
+- Based on the original **[2048](https://play2048.co/)** by [Gabriele Cirulli](https://github.com/gabrielecirulli).
+- Hex coordinate math adapted from [Red Blob Games](https://www.redblobgames.com/grids/hexagons/).
