@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-20
+
+### Added
+- Realtime leaderboard via Firestore `onSnapshot` listeners — top scores update across every open client the instant a new entry lands, no manual refresh.
+- Triple-spawn mechanic on the XL board: 10% of post-move spawns now drop three new tiles at once.
+- Visible undo counter on the Undo button (`Undo (n)`) that decrements with each use; button disables at 0.
+- Unit tests for the visible undo counter (in `GameMenu`) and the end-to-end undo budget (in `App`).
+- Firebase mocked in App tests so the suite no longer initializes the real SDK.
+
+### Changed
+- Leaderboard now lists the **top 4** per board (was top 5) to keep the modal compact.
+- Difficulty rebalance for Medium/Large/XL — pressure now scales more aggressively so larger boards don't feel forgiving:
+  - Medium (radius 3): P(4) 12% → 15%; P(double) 15% → 25%.
+  - Large (radius 4): P(4) 14% → 20%; P(double) 30% → 60%.
+  - XL (radius 5): P(4) 16% → 25%; P(double) 45% → 75%; added 10% P(triple).
+  - Small is unchanged (classic 2048 baseline).
+- Score animation styling cleaned up: removed the white text-shadow halo, lighter font weight (700), tighter letter-spacing. Color now matches the "playing" status pill — dark forest green in light mode (`#2d6a4f`), light mint in dark mode (`#95d5b2`).
+- Top-score legend below "How to play" is now left-aligned and reserves `min-height` so the board doesn't shift when the leaderboard finishes loading.
+- Leaderboard board sections reserve a `min-height` equivalent to four rows so the modal stays the same size whether boards are empty, loading, or fully populated.
+- Footer slightly shrunk and softened to 50% opacity.
+
+### Fixed
+- Off-by-one in the undo budget: players now actually get 3 undos per game instead of 2.
+- Best pill no longer fires the `+N` pop animation. Previously, any change to the global #1 (initial leaderboard load, switching boards, a remote update) caused the animation to render `+<full new best>` on the Best pill. The animation now only fires on the Score pill, which is the only one that receives a `historyScore`.
+- Submit prompt on the win overlay: previously only `game-over` set `pendingHighScore`, so reaching 2048 produced a win banner without a name-entry field. The hook now also flips `pendingHighScore` when `isWin` becomes true.
+- Duplicate score submissions caused by both the form's `onSubmit` and the inner button's click handler firing. The Save button is now `type="submit"` and the form is the single submission path.
+
 ## [0.3.0] - 2026-05-20
 
 ### Added
