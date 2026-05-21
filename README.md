@@ -1,25 +1,15 @@
 # 2048 Hexagon
 
-A hexagonal twist on the classic [2048](https://play2048.co/) puzzle game. Slide and merge tiles across a hex grid to reach 2048.
+This is a hexagonal version of the classic [2048](https://play2048.co/).
 
 **[Play it here →](https://2048hexagon.com)**
 
 ![Gameplay](./game2.png)
 
-## How to play
-
-Combine tiles of the same number by sliding the board in one of six directions. When two matching tiles meet, they merge into one with double the value. Keep merging to reach **2048** (512 in small).
-
-### Features
-
-- Two board sizes — **Small** (7 cells) and **Normal** (19 cells) — selectable from the **New Game** menu
-- Personal best per board persisted in `localStorage`
-- Light/dark theme with system-preference detection
-- Accessible: keyboard-first controls, ARIA live regions, dialog focus management
-
 ### Spawn rules
 
-Each board picks a different cadence and tile-value mix so the difficulty curve fits the size.
+Because this is not a square like the regular one I've been tweaking the game to make it winnable and as fair as possible. For example the small hexagon version
+most likely cannot be beaten, so I reduce the win condition to 512.
 
 | Board  | Cells | Starter spawn | Per-turn spawn count                  | Spawned tile values |
 | ------ | ----- | ------------- | ------------------------------------- | ------------------- |
@@ -27,6 +17,8 @@ Each board picks a different cadence and tile-value mix so the difficulty curve 
 | Normal | 19    | 3 × `2`       | 50% chance of 1 tile · 50% of 2 tiles | 80% `2` · 20% `4`   |
 
 Small never spawns a `4` — board pressure already comes from running out of space, so a stray high-value tile would be pure friction. Normal can spawn 4s and occasionally adds two tiles at once to keep the larger board filling up.
+
+Was quite a challenge to make the hexagons to work. I've used this guide to learn how to do it [Red Blob Games](https://www.redblobgames.com/grids/hexagons/)
 
 ## Tech stack
 
@@ -45,10 +37,6 @@ npm i
 npm run dev
 npm run test:watch # run tests in watch mode
 ```
-
-## Notes on the hex math
-
-The grid uses **cube coordinates** (`x + y + z = 0`) — three axes for the six neighbour directions instead of two for a square grid. Red Blob Games' [Hexagonal Grids guide](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) is an excellent reference and was the basis for the movement and merge logic here.
 
 ## Credits
 
