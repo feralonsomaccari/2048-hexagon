@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getRNGPoints } from "../utils/generateTiles";
-import { addIds, hasBlockedCenter } from "../utils/gameLogic";
+import { addIds, getBlockedPoints } from "../utils/gameLogic";
 
 const useGameTiles = (tileSet: gridElement[], radius: number) => {
   const [response, setResponse] = useState<gridElement[]>([]);
@@ -8,8 +8,7 @@ const useGameTiles = (tileSet: gridElement[], radius: number) => {
 
   const fetchTiles = async (newTileSet: gridElement[] = tileSet, newRadius: number = radius) => {
     try {
-      const blocked = hasBlockedCenter(newRadius) ? [{ x: 0, y: 0, z: 0 }] : [];
-      const result = getRNGPoints(newRadius + 1, newTileSet, blocked);
+      const result = getRNGPoints(newRadius + 1, newTileSet, getBlockedPoints(newRadius));
       setResponse([...addIds(result), ...newTileSet]);
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));

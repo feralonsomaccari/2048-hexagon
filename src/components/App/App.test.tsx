@@ -81,10 +81,10 @@ describe("<App/>", () => {
   });
 
   describe("undo budget", () => {
-    it("should start with 3 remaining undos shown on the button", async () => {
+    it("should start with 1 remaining undo shown on the button", async () => {
       render(<App />);
       await waitFor(() => {
-        expect(screen.getByTestId("undo-btn")).toHaveTextContent("Undo (3)");
+        expect(screen.getByTestId("undo-btn")).toHaveTextContent("Undo (1)");
       });
     });
 
@@ -102,16 +102,16 @@ describe("<App/>", () => {
         expect(screen.getByTestId("undo-btn")).toBeInTheDocument();
       });
 
-      for (let used = 0; used < 3; used += 1) {
+      for (let used = 0; used < 1; used += 1) {
         await makeAnyValidMove();
-        expect(screen.getByTestId("undo-btn")).toHaveTextContent(`Undo (${3 - used})`);
+        expect(screen.getByTestId("undo-btn")).toHaveTextContent(`Undo (${1 - used})`);
 
         await act(async () => {
           fireEvent.click(screen.getByTestId("undo-btn"));
         });
 
         await waitFor(() => {
-          expect(screen.getByTestId("undo-btn")).toHaveTextContent(`Undo (${3 - used - 1})`);
+          expect(screen.getByTestId("undo-btn")).toHaveTextContent(`Undo (${1 - used - 1})`);
         });
       }
 
@@ -119,7 +119,7 @@ describe("<App/>", () => {
 
       try {
         await makeAnyValidMove();
-        throw new Error("Expected no undo to become available after 3 undos consumed");
+        throw new Error("Expected no undo to become available after 1 undo consumed");
       } catch (err) {
         expect((err as Error).message).toMatch(/No movement direction enabled undo/);
       }

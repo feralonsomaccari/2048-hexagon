@@ -6,11 +6,11 @@ export type HighScoreEntry = {
 
 export type HighScores = Record<string, HighScoreEntry[]>;
 
-export const MAX_ENTRIES_PER_BOARD = 3;
+export const MAX_ENTRIES_PER_BOARD = 5;
 
 export const BOARD_LABELS: Record<number, string> = {
   1: "Small",
-  2: "Medium",
+  2: "Normal",
   3: "Large",
   4: "XL",
 };

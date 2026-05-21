@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-05-21
+
+### Changed
+- New Game menu now offers only **Small** and **Normal** board sizes (Large and XL are hidden but preserved in code for easy restore).
+- Renamed the radius-2 board from "Medium" to **"Normal"** across the New Game menu and the leaderboard.
+- Default board size on first load is now **Normal** (radius 2) instead of Small.
+- Leaderboard now lists the **top 5** per board (was top 3) and shows **Normal first**, Small second. Firestore listeners fetch 5 docs accordingly.
+- "Beats high score" indicator now compares against the 5th-place entry (was 3rd) to match the new leaderboard depth.
+
 ## [0.4.4] - 2026-05-20
 
 ### Added

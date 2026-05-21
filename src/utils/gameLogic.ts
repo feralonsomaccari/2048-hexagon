@@ -108,7 +108,32 @@ const BLOCKED_VALUE = -1;
 const isBlocked = (cell: { value?: number } | undefined | false): boolean =>
   !!cell && cell.value === BLOCKED_VALUE;
 
-const hasBlockedCenter = (radius: number): boolean => radius === 2;
+const BLOCKED_RADIUS_BY_RADIUS: Record<number, number> = { 2: 0, 3: 1, 4: 2 };
+
+const getBlockedRadius = (radius: number): number => BLOCKED_RADIUS_BY_RADIUS[radius] ?? -1;
+
+const hasBlockedCenter = (radius: number): boolean => getBlockedRadius(radius) >= 0;
+
+const isWithinBlockedZone = (x: number, y: number, z: number, radius: number): boolean => {
+  const blockedRadius = getBlockedRadius(radius);
+  if (blockedRadius < 0) return false;
+  return (Math.abs(x) + Math.abs(y) + Math.abs(z)) / 2 <= blockedRadius;
+};
+
+const getBlockedPoints = (radius: number): { x: number; y: number; z: number }[] => {
+  if (!hasBlockedCenter(radius)) return [];
+  const points: { x: number; y: number; z: number }[] = [];
+  for (let i = -radius; i <= radius; i++) {
+    for (let j = -radius; j <= radius; j++) {
+      for (let k = -radius; k <= radius; k++) {
+        if (i + j + k === 0 && isWithinBlockedZone(i, j, k, radius)) {
+          points.push({ x: i, y: j, z: k });
+        }
+      }
+    }
+  }
+  return points;
+};
 
 const createHexBlock = (x: number, y: number, z: number): gridElement => ({ x, y, z, value: 0 });
 
@@ -120,7 +145,7 @@ const createHexGrid = (radius: number): gridElement[] => {
       for (let k = -radius; k <= radius; k++) {
         if (i + j + k === 0) {
           const block = createHexBlock(i, j, k);
-          if (hasBlockedCenter(radius) && i === 0 && j === 0 && k === 0) {
+          if (isWithinBlockedZone(i, j, k, radius)) {
             block.value = BLOCKED_VALUE;
           }
           grid.push(block);
@@ -152,5 +177,6 @@ export {
   isValidSavedGame,
   isBlocked,
   hasBlockedCenter,
+  getBlockedPoints,
   BLOCKED_VALUE,
 };

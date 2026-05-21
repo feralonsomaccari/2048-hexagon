@@ -30,7 +30,7 @@ const MAX_UNDO_BY_RADIUS: Record<number, number> = { 1: 3, 2: 1, 3: 0, 4: 0 };
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
-  const [radius, setRadius] = useState(1);
+  const [radius, setRadius] = useState(2);
   const [grid, setGrid] = useState<gridElement[]>([]);
   const [tileSet, setTileSet] = useState<gridElement[]>([]);
   const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
@@ -42,13 +42,13 @@ export const App: React.FC = () => {
   const [undoCount, setUndoCount] = useState(0)
   const [isMaxUndo, setIsMaxUndo] = useState(false)
   const [historyScore, setHistoryScore] = useState(0);
-  const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 1: 0 });
+  const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
   const [pendingHighScore, setPendingHighScore] = useState(false);
   const [lastQualifyingEntry, setLastQualifyingEntry] = useState<HighScoreEntry | null>(null);
   const [lastQualifyingRadius, setLastQualifyingRadius] = useState<number | null>(null);
-  const [serverResponse, fetchTiles] = useGameTiles([], 1);
+  const [serverResponse, fetchTiles] = useGameTiles([], 2);
   const [theme, toggleTheme] = useTheme();
   const viewport = useViewport();
   const boardRef = useRef<HTMLElement>(null);
@@ -372,7 +372,7 @@ export const App: React.FC = () => {
           pendingHighScore={pendingHighScore}
           score={score}
           onSubmitHighScore={submitHighScore}
-          beatsHighScore={score > (highScores[radius]?.[2]?.score ?? 0)}
+          beatsHighScore={score > (highScores[radius]?.[4]?.score ?? 0)}
         />
         <footer className={styles.footer}>
           Made by{" "}

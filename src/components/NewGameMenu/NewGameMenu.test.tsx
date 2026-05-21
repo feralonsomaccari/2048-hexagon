@@ -9,9 +9,10 @@ describe("<NewGameMenu/>", () => {
   it("should render all size options", () => {
     render(<NewGameMenu {...props} />);
     expect(screen.getByText("Small")).toBeInTheDocument();
-    expect(screen.getByText("Medium")).toBeInTheDocument();
-    expect(screen.getByText("Large")).toBeInTheDocument();
-    expect(screen.getByText("XL")).toBeInTheDocument();
+    expect(screen.getByText("Normal")).toBeInTheDocument();
+    expect(screen.queryByText("Medium")).not.toBeInTheDocument();
+    expect(screen.queryByText("Large")).not.toBeInTheDocument();
+    expect(screen.queryByText("XL")).not.toBeInTheDocument();
   });
 
   it("should render the start button", () => {
@@ -22,15 +23,15 @@ describe("<NewGameMenu/>", () => {
   it("should call resetGameHandler with the selected radius on start", () => {
     const resetGameHandler = vi.fn();
     render(<NewGameMenu resetGameHandler={resetGameHandler} />);
-    fireEvent.click(screen.getByText("Medium"));
+    fireEvent.click(screen.getByText("Small"));
     fireEvent.click(screen.getByText("Start Game"));
-    expect(resetGameHandler).toHaveBeenCalledWith(2);
+    expect(resetGameHandler).toHaveBeenCalledWith(1);
   });
 
-  it("should default to Small (radius 1)", () => {
+  it("should default to Normal (radius 2)", () => {
     const resetGameHandler = vi.fn();
     render(<NewGameMenu resetGameHandler={resetGameHandler} />);
     fireEvent.click(screen.getByText("Start Game"));
-    expect(resetGameHandler).toHaveBeenCalledWith(1);
+    expect(resetGameHandler).toHaveBeenCalledWith(2);
   });
 });
