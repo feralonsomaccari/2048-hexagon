@@ -52,36 +52,51 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png" />
     <link rel="manifest" href="./manifest.json" />
     <title>2048 Hexagon — Free Online Hex Puzzle Game</title>
+    <style>
+      .seo-content {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
   </head>
   <body>
     <noscript>
-      <h1>2048 Hexagon — Free Online Hex Puzzle Game</h1>
-      <p>
-        2048 Hexagon is a free, browser-based puzzle game — a hexagonal twist on the classic 2048.
-        Instead of a 4×4 square grid, tiles live on a hexagonal board, giving you six directions to slide
-        instead of four. The challenge is the same: merge matching numbered tiles to climb toward the
-        elusive 2048 tile.
-      </p>
-
-      <h2>How to play</h2>
-      <ul>
-        <li>Slide tiles using <strong>Q, W, E, A, S, D</strong> on the keyboard, or swipe on touch devices.</li>
-        <li>When two tiles with the same number touch, they merge into one tile with double the value.</li>
-        <li>A new tile spawns after every move. The game ends when no moves are possible.</li>
-        <li>Reach the <strong>2048 tile</strong> to win — but you can keep merging for higher scores.</li>
-      </ul>
-
-      <h2>Features</h2>
-      <ul>
-        <li>Free to play in your browser — no download, no signup, no ads.</li>
-        <li>Multiple board sizes for different difficulty levels.</li>
-        <li>Works on desktop and mobile.</li>
-        <li>Built with React and TypeScript — open source on GitHub.</li>
-      </ul>
-
-      <p><strong>You need to enable JavaScript to play.</strong></p>
+      <p><strong>You need to enable JavaScript to play 2048 Hexagon.</strong></p>
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div class="seo-content">
+        <h1>2048 Hexagon — Free Online Hex Puzzle Game</h1>
+        <p>
+          2048 Hexagon is a free, browser-based puzzle game — a hexagonal twist on the classic 2048.
+          Instead of a 4×4 square grid, tiles live on a hexagonal board, giving you six directions to slide
+          instead of four. The challenge is the same: merge matching numbered tiles to climb toward the
+          elusive 2048 tile.
+        </p>
+
+        <h2>How to play</h2>
+        <ul>
+          <li>Slide tiles using <strong>Q, W, E, A, S, D</strong> on the keyboard, or swipe on touch devices.</li>
+          <li>When two tiles with the same number touch, they merge into one tile with double the value.</li>
+          <li>A new tile spawns after every move. The game ends when no moves are possible.</li>
+          <li>Reach the <strong>2048 tile</strong> to win — but you can keep merging for higher scores.</li>
+        </ul>
+
+        <h2>Features</h2>
+        <ul>
+          <li>Free to play in your browser — no download, no signup, no ads.</li>
+          <li>Multiple board sizes for different difficulty levels.</li>
+          <li>Works on desktop and mobile.</li>
+          <li>Built with React and TypeScript — open source on GitHub.</li>
+        </ul>
+      </div>
+    </div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
