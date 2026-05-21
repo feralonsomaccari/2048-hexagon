@@ -1,6 +1,14 @@
 // ── Defaults ────────────────────────────────────────────────────────────────
 /** Board radius used on first load when no saved game exists. 1=Small, 2=Normal, 3=Large, 4=XL */
-export const DEFAULT_RADIUS = 1;
+export const DEFAULT_RADIUS = 2;
+
+/** Tile value required to win, per board radius. */
+export const WIN_TILE_BY_RADIUS: Record<number, number> = {
+  1: 512,  // Small
+  2: 2048, // Normal
+  3: 2048, // Large
+  4: 2048, // XL
+};
 
 // ── Leaderboard ─────────────────────────────────────────────────────────────
 export const LEADERBOARD_SIZE = 5;

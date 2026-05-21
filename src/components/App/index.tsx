@@ -32,7 +32,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
@@ -181,7 +181,7 @@ export const App: React.FC = () => {
         }
         const newValue = tile.value + nextBlock.value;
         setScore((prevScore) => prevScore + newValue);
-        if (newValue >= 2048) setIsWin(true);
+        if (newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
         tile.z = nextBlock.z;
