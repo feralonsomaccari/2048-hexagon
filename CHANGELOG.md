@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.7] - 2026-05-21
+
+### Added
+- Last chosen board size is now persisted to `localStorage` under `lastRadius` as soon as a new game is started, so refreshing before making the first move keeps the selected size (e.g. Small) instead of falling back to the default.
+
+### Changed
+- Saved-game writes are now gated on at least one move being made (non-empty `historyTileSet`), so a brand-new game with no moves no longer creates a stale save slot.
+
+## [0.4.6] - 2026-05-21
+
+### Added
+- Game progress now persists across page reloads: board, tiles, score, current radius, and undo state (history snapshot, remaining undos, max-undo flag) are written to `localStorage` under the `savedGame` key after each change and restored on next visit. The saved game is cleared on game over or when starting a new game.
+
 ## [0.4.5] - 2026-05-21
 
 ### Changed

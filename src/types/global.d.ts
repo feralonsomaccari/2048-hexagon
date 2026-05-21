@@ -14,6 +14,12 @@ declare global {
     tileSet: gridElement[],
     grid: gridElement[],
     score: number,
-    radius: number
+    radius: number,
+    historyTileSet?: gridElement[],
+    historyScore?: number,
+    undoCount?: number,
+    isUndoAvailable?: boolean,
+    isMaxUndo?: boolean,
+    isWin?: boolean
   }
 }

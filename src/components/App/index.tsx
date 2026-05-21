@@ -25,35 +25,47 @@ import useViewport from "../../hooks/useWindowScale";
 import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
 import useRemoteHighScores from "../../hooks/useRemoteHighScores";
+import {
+  loadSavedGame,
+  saveGame,
+  clearSavedGame,
+  loadLastRadius,
+  saveLastRadius,
+} from "../../utils/savedGameStorage";
 
 const MAX_UNDO_BY_RADIUS: Record<number, number> = { 1: 3, 2: 1, 3: 0, 4: 0 };
 
+const initialSavedGame = loadSavedGame();
+const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? 2;
+
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
-  const [radius, setRadius] = useState(2);
-  const [grid, setGrid] = useState<gridElement[]>([]);
-  const [tileSet, setTileSet] = useState<gridElement[]>([]);
-  const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>([]);
+  const [radius, setRadius] = useState(initialRadius);
+  const [grid, setGrid] = useState<gridElement[]>(initialSavedGame?.grid ?? []);
+  const [tileSet, setTileSet] = useState<gridElement[]>(initialSavedGame?.tileSet ?? []);
+  const [historyTileSet, setHistoryTileSet] = useState<gridElement[]>(initialSavedGame?.historyTileSet ?? []);
   const [isMovementBlocked, setIsMovementBlocked] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isWin, setIsWin] = useState(false);
-  const [score, setScore] = useState(0);
-  const [isUndoAvailable, setIsUndoAvailable] = useState(false);
-  const [undoCount, setUndoCount] = useState(0)
-  const [isMaxUndo, setIsMaxUndo] = useState(false)
-  const [historyScore, setHistoryScore] = useState(0);
+  const [isWin, setIsWin] = useState(initialSavedGame?.isWin ?? false);
+  const [score, setScore] = useState(initialSavedGame?.score ?? 0);
+  const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
+  const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
+  const [isMaxUndo, setIsMaxUndo] = useState(initialSavedGame?.isMaxUndo ?? false)
+  const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
   const [pendingHighScore, setPendingHighScore] = useState(false);
   const [lastQualifyingEntry, setLastQualifyingEntry] = useState<HighScoreEntry | null>(null);
   const [lastQualifyingRadius, setLastQualifyingRadius] = useState<number | null>(null);
-  const [serverResponse, fetchTiles] = useGameTiles([], 2);
+  const [serverResponse, fetchTiles] = useGameTiles([], initialRadius);
   const [theme, toggleTheme] = useTheme();
   const viewport = useViewport();
   const boardRef = useRef<HTMLElement>(null);
+  const restoredRef = useRef<boolean>(!!initialSavedGame);
 
   useEffect(() => {
+    if (initialSavedGame) return;
     setGrid(createHexGrid(radius));
   }, []);
 
@@ -65,6 +77,7 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (restoredRef.current) return;
     setTileSet(serverResponse);
     setIsMovementBlocked(false);
   }, [serverResponse]);
@@ -126,6 +139,27 @@ export const App: React.FC = () => {
       setPendingHighScore(true);
     }
   }, [isWin]);
+
+  useEffect(() => {
+    if (isGameOver) {
+      clearSavedGame();
+      return;
+    }
+    if (!tileSet.length || !grid.length) return;
+    if (!historyTileSet.length) return;
+    saveGame({
+      tileSet,
+      grid,
+      score,
+      radius,
+      historyTileSet,
+      historyScore,
+      undoCount,
+      isUndoAvailable,
+      isMaxUndo,
+      isWin,
+    });
+  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, isWin, isGameOver]);
 
   const updateTile = (
     tile: gridElement,
@@ -210,6 +244,7 @@ export const App: React.FC = () => {
 
     setTileSet(updatedTileSet);
     setTimeout(() => {
+      restoredRef.current = false;
       fetchTiles(updatedTileSet, radius);
     }, 200);
   };
@@ -277,6 +312,9 @@ export const App: React.FC = () => {
     setPendingHighScore(false);
     setLastQualifyingEntry(null);
     setLastQualifyingRadius(null);
+    clearSavedGame();
+    saveLastRadius(newRadius);
+    restoredRef.current = false;
     fetchTiles([], newRadius);
   };
 
