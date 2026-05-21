@@ -1,3 +1,6 @@
+// ── Debug ───────────────────────────────────────────────────────────────────
+export const FIREBASE_LOGS_ENABLED = false;
+
 // ── Defaults ────────────────────────────────────────────────────────────────
 /** Board radius used on first load when no saved game exists. 1=Small, 2=Normal, 3=Large, 4=XL */
 export const DEFAULT_RADIUS = 2;

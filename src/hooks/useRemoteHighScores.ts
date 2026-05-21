@@ -12,6 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getDb } from "../services/firebase";
+import { FIREBASE_LOGS_ENABLED } from "../config/gameConfig";
 import {
   HighScoreEntry,
   HighScores,
@@ -80,7 +81,9 @@ const useRemoteHighScores = (): RemoteState => {
           if (received.size === RADII.length) setIsLoading(false);
         },
         (err) => {
-          console.error(`[highScores] listener for radius=${radius} failed:`, err);
+          if (FIREBASE_LOGS_ENABLED) {
+            console.error(`[highScores] listener for radius=${radius} failed:`, err);
+          }
           setError(err instanceof Error ? err : new Error(String(err)));
           setIsLoading(false);
         }
@@ -118,7 +121,9 @@ const useRemoteHighScores = (): RemoteState => {
           });
         }
       } catch (err) {
-        console.error("[highScores] write failed:", err);
+        if (FIREBASE_LOGS_ENABLED) {
+          console.error("[highScores] write failed:", err);
+        }
         setError(err instanceof Error ? err : new Error(String(err)));
         return null;
       }
