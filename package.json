@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/feralonsomaccari/2048-hexagon.git"
   },
-  "homepage": "https://feralonsomaccari.github.io/2048-hexagon",
+  "homepage": "https://2048hexagon.com",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

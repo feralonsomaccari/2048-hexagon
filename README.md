@@ -2,7 +2,7 @@
 
 A hexagonal twist on the classic [2048](https://play2048.co/) puzzle game. Slide and merge tiles across a hex grid to reach 2048.
 
-**[Play it here →](https://feralonsomaccari.github.io/2048-hexagon/)**
+**[Play it here →](https://2048hexagon.com)**
 
 ![Gameplay](./game2.png)
 
