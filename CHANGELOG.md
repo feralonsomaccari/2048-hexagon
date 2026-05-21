@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.9] - 2026-05-21
+
+### Changed
+- **Small** board now starts with **2** tiles instead of 3. With only 7 cells, the extra empty cell at start gives meaningfully more room to set up the first merge. Normal still starts with 3.
+
+### Docs
+- README spawn-rules table updated to reflect Small's new 2-tile starter.
+
 ## [0.4.8] - 2026-05-21
 
 ### Changed

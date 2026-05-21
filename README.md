@@ -26,7 +26,7 @@ Each board picks a different cadence and tile-value mix so the difficulty curve 
 
 | Board  | Cells | Starter spawn | Per-turn spawn count                  | Spawned tile values |
 | ------ | ----- | ------------- | ------------------------------------- | ------------------- |
-| Small  | 7     | 3 × `2`       | 1 tile                                | 100% `2` · 0% `4`   |
+| Small  | 7     | 2 × `2`       | 1 tile                                | 100% `2` · 0% `4`   |
 | Normal | 19    | 3 × `2`       | 50% chance of 1 tile · 50% of 2 tiles | 80% `2` · 20% `4`   |
 
 Small never spawns a `4` — board pressure already comes from running out of space, so a stray high-value tile would be pure friction. Normal can spawn 4s and occasionally adds two tiles at once to keep the larger board filling up.

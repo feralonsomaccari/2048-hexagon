@@ -27,6 +27,7 @@ const arePointsSame = (a: Point, b: Point): boolean =>
 const fourProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.2, 4: 0.2, 5: 0.25 };
 const doubleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.5, 4: 0.6, 5: 0.75 };
 const tripleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0.1 };
+const starterSpawnCountByRadius: Record<number, number> = { 2: 2, 3: 3, 4: 3, 5: 3 };
 
 const pickSpawnCount = (radius: number): number => {
   const tripleProb = tripleSpawnProbabilityByRadius[radius] ?? 0;
@@ -47,9 +48,10 @@ export function getRNGPoints(
     excluded.every((b) => !arePointsSame(a, b))
   );
   const fourProbability = fourProbabilityByRadius[radius] ?? 0.1;
+  const starterCount = starterSpawnCountByRadius[radius] ?? 3;
   const pointsCount = Math.min(
     availablePositions.length,
-    userPoints.length === 0 ? 3 : pickSpawnCount(radius)
+    userPoints.length === 0 ? starterCount : pickSpawnCount(radius)
   );
   const selectedValue = userPoints.length === 0 ? 2 : Math.random() < 1 - fourProbability ? 2 : 4;
   return pickRandomN(availablePositions, pointsCount).map((p) => ({ ...p, value: selectedValue }));
