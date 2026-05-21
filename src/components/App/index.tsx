@@ -32,8 +32,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-
-const MAX_UNDO_BY_RADIUS: Record<number, number> = { 1: 3, 2: 1, 3: 0, 4: 0 };
+import { LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? 2;
@@ -410,7 +409,7 @@ export const App: React.FC = () => {
           pendingHighScore={pendingHighScore}
           score={score}
           onSubmitHighScore={submitHighScore}
-          beatsHighScore={score > (highScores[radius]?.[4]?.score ?? 0)}
+          beatsHighScore={score > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
         />
         <footer className={styles.footer}>
           Made by{" "}

@@ -8,7 +8,7 @@ const useGameTiles = (tileSet: gridElement[], radius: number) => {
 
   const fetchTiles = async (newTileSet: gridElement[] = tileSet, newRadius: number = radius) => {
     try {
-      const result = getRNGPoints(newRadius + 1, newTileSet, getBlockedPoints(newRadius));
+      const result = getRNGPoints(newRadius, newTileSet, getBlockedPoints(newRadius));
       setResponse([...addIds(result), ...newTileSet]);
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));

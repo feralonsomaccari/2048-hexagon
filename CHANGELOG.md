@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.10] - 2026-05-21
+
+### Changed
+- Centralized all tunable game knobs into `src/config/gameConfig.ts` so difficulty and leaderboard tweaks live in one file:
+  - `LEADERBOARD_SIZE` (was `MAX_ENTRIES_PER_BOARD` literal, now re-exported from there for backwards compatibility with existing imports).
+  - `MAX_NAME_LENGTH` (player-name cap on the high-score prompt).
+  - `MAX_UNDO_BY_RADIUS` (undo budget per board).
+  - `BLOCKED_RADIUS_BY_RADIUS` (center-blocked cells per board).
+  - `STARTER_SPAWN_COUNT_BY_RADIUS`, `FOUR_PROBABILITY_BY_RADIUS`, `DOUBLE_SPAWN_PROBABILITY_BY_RADIUS`, `TRIPLE_SPAWN_PROBABILITY_BY_RADIUS` (spawn cadence and value mix per board).
+- Re-keyed all spawn tables from the old `radius + 1` convention to **game radius** (1 = Small, 2 = Normal, …) for consistency with the rest of the config; `useGameTiles` now passes the game radius directly to `getRNGPoints`.
+- `beatsHighScore` threshold in `App` now derived from `LEADERBOARD_SIZE - 1` instead of a hardcoded `[4]` index.
+
+### Notes
+- The bot under `src/bot/` keeps its own copy of the spawn tables (it's a standalone offline tool); sync manually if you tune the bot.
+
 ## [0.4.9] - 2026-05-21
 
 ### Changed

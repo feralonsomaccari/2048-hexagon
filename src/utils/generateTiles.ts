@@ -1,3 +1,10 @@
+import {
+  DOUBLE_SPAWN_PROBABILITY_BY_RADIUS,
+  FOUR_PROBABILITY_BY_RADIUS,
+  STARTER_SPAWN_COUNT_BY_RADIUS,
+  TRIPLE_SPAWN_PROBABILITY_BY_RADIUS,
+} from "../config/gameConfig";
+
 type Point = { x: number; y: number; z: number };
 
 const minusToPlusN = (n: number, f: (i: number) => void): void => {
@@ -6,9 +13,9 @@ const minusToPlusN = (n: number, f: (i: number) => void): void => {
 
 const getFieldPoints = (radius: number): Point[] => {
   const points: Point[] = [];
-  minusToPlusN(radius - 1, (x) =>
-    minusToPlusN(radius - 1, (y) =>
-      minusToPlusN(radius - 1, (z) => x + y + z === 0 && points.push({ x, y, z }))
+  minusToPlusN(radius, (x) =>
+    minusToPlusN(radius, (y) =>
+      minusToPlusN(radius, (z) => x + y + z === 0 && points.push({ x, y, z }))
     )
   );
   return points;
@@ -24,14 +31,9 @@ const pickRandomN = <T>(array: T[], n: number): T[] =>
 const arePointsSame = (a: Point, b: Point): boolean =>
   !["x", "y", "z"].some((v) => a[v as keyof Point] !== b[v as keyof Point]);
 
-const fourProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.2, 4: 0.2, 5: 0.25 };
-const doubleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.5, 4: 0.6, 5: 0.75 };
-const tripleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0.1 };
-const starterSpawnCountByRadius: Record<number, number> = { 2: 2, 3: 3, 4: 3, 5: 3 };
-
 const pickSpawnCount = (radius: number): number => {
-  const tripleProb = tripleSpawnProbabilityByRadius[radius] ?? 0;
-  const doubleProb = doubleSpawnProbabilityByRadius[radius] ?? 0;
+  const tripleProb = TRIPLE_SPAWN_PROBABILITY_BY_RADIUS[radius] ?? 0;
+  const doubleProb = DOUBLE_SPAWN_PROBABILITY_BY_RADIUS[radius] ?? 0;
   const roll = Math.random();
   if (roll < tripleProb) return 3;
   if (roll < tripleProb + doubleProb) return 2;
@@ -47,8 +49,8 @@ export function getRNGPoints(
   const availablePositions = getFieldPoints(radius).filter((a) =>
     excluded.every((b) => !arePointsSame(a, b))
   );
-  const fourProbability = fourProbabilityByRadius[radius] ?? 0.1;
-  const starterCount = starterSpawnCountByRadius[radius] ?? 3;
+  const fourProbability = FOUR_PROBABILITY_BY_RADIUS[radius] ?? 0.1;
+  const starterCount = STARTER_SPAWN_COUNT_BY_RADIUS[radius] ?? 3;
   const pointsCount = Math.min(
     availablePositions.length,
     userPoints.length === 0 ? starterCount : pickSpawnCount(radius)

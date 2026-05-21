@@ -6,7 +6,9 @@ export type HighScoreEntry = {
 
 export type HighScores = Record<string, HighScoreEntry[]>;
 
-export const MAX_ENTRIES_PER_BOARD = 5;
+import { LEADERBOARD_SIZE } from "../config/gameConfig";
+
+export const MAX_ENTRIES_PER_BOARD = LEADERBOARD_SIZE;
 
 export const BOARD_LABELS: Record<number, string> = {
   1: "Small",

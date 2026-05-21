@@ -1,14 +1,13 @@
 import { useState } from "react";
 import styles from "./Leaderboard.module.css";
 import Button from "../Button";
+import { MAX_NAME_LENGTH } from "../../config/gameConfig";
 
 type props = {
   score: number;
   onSubmit: (name: string) => void;
   beatsHighScore?: boolean;
 };
-
-const MAX_NAME_LENGTH = 16;
 
 const HighScorePrompt = ({ score, onSubmit, beatsHighScore = false }: props) => {
   const [name, setName] = useState("");

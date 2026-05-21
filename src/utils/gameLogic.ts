@@ -1,3 +1,5 @@
+import { BLOCKED_RADIUS_BY_RADIUS } from "../config/gameConfig";
+
 const getPositionFromCoordinates = (block: gridElement, radius: number = 2): { left: number; top: number } => {
   const edgeLength = 66.5;
   const edgeW = (edgeLength * 3) / 2;
@@ -107,8 +109,6 @@ const BLOCKED_VALUE = -1;
 
 const isBlocked = (cell: { value?: number } | undefined | false): boolean =>
   !!cell && cell.value === BLOCKED_VALUE;
-
-const BLOCKED_RADIUS_BY_RADIUS: Record<number, number> = { 2: 0, 3: 1, 4: 2 };
 
 const getBlockedRadius = (radius: number): number => BLOCKED_RADIUS_BY_RADIUS[radius] ?? -1;
 
