@@ -8,16 +8,13 @@ A hexagonal twist on the classic [2048](https://play2048.co/) puzzle game. Slide
 
 ## How to play
 
-Combine tiles of the same number by sliding the board in one of six directions. When two matching tiles meet, they merge into one with double the value. Keep merging to reach **2048**.
+Combine tiles of the same number by sliding the board in one of six directions. When two matching tiles meet, they merge into one with double the value. Keep merging to reach **2048** (512 in small).
 
 ### Features
 
 - Two board sizes — **Small** (7 cells) and **Normal** (19 cells) — selectable from the **New Game** menu
-- Cross-device leaderboard backed by **Firebase Firestore**: top scores per board are shared across all players, deduplicated per name
 - Personal best per board persisted in `localStorage`
 - Light/dark theme with system-preference detection
-- Undo (capped per game)
-- Smooth tile movement and merge animations
 - Accessible: keyboard-first controls, ARIA live regions, dialog focus management
 
 ### Spawn rules
@@ -34,10 +31,9 @@ Small never spawns a `4` — board pressure already comes from running out of sp
 ## Tech stack
 
 - **React 18** + **TypeScript**
-- **Vite** as the build tool and dev server
+- **Vite**
 - **CSS Modules** for scoped styling
-- **Firebase Firestore** for the global leaderboard (anon writes locked down via security rules)
-- **Vitest** + **React Testing Library** for unit tests
+- **Firebase Firestore** for the leaderboard
 - Deployed to **GitHub Pages** via `gh-pages`
 
 ## Local development
