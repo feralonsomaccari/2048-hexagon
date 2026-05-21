@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import styles from "./NewGameMenu.module.css";
 import Button from "../Button";
+import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 type props = {
   resetGameHandler: (radius: number) => void;
@@ -71,6 +72,7 @@ const NewGameMenu = ({ resetGameHandler, currentRadius = 2 }: props) => {
             >
               <span className={styles.cardLabel}>{label}</span>
               <span className={styles.cardDesc}>{description}</span>
+              <span className={styles.cardDesc}>Reach {WIN_TILE_BY_RADIUS[radius] ?? 2048}</span>
             </button>
           );
         })}

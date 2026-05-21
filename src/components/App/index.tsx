@@ -387,7 +387,7 @@ export const App: React.FC = () => {
           onToggleTheme={toggleTheme}
           onHighScoresHandler={openLeaderboard}
         />
-        <Instructions />
+        <Instructions radius={radius} />
         <p className={styles.topScoreLegend}>
           {highScores[radius]?.[0] && (
             <>
