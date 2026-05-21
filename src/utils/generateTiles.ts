@@ -24,7 +24,7 @@ const pickRandomN = <T>(array: T[], n: number): T[] =>
 const arePointsSame = (a: Point, b: Point): boolean =>
   !["x", "y", "z"].some((v) => a[v as keyof Point] !== b[v as keyof Point]);
 
-const fourProbabilityByRadius: Record<number, number> = { 2: 0.1, 3: 0.2, 4: 0.2, 5: 0.25 };
+const fourProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.2, 4: 0.2, 5: 0.25 };
 const doubleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0.5, 4: 0.6, 5: 0.75 };
 const tripleSpawnProbabilityByRadius: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0.1 };
 

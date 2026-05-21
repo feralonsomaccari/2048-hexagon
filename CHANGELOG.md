@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-05-21
+
+### Changed
+- **Small** board no longer spawns `4` tiles — only `2`s. The board is space-limited, so a stray high-value tile was pure friction. Normal is unchanged (still 20% `4` per spawn).
+
+### Docs
+- README "Features" line updated to call out the two visible board sizes (Small / Normal).
+- Added a **Spawn rules** table to the README documenting starter spawn, per-turn spawn count, and tile-value mix for Small and Normal.
+
 ## [0.4.7] - 2026-05-21
 
 ### Added
