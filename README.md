@@ -4,8 +4,6 @@ This is a hexagonal version of the classic [2048](https://play2048.co/).
 
 **[Play it here →](https://2048hexagon.com)**
 
-![Gameplay](./game2.png)
-
 ### Spawn rules
 
 Because this is not a square like the regular one I've been tweaking the game to make it winnable and as fair as possible. For example the small hexagon version
@@ -27,6 +25,8 @@ Was quite a challenge to make the hexagons to work. I've used this guide to lear
 - **CSS Modules** for scoped styling
 - **Firebase Firestore** for the leaderboard
 - Deployed to **GitHub Pages** via `gh-pages`
+
+![Gameplay](./game2.png)
 
 ## Local development
 
