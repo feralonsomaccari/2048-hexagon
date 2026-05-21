@@ -6,24 +6,25 @@
     <meta name="theme-color" content="#bbada0" />
     <meta name="referrer" content="no-referrer">
     <meta name="author" content="feralonsomaccari" />
-    <meta name="keywords" content="2048, hexagon, hex, puzzle, game, react, typescript" />
     <meta
       name="description"
-      content="A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048."
+      content="A hexagonal twist on the classic 2048. Slide and merge tiles on a hex grid to reach 2048. Free to play in your browser — no download, no signup."
     />
     <link rel="canonical" href="https://2048hexagon.com/" />
+    <link rel="alternate" href="https://www.2048hexagon.com/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="2048 Hexagon" />
-    <meta property="og:description" content="A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048." />
+    <meta property="og:description" content="A hexagonal twist on the classic 2048. Slide and merge tiles on a hex grid to reach 2048. Free to play in your browser — no download, no signup." />
     <meta property="og:url" content="https://2048hexagon.com/" />
     <meta property="og:site_name" content="2048 Hexagon" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://2048hexagon.com/og-image.png" />
     <meta property="og:image:alt" content="Screenshot of 2048 Hexagon gameplay" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="2048 Hexagon" />
-    <meta name="twitter:description" content="A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048." />
+    <meta name="twitter:description" content="A hexagonal twist on the classic 2048. Slide and merge tiles on a hex grid to reach 2048. Free to play in your browser — no download, no signup." />
     <meta name="twitter:image" content="https://2048hexagon.com/og-image.png" />
 
     <script type="application/ld+json">
@@ -33,7 +34,7 @@
         "name": "2048 Hexagon",
         "url": "https://2048hexagon.com/",
         "image": "https://2048hexagon.com/og-image.png",
-        "description": "A hexagonal twist on the classic 2048 puzzle game. Slide and merge tiles on a hex grid to reach 2048.",
+        "description": "A hexagonal twist on the classic 2048. Slide and merge tiles on a hex grid to reach 2048. Free to play in your browser — no download, no signup.",
         "author": {
           "@type": "Person",
           "name": "feralonsomaccari",
@@ -50,20 +51,53 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png" />
     <link rel="manifest" href="./manifest.json" />
-    <title>2048 Hexagon</title>
+    <title>2048 Hexagon — Free Online Hex Puzzle Game</title>
+    <style>
+      .seo-content {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
     <script type="module" crossorigin src="/assets/index-BQobL-vF.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DK-Y6B4N.css">
   </head>
   <body>
     <noscript>
-      <h1>2048 Hexagon</h1>
-      <p>
-        2048 Hexagon is a free, browser-based puzzle game — a hexagonal twist on the classic 2048.
-        Slide and merge numbered tiles on a hex grid using Q, W, E, A, S, D or the arrow keys.
-        When two tiles with the same number touch, they merge into one. Keep merging until you reach 2048.
-      </p>
-      <p>You need to enable JavaScript to play.</p>
+      <p><strong>You need to enable JavaScript to play 2048 Hexagon.</strong></p>
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div class="seo-content">
+        <h1>2048 Hexagon — Free Online Hex Puzzle Game</h1>
+        <p>
+          2048 Hexagon is a free, browser-based puzzle game — a hexagonal twist on the classic 2048.
+          Instead of a 4×4 square grid, tiles live on a hexagonal board, giving you six directions to slide
+          instead of four. The challenge is the same: merge matching numbered tiles to climb toward the
+          elusive 2048 tile.
+        </p>
+
+        <h2>How to play</h2>
+        <ul>
+          <li>Slide tiles using <strong>Q, W, E, A, S, D</strong> on the keyboard, or swipe on touch devices.</li>
+          <li>When two tiles with the same number touch, they merge into one tile with double the value.</li>
+          <li>A new tile spawns after every move. The game ends when no moves are possible.</li>
+          <li>Reach the <strong>2048 tile</strong> to win — but you can keep merging for higher scores.</li>
+        </ul>
+
+        <h2>Features</h2>
+        <ul>
+          <li>Free to play in your browser — no download, no signup, no ads.</li>
+          <li>Multiple board sizes for different difficulty levels.</li>
+          <li>Works on desktop and mobile.</li>
+          <li>Built with React and TypeScript — open source on GitHub.</li>
+        </ul>
+      </div>
+    </div>
   </body>
 </html>
