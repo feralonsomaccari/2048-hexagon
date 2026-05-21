@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.11] - 2026-05-21
+
+### Changed
+- Default board radius on first load is now sourced from `DEFAULT_RADIUS` in `src/config/gameConfig.ts` instead of a hardcoded `2` literal in `App`, so the first-load size lives alongside the other tunable knobs.
+
 ## [0.4.10] - 2026-05-21
 
 ### Changed

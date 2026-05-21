@@ -1,3 +1,7 @@
+// ── Defaults ────────────────────────────────────────────────────────────────
+/** Board radius used on first load when no saved game exists. 1=Small, 2=Normal, 3=Large, 4=XL */
+export const DEFAULT_RADIUS = 1;
+
 // ── Leaderboard ─────────────────────────────────────────────────────────────
 export const LEADERBOARD_SIZE = 5;
 export const MAX_NAME_LENGTH = 16;
@@ -9,7 +13,6 @@ export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
 };
 
 // ── Board shape ─────────────────────────────────────────────────────────────
-
 export const BLOCKED_RADIUS_BY_RADIUS: Record<number, number> = {
   // 1: -1, // Small: no blocked cells (default)
   2: 0,    // Normal: only the center cell is blocked

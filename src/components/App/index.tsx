@@ -32,10 +32,10 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
-const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? 2;
+const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
 
 export const App: React.FC = () => {
   const [isModalShown, setIsModalShown] = useState(false);
