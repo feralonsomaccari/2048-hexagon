@@ -20,12 +20,16 @@
     <meta property="og:site_name" content="2048 Hexagon" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://2048hexagon.com/og-image.png" />
-    <meta property="og:image:alt" content="Screenshot of 2048 Hexagon gameplay" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="2048 Hexagon — hexagonal 2048 puzzle game" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="2048 Hexagon" />
     <meta name="twitter:description" content="A hexagonal twist on the classic 2048. Slide and merge tiles on a hex grid to reach 2048. Free to play in your browser — no download, no signup." />
     <meta name="twitter:image" content="https://2048hexagon.com/og-image.png" />
+    <meta name="twitter:image:alt" content="2048 Hexagon — hexagonal 2048 puzzle game" />
 
     <script type="application/ld+json">
       {
@@ -43,7 +47,45 @@
         "genre": ["Puzzle", "Logic"],
         "applicationCategory": "Game",
         "operatingSystem": "Web",
-        "playMode": "SinglePlayer"
+        "playMode": "SinglePlayer",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How to play 2048 Hexagon",
+        "description": "Slide and merge numbered tiles on a hexagonal grid to reach the 2048 tile.",
+        "image": "https://2048hexagon.com/og-image.png",
+        "totalTime": "PT2M",
+        "step": [
+          {
+            "@type": "HowToStep",
+            "name": "Slide the tiles",
+            "text": "Slide tiles using Q, W, E, A, S, D on the keyboard, or swipe in any of the six directions on touch devices."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Merge matching tiles",
+            "text": "When two tiles with the same number touch, they merge into one tile with double the value."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Keep the board moving",
+            "text": "A new tile spawns after every move. The game ends when no moves are possible."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Reach 2048",
+            "text": "Reach the 2048 tile to win, then keep merging for an even higher score."
+          }
+        ]
       }
     </script>
 
@@ -65,7 +107,7 @@
         border: 0;
       }
     </style>
-    <script type="module" crossorigin src="/assets/index-COyiR9WB.js"></script>
+    <script type="module" crossorigin src="/assets/index-Bew9424y.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DK-Y6B4N.css">
   </head>
   <body>
