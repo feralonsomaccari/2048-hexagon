@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="hexFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7d030" />
+      <stop offset="55%" stop-color="#f2c918" />
+      <stop offset="100%" stop-color="#e8bd0a" />
+    </linearGradient>
+  </defs>
+
+  <!--
+    Pointy-flat rounded hexagon adapted from src/components/Block/hexagon.svg.
+    Source path lives in a 121 x 110 box. Scaled + translated so the shape is
+    centered in the 512 canvas and fills ~88% of the frame.
+    scale = 450/121 ≈ 3.7190 → shape ≈ 450 x 409
+    centered: tx = (512-450)/2 = 31 ; ty = (512-409)/2 ≈ 51.5
+  -->
+  <g transform="translate(31,51.5) scale(3.71901)">
+    <path d="M38,2 L82,2 A12,12 0 0,1 94,10 L112,44 A12,12 0 0,1 112,56
+             L94,90 A12,12 0 0,1 82,98 L38,98 A12,12 0 0,1 26,90 L8,56
+             A12,12 0 0,1 8,44 L26,10 A12,12 0 0,1 38,2 Z" fill="url(#hexFill)" />
+  </g>
+
+  <!-- 2048 wordmark, centered on the canvas -->
+  <text x="256" y="262" text-anchor="middle" dominant-baseline="central"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-weight="700" font-size="150" fill="#fdfcf7">2048</text>
+</svg>
