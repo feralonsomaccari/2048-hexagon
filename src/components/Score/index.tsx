@@ -10,7 +10,7 @@ const Score = ({ title, score, historyScore }: props) => {
   const totalScore = historyScore === undefined ? 0 : score - historyScore;
   return (
     <div data-testid="score" className={styles.scoreWrapper}>
-      <h3 className={styles.scoreTitle}>{title}</h3>
+      <h2 className={styles.scoreTitle}>{title}</h2>
       <p
         className={`${totalScore > 0 ? styles.score : ""}`}
         key={score}
