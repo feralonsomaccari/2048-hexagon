@@ -22,8 +22,7 @@
 .topScoreLegend {
   font-size: 12px;
   line-height: 1.4;
-  color: var(--color-text-main);
-  opacity: 0.6;
+  color: var(--color-text-muted);
   margin: 0;
   padding: 4px 0 6px;
   text-align: left;
@@ -39,14 +38,13 @@
   padding-top: 24px;
   text-align: center;
   font-size: 12px;
-  color: var(--color-text-main);
-  opacity: 0.5;
+  color: var(--color-text-muted);
 }
 
 .footer a {
   color: var(--color-secondary);
   font-weight: 600;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .footer a:hover,
