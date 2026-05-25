@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-05-25
+
+### Changed
+- Mobile (≤480px): the action buttons (New Game, Undo, …) are less crowded — slightly taller (42px) with a smaller font (13px) and tighter horizontal padding, giving a more comfortable tap target and more room between buttons.
+
 ## [0.5.4] - 2026-05-25
 
 ### Fixed
