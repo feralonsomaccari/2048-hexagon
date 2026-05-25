@@ -11,9 +11,6 @@ const COLLECTION = "highScores";
 const MAX_SCORE_SANITY = 10_000_000;
 const RADII = [1, 2, 3, 4] as const;
 
-const docIdFor = (radius: number, name: string): string =>
-  `${radius}_${name.trim().toLowerCase()}`;
-
 type RemoteState = {
   scores: HighScores;
   submit: (radius: number, score: number, name: string) => Promise<HighScoreEntry | null>;
@@ -103,24 +100,18 @@ const useRemoteHighScores = (): RemoteState => {
       };
 
       try {
-        const [db, { doc, getDoc, serverTimestamp, setDoc }] = await Promise.all([
+        const [db, { addDoc, collection, serverTimestamp }] = await Promise.all([
           getDb(),
           import("firebase/firestore"),
         ]);
         if (!db) return null;
 
-        const ref = doc(db, COLLECTION, docIdFor(radius, trimmedName));
-        const existing = await getDoc(ref);
-        const existingScore = existing.exists() ? (existing.data().score as number) : -Infinity;
-
-        if (score > existingScore) {
-          await setDoc(ref, {
-            name: trimmedName,
-            score,
-            boardRadius: radius,
-            createdAt: serverTimestamp(),
-          });
-        }
+        await addDoc(collection(db, COLLECTION), {
+          name: trimmedName,
+          score,
+          boardRadius: radius,
+          createdAt: serverTimestamp(),
+        });
       } catch (err) {
         if (FIREBASE_LOGS_ENABLED) {
           console.error("[highScores] write failed:", err);

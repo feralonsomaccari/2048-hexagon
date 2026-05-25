@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.8] - 2026-05-25
+
+### Changed
+- High scores are now recorded per submission instead of per name: each saved score is its own leaderboard entry, so a player using the same name twice (e.g. "Liz" 99 then "Liz" 110) keeps both rows rather than overwriting the earlier one. Submissions are written with auto-generated document IDs (`addDoc`) instead of a `radius_name` key, and the previous "only write if higher than the existing entry for that name" check is gone — every qualifying submission is stored. The displayed leaderboard remains capped at the top N per board.
+
 ## [0.5.7] - 2026-05-25
 
 ### Changed

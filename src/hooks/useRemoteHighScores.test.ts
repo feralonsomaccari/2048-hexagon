@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-const setDocMock = vi.fn();
-const getDocMock = vi.fn();
+const addDocMock = vi.fn();
 const getDbMock = vi.fn();
 const isConfiguredMock = vi.fn();
 
@@ -31,8 +30,7 @@ const onSnapshotMock = vi.fn(
 );
 
 vi.mock("firebase/firestore", () => ({
-  setDoc: (...args: unknown[]) => setDocMock(...args),
-  getDoc: (...args: unknown[]) => getDocMock(...args),
+  addDoc: (...args: unknown[]) => addDocMock(...args),
   onSnapshot: (...args: unknown[]) =>
     onSnapshotMock(args[0] as never, args[1] as never, args[2] as never),
   collection: (_db: unknown, name: string) => ({ name }),
@@ -75,8 +73,7 @@ const emitInitialEmptySnapshots = async () => {
 
 beforeEach(() => {
   localStorage.clear();
-  setDocMock.mockReset();
-  getDocMock.mockReset();
+  addDocMock.mockReset();
   getDbMock.mockReset();
   isConfiguredMock.mockReset();
   onSnapshotMock.mockClear();
@@ -115,7 +112,7 @@ describe("useRemoteHighScores — no Firebase configured", () => {
       returned = await result.current.submit(1, 500, "Alice");
     });
     expect(returned).toBeNull();
-    expect(setDocMock).not.toHaveBeenCalled();
+    expect(addDocMock).not.toHaveBeenCalled();
   });
 
   it("clears any stale localStorage highScores key on mount", () => {
@@ -160,9 +157,8 @@ describe("useRemoteHighScores — Firebase configured", () => {
     });
   });
 
-  it("submit writes a new doc when no entry exists for that name+board", async () => {
-    getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
-    setDocMock.mockResolvedValue(undefined);
+  it("submit adds a new doc to the collection", async () => {
+    addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
     await emitInitialEmptySnapshots();
 
@@ -170,44 +166,43 @@ describe("useRemoteHighScores — Firebase configured", () => {
       await result.current.submit(1, 500, "Alice");
     });
 
-    expect(getDocMock).toHaveBeenCalledTimes(1);
-    const docRef = getDocMock.mock.calls[0][0];
-    expect(docRef).toMatchObject({ coll: "highScores", id: "1_alice" });
-    expect(setDocMock).toHaveBeenCalledTimes(1);
-    const [, payload] = setDocMock.mock.calls[0];
+    expect(addDocMock).toHaveBeenCalledTimes(1);
+    const [collRef, payload] = addDocMock.mock.calls[0];
+    expect(collRef).toMatchObject({ name: "highScores" });
     expect(payload).toMatchObject({ name: "Alice", score: 500, boardRadius: 1 });
   });
 
-  it("submit overwrites the existing doc when the new score is higher", async () => {
-    getDocMock.mockResolvedValue({ exists: () => true, data: () => ({ score: 300 }) });
-    setDocMock.mockResolvedValue(undefined);
+  it("submit adds a separate doc per submission, even for a repeated name", async () => {
+    addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
     await emitInitialEmptySnapshots();
 
     await act(async () => {
-      await result.current.submit(1, 500, "Alice");
+      await result.current.submit(1, 99, "Liz");
+      await result.current.submit(1, 110, "Liz");
     });
 
-    expect(setDocMock).toHaveBeenCalledTimes(1);
-    const [, payload] = setDocMock.mock.calls[0];
-    expect(payload.score).toBe(500);
+    expect(addDocMock).toHaveBeenCalledTimes(2);
+    expect(addDocMock.mock.calls[0][1]).toMatchObject({ name: "Liz", score: 99 });
+    expect(addDocMock.mock.calls[1][1]).toMatchObject({ name: "Liz", score: 110 });
   });
 
-  it("submit skips writing when the existing score is higher", async () => {
-    getDocMock.mockResolvedValue({ exists: () => true, data: () => ({ score: 800 }) });
+  it("submit adds a doc even when the new score is lower than a prior one", async () => {
+    addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
     await emitInitialEmptySnapshots();
 
     await act(async () => {
+      await result.current.submit(1, 800, "Alice");
       await result.current.submit(1, 500, "Alice");
     });
 
-    expect(setDocMock).not.toHaveBeenCalled();
+    expect(addDocMock).toHaveBeenCalledTimes(2);
+    expect(addDocMock.mock.calls[1][1]).toMatchObject({ name: "Alice", score: 500 });
   });
 
-  it("submit normalizes the doc id to lowercase so name casing collapses", async () => {
-    getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
-    setDocMock.mockResolvedValue(undefined);
+  it("submit preserves the name casing as entered", async () => {
+    addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
     await emitInitialEmptySnapshots();
 
@@ -215,14 +210,11 @@ describe("useRemoteHighScores — Firebase configured", () => {
       await result.current.submit(2, 100, "PePe");
     });
 
-    expect(getDocMock.mock.calls[0][0]).toMatchObject({ id: "2_pepe" });
-    const [, payload] = setDocMock.mock.calls[0];
-    expect(payload.name).toBe("PePe");
+    expect(addDocMock.mock.calls[0][1]).toMatchObject({ name: "PePe" });
   });
 
   it("submit captures Firestore errors and returns null", async () => {
-    getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
-    setDocMock.mockRejectedValue(new Error("permission-denied"));
+    addDocMock.mockRejectedValue(new Error("permission-denied"));
     const { result } = renderHook(() => useRemoteHighScores());
     await emitInitialEmptySnapshots();
 
@@ -276,8 +268,7 @@ describe("useRemoteHighScores — input validation", () => {
   beforeEach(() => {
     isConfiguredMock.mockReturnValue(true);
     getDbMock.mockReturnValue({ __db: true });
-    getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
-    setDocMock.mockResolvedValue(undefined);
+    addDocMock.mockResolvedValue(undefined);
   });
 
   it.each([
@@ -295,7 +286,7 @@ describe("useRemoteHighScores — input validation", () => {
       returned = await result.current.submit(1, score, name);
     });
     expect(returned).toBeNull();
-    expect(setDocMock).not.toHaveBeenCalled();
+    expect(addDocMock).not.toHaveBeenCalled();
   });
 
   it("trims and caps name length at 16 characters", async () => {
