@@ -9,7 +9,7 @@
   flex-direction: column;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .wrapper {
     padding: 12px;
   }

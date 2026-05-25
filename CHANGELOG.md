@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.6] - 2026-05-25
+
+### Changed
+- Responsive layout: the mobile menu layout now activates at ≤600px (was ≤480px), fixing the cramped/misaligned header in the ~481–582px range where the desktop layout was overflowing. The stacked title, full-width score boxes, wrapping action buttons, hidden game-status badge, and tighter page padding/instructions text all switch at the same 600px threshold for consistency.
+
 ## [0.5.5] - 2026-05-25
 
 ### Changed

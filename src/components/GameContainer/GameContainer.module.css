@@ -15,7 +15,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .gameWrapper {
     padding: 10px 0;
   }
