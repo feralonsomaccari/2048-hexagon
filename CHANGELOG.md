@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-05-25
+
+### Fixed
+- Accessibility: all text now meets the WCAG AA contrast minimum (≥4.5:1, ≥3:1 for large text) in both light and dark themes, resolving the "background and foreground colors do not have a sufficient contrast ratio" audit. Removed `opacity`-dimmed text (footer, instructions, top-score legend) in favor of explicit colors, and introduced `--color-text-muted`, `--color-score-box`, and `--color-score-box-text` tokens. Colors were tuned to the lightest values that still pass, to stay close to the original muted palette. Footer links are now underlined so they are distinguishable without relying on color alone.
+
 ## [0.5.0] - 2026-05-25
 
 ### Added
