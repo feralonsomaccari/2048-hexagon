@@ -412,15 +412,7 @@ export const App: React.FC = () => {
           beatsHighScore={score > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
         />
         <footer className={styles.footer}>
-          Made by{" "}
-          <a
-            href="https://feralonsomaccari.github.io/my-portfolio/"
-            target="_blank"
-            rel="author noopener"
-          >
-            feralonsomaccari
-          </a>
-          {" · Based on 2048 by "}
+          Based on 2048 by{" "}
           <a
             href="https://play2048.co/"
             target="_blank"
