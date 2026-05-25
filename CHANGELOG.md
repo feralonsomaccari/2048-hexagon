@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.7] - 2026-05-25
+
+### Changed
+- Win/Game Over overlay polish: added a 🏆 trophy icon and a "Score: …" line to the win screen, fixed the washed-out win title (now uses the readable main text color over the wash), and placed the "Try Again" / "Keep Playing" buttons in a single row with consistent spacing. The standalone score line is hidden when the high-score name prompt is shown to avoid showing the score twice.
+
 ## [0.5.6] - 2026-05-25
 
 ### Changed

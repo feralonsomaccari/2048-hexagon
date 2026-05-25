@@ -59,7 +59,11 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
           aria-atomic="true"
           aria-modal="true"
         >
-          <h2 id="overlay-title">{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
+          {isWin && <span className={styles.overlayIcon} aria-hidden="true">🏆</span>}
+          <h2 id="overlay-title" className={styles.overlayTitle}>{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
+          {!(pendingHighScore && onSubmitHighScore) && (
+            <p className={styles.overlayScore}>Score: {score}</p>
+          )}
           {pendingHighScore && onSubmitHighScore && (
             <HighScorePrompt
               score={score}
@@ -67,8 +71,10 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
               beatsHighScore={beatsHighScore}
             />
           )}
-          <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
-          {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
+          <div className={styles.overlayActions}>
+            <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
+            {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
+          </div>
         </div>
       )}
       <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
