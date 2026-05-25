@@ -23,7 +23,12 @@
   --bg-color-512: #edc850;
   --bg-color-1024: #edc53f;
   --bg-color-2048: #edc22e;
-  --bg-color-final: #3c3a32;
+  --bg-color-4096: #f0793c;
+  --bg-color-8192: #e8503f;
+  --bg-color-16384: #c83b6e;
+  --bg-color-32768: #8a4f9e;
+  --bg-color-65536: #3f6fd1;
+  --bg-color-final: #2f8f83;
 }
 
 [data-theme="dark"] {

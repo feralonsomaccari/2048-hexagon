@@ -9,8 +9,18 @@ type props = {
   merged?: boolean;
 };
 
+// Tile values that have their own color class in Tile.module.css. Anything
+// beyond the largest tier uses the shared "final" color so super-tiles never
+// render without a background.
+const COLORED_VALUES = new Set([
+  2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
+  65536,
+]);
+
 const Tile = ({ value, left, top, merged }: props): JSX.Element => {
-  const color = `color-${value}`;
+  const colorClass = COLORED_VALUES.has(value)
+    ? styles[`color-${value}`]
+    : styles["color-final"];
   return (
     <div
       data-testid="tile"
@@ -19,7 +29,7 @@ const Tile = ({ value, left, top, merged }: props): JSX.Element => {
       role="img"
       aria-label={`Tile ${value}`}
     >
-      <div className={`${styles.tileInner} ${styles[color]} ${merged ? styles.merged : ""}`}>
+      <div className={`${styles.tileInner} ${colorClass} ${merged ? styles.merged : ""}`}>
         {value}
       </div>
     </div>

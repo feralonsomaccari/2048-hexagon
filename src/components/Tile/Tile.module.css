@@ -44,6 +44,11 @@
 .color-512  { background-color: var(--bg-color-512);  color: var(--color-text-secondary); }
 .color-1024 { background-color: var(--bg-color-1024); color: var(--color-text-secondary); }
 .color-2048 { background-color: var(--bg-color-2048); color: var(--color-text-secondary); }
+.color-4096  { background-color: var(--bg-color-4096);  color: var(--color-text-secondary); }
+.color-8192  { background-color: var(--bg-color-8192);  color: var(--color-text-secondary); }
+.color-16384 { background-color: var(--bg-color-16384); color: var(--color-text-secondary); }
+.color-32768 { background-color: var(--bg-color-32768); color: var(--color-text-secondary); }
+.color-65536 { background-color: var(--bg-color-65536); color: var(--color-text-secondary); }
 .color-final { background-color: var(--bg-color-final); color: var(--color-text-secondary); }
 
 @keyframes popin {

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.4] - 2026-05-25
+
+### Fixed
+- Tiles beyond 2048 are no longer rendered without a background color. Values past 2048 now continue the color progression (4096, 8192, 16384, 32768, 65536 each get a distinct color), and any value above the highest tier falls back to a shared "final" color so a super-tile can never appear black/uncolored.
+
 ## [0.5.3] - 2026-05-25
 
 ### Fixed
