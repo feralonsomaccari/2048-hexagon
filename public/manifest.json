@@ -1,7 +1,7 @@
 {
   "short_name": "2048 Hex",
   "name": "2048 Hexagon",
-  "description": "A hexagonal twist on the classic 2048 puzzle game.",
+  "description": "A hexagonal twist on the classic 2048. Slide and merge tiles on a hex grid to reach 2048. Free to play in your browser — no download, no signup.",
   "icons": [
     {
       "src": "favicon.ico",
