@@ -6,7 +6,7 @@ import {
   cleanup,
   act,
 } from "@testing-library/react";
-import { vi } from "vitest";
+import { vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("../../services/firebase", () => ({
   getDb: async () => null,
@@ -127,5 +127,120 @@ describe("<App/>", () => {
 
       expect(screen.getByTestId("undo-btn")).toBeDisabled();
     });
+  });
+});
+
+// ── Win overlay / "Keep Playing" ────────────────────────────────────────────
+// Radius 1 (Small) wins at 512, only ever spawns single 2-tiles, and has no
+// blocked cells — which makes a merge into the winning tile fully deterministic.
+const RADIUS_1 = 1;
+const WIN_VALUE = 512;
+
+// The seven cells of a radius-1 hex grid (x + y + z === 0).
+const RADIUS_1_CELLS: Array<[number, number, number]> = [
+  [0, 0, 0],
+  [0, 1, -1],
+  [0, -1, 1],
+  [1, 0, -1],
+  [1, -1, 0],
+  [-1, 0, 1],
+  [-1, 1, 0],
+];
+
+const buildRadius1Grid = (): gridElement[] =>
+  RADIUS_1_CELLS.map(([x, y, z]) => ({ x, y, z, value: 0 }));
+
+// Two 256 tiles aligned on the "north" axis: the tile at (0,-1,1) moves north
+// into (0,0,0), merging the pair into 512.
+const winningPairTileSet = (): gridElement[] => [
+  { x: 0, y: 0, z: 0, value: 256, id: 1 },
+  { x: 0, y: -1, z: 1, value: 256, id: 2 },
+];
+
+const seedSavedGame = (overrides: Partial<savedGame>): void => {
+  const tileSet = overrides.tileSet ?? winningPairTileSet();
+  const saved: savedGame = {
+    tileSet,
+    grid: buildRadius1Grid(),
+    score: 0,
+    radius: RADIUS_1,
+    historyTileSet: tileSet,
+    historyScore: 0,
+    undoCount: 0,
+    isUndoAvailable: false,
+    isMaxUndo: false,
+    isWin: false,
+    hasKeptPlaying: false,
+    ...overrides,
+  };
+  localStorage.setItem("savedGame", JSON.stringify(saved));
+  localStorage.setItem("lastRadius", String(RADIUS_1));
+};
+
+// `initialSavedGame` is captured at module-load time, so each test seeds
+// localStorage and then imports a fresh copy of <App/>.
+const renderFreshApp = async () => {
+  vi.resetModules();
+  const { App: FreshApp } = await import(".");
+  return render(<FreshApp />);
+};
+
+describe("<App/> win overlay", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+    localStorage.clear();
+  });
+
+  it("shows the win overlay when a tile first reaches the winning value", async () => {
+    seedSavedGame({ isWin: false, hasKeptPlaying: false });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // north: merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toHaveTextContent(`You reached ${WIN_VALUE}!`);
+    });
+    expect(screen.getByText("Keep Playing")).toBeInTheDocument();
+  });
+
+  it("dismisses the overlay when the player chooses Keep Playing", async () => {
+    // Start already won so the overlay is on screen at mount.
+    seedSavedGame({ isWin: true, hasKeptPlaying: false });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText("Keep Playing"));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
+    });
+  });
+
+  it("does not show the win overlay again after Keep Playing when another winning tile is formed", async () => {
+    // hasKeptPlaying: true represents a game where the player already won once
+    // and chose to keep playing. Forming another 512 must NOT re-trigger the overlay.
+    seedSavedGame({ isWin: false, hasKeptPlaying: true });
+    await renderFreshApp();
+
+    expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges another 256 pair into 512
+    });
+
+    // Give the win-detection path time to run; the overlay must stay hidden.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
   });
 });

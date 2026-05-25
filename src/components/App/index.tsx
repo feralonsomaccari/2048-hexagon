@@ -46,6 +46,7 @@ export const App: React.FC = () => {
   const [isMovementBlocked, setIsMovementBlocked] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isWin, setIsWin] = useState(initialSavedGame?.isWin ?? false);
+  const [hasKeptPlaying, setHasKeptPlaying] = useState(initialSavedGame?.hasKeptPlaying ?? false);
   const [score, setScore] = useState(initialSavedGame?.score ?? 0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
@@ -157,8 +158,9 @@ export const App: React.FC = () => {
       isUndoAvailable,
       isMaxUndo,
       isWin,
+      hasKeptPlaying,
     });
-  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, isWin, isGameOver]);
+  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, isGameOver]);
 
   const updateTile = (
     tile: gridElement,
@@ -184,7 +186,7 @@ export const App: React.FC = () => {
         mergeCounter.count += 1;
         const comboMultiplier = mergeCounter.count;
         setScore((prevScore) => prevScore + newValue * comboMultiplier);
-        if (newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
+        if (!hasKeptPlaying && newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
         tile.z = nextBlock.z;
@@ -311,6 +313,7 @@ export const App: React.FC = () => {
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
+    setHasKeptPlaying(false);
     setIsModalShown(false);
     setPendingHighScore(false);
     setLastQualifyingEntry(null);
@@ -340,6 +343,7 @@ export const App: React.FC = () => {
 
   const dismissOverlay = useCallback(() => {
     setIsWin(false);
+    setHasKeptPlaying(true);
   }, []);
 
   const undoHandler = useCallback(() => {

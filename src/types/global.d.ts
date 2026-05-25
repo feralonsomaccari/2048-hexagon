@@ -20,6 +20,7 @@ declare global {
     undoCount?: number,
     isUndoAvailable?: boolean,
     isMaxUndo?: boolean,
-    isWin?: boolean
+    isWin?: boolean,
+    hasKeptPlaying?: boolean
   }
 }

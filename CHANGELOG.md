@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-05-25
+
+### Fixed
+- Win overlay no longer reappears after choosing "Keep Playing": once the player dismisses the win screen, forming another winning tile no longer re-triggers the "You reached …!" alert, so play continues uninterrupted until game over. The "kept playing" state is persisted with the saved game.
+
 ## [0.5.2] - 2026-05-25
 
 ### Changed
