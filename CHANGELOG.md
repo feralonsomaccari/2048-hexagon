@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-05-25
+
+### Changed
+- Combo scoring: merges within the same move now multiply the score (1st merge ×1, 2nd ×2, 3rd ×3, etc.), rewarding chained merges and increasing score variance especially on the small board.
+
 ## [0.5.1] - 2026-05-25
 
 ### Fixed

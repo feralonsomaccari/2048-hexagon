@@ -164,7 +164,8 @@ export const App: React.FC = () => {
     tile: gridElement,
     direction: string,
     grid: gridElement[],
-    removeTiles: number[]
+    removeTiles: number[],
+    mergeCounter: { count: number }
   ): gridElement => {
     const nextBlock = findNextBlock(tile, direction, grid);
     if (nextBlock === false || tile.merged) return tile;
@@ -180,7 +181,9 @@ export const App: React.FC = () => {
           delete currentBlock.id;
         }
         const newValue = tile.value + nextBlock.value;
-        setScore((prevScore) => prevScore + newValue);
+        mergeCounter.count += 1;
+        const comboMultiplier = mergeCounter.count;
+        setScore((prevScore) => prevScore + newValue * comboMultiplier);
         if (newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
@@ -193,7 +196,7 @@ export const App: React.FC = () => {
         nextBlock.id = tile.id;
         nextBlock.merged = true;
 
-        return updateTile(tile, direction, grid, removeTiles);
+        return updateTile(tile, direction, grid, removeTiles, mergeCounter);
       } else {
         return tile;
       }
@@ -212,7 +215,7 @@ export const App: React.FC = () => {
       nextBlock.value = tile.value;
       nextBlock.id = tile.id;
 
-      return updateTile(tile, direction, grid, removeTiles);
+      return updateTile(tile, direction, grid, removeTiles, mergeCounter);
     }
   };
 
@@ -229,9 +232,10 @@ export const App: React.FC = () => {
     }
 
     const tilesToBeRemoved: number[] = [];
+    const mergeCounter = { count: 0 };
     const sortedTileSet = sortTileSet(clonedTileSet, direction);
     const updatedTileSet: gridElement[] = sortedTileSet.map((tile) => {
-      return updateTile(tile, direction, grid, tilesToBeRemoved);
+      return updateTile(tile, direction, grid, tilesToBeRemoved, mergeCounter);
     });
 
     tilesToBeRemoved.forEach((tileId) => {
