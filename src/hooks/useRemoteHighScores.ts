@@ -1,17 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  getDoc,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-  where,
-} from "firebase/firestore";
-import { getDb } from "../services/firebase";
+import { getDb, isFirebaseConfigured } from "../services/firebase";
 import { FIREBASE_LOGS_ENABLED } from "../config/gameConfig";
 import {
   HighScoreEntry,
@@ -48,10 +36,9 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
 
 const useRemoteHighScores = (): RemoteState => {
   const [scores, setScores] = useState<HighScores>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isFirebaseConfigured());
   const [error, setError] = useState<Error | null>(null);
-  const db = getDb();
-  const isRemote = Boolean(db);
+  const isRemote = isFirebaseConfigured();
 
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
@@ -60,46 +47,54 @@ const useRemoteHighScores = (): RemoteState => {
   }, []);
 
   useEffect(() => {
-    if (!db) return;
+    if (!isRemote) return;
 
-    setIsLoading(true);
+    let cancelled = false;
+    let unsubscribers: Array<() => void> = [];
     const received = new Set<number>();
 
-    const unsubscribers = RADII.map((radius) => {
-      const q = query(
-        collection(db, COLLECTION),
-        where("boardRadius", "==", radius),
-        orderBy("score", "desc"),
-        limit(MAX_ENTRIES_PER_BOARD)
-      );
-      return onSnapshot(
-        q,
-        (snap) => {
-          const entries = snap.docs.map((d) => docToEntry(d.data() as FirestoreDocData));
-          setScores((prev) => ({ ...prev, [radius]: entries }));
-          received.add(radius);
-          if (received.size === RADII.length) setIsLoading(false);
-        },
-        (err) => {
-          if (FIREBASE_LOGS_ENABLED) {
-            console.error(`[highScores] listener for radius=${radius} failed:`, err);
+    (async () => {
+      const [db, { collection, limit, onSnapshot, orderBy, query, where }] =
+        await Promise.all([getDb(), import("firebase/firestore")]);
+      if (cancelled || !db) return;
+
+      unsubscribers = RADII.map((radius) => {
+        const q = query(
+          collection(db, COLLECTION),
+          where("boardRadius", "==", radius),
+          orderBy("score", "desc"),
+          limit(MAX_ENTRIES_PER_BOARD)
+        );
+        return onSnapshot(
+          q,
+          (snap) => {
+            const entries = snap.docs.map((d) => docToEntry(d.data() as FirestoreDocData));
+            setScores((prev) => ({ ...prev, [radius]: entries }));
+            received.add(radius);
+            if (received.size === RADII.length) setIsLoading(false);
+          },
+          (err) => {
+            if (FIREBASE_LOGS_ENABLED) {
+              console.error(`[highScores] listener for radius=${radius} failed:`, err);
+            }
+            setError(err instanceof Error ? err : new Error(String(err)));
+            setIsLoading(false);
           }
-          setError(err instanceof Error ? err : new Error(String(err)));
-          setIsLoading(false);
-        }
-      );
-    });
+        );
+      });
+    })();
 
     return () => {
+      cancelled = true;
       unsubscribers.forEach((unsub) => unsub());
     };
-  }, [db]);
+  }, [isRemote]);
 
   const submit = useCallback(
     async (radius: number, score: number, name: string): Promise<HighScoreEntry | null> => {
       const trimmedName = name.trim().slice(0, 16);
       if (!trimmedName || score <= 0 || score > MAX_SCORE_SANITY) return null;
-      if (!db) return null;
+      if (!isRemote) return null;
 
       const entry: HighScoreEntry = {
         name: trimmedName,
@@ -108,6 +103,12 @@ const useRemoteHighScores = (): RemoteState => {
       };
 
       try {
+        const [db, { doc, getDoc, serverTimestamp, setDoc }] = await Promise.all([
+          getDb(),
+          import("firebase/firestore"),
+        ]);
+        if (!db) return null;
+
         const ref = doc(db, COLLECTION, docIdFor(radius, trimmedName));
         const existing = await getDoc(ref);
         const existingScore = existing.exists() ? (existing.data().score as number) : -Infinity;
@@ -130,7 +131,7 @@ const useRemoteHighScores = (): RemoteState => {
 
       return entry;
     },
-    [db]
+    [isRemote]
   );
 
   return { scores, submit, isRemote, isLoading, error };

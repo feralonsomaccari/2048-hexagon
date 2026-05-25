@@ -1,5 +1,5 @@
-import { initializeApp, FirebaseApp } from "firebase/app";
-import { getFirestore, Firestore } from "firebase/firestore";
+import type { FirebaseApp } from "firebase/app";
+import type { Firestore } from "firebase/firestore";
 import { FIREBASE_LOGS_ENABLED } from "../config/gameConfig";
 
 const config = {
@@ -13,8 +13,12 @@ const config = {
 
 let appInstance: FirebaseApp | null = null;
 let dbInstance: Firestore | null = null;
+let dbPromise: Promise<Firestore | null> | null = null;
 
-const isConfigured = (): boolean => Boolean(config.apiKey && config.projectId);
+// Synchronous check so callers can decide whether to bother loading the SDK
+// (and surface "remote vs local" state) without pulling Firebase into the main bundle.
+export const isFirebaseConfigured = (): boolean =>
+  Boolean(config.apiKey && config.projectId);
 
 if (FIREBASE_LOGS_ENABLED) {
   console.log("[firebase] env check:", {
@@ -25,19 +29,32 @@ if (FIREBASE_LOGS_ENABLED) {
   });
 }
 
-export const getDb = (): Firestore | null => {
-  if (!isConfigured()) {
+// Lazily loads the Firebase SDK via dynamic import so it is code-split into its
+// own chunk and kept off the critical path. Resolves to null when not configured.
+export const getDb = async (): Promise<Firestore | null> => {
+  if (!isFirebaseConfigured()) {
     if (FIREBASE_LOGS_ENABLED) {
       console.warn("[firebase] not configured — VITE_FIREBASE_API_KEY or VITE_FIREBASE_PROJECT_ID missing. Falling back to localStorage.");
     }
     return null;
   }
-  if (!appInstance) {
-    if (FIREBASE_LOGS_ENABLED) {
-      console.log("[firebase] initializing app for project:", config.projectId);
+  if (dbInstance) return dbInstance;
+  if (dbPromise) return dbPromise;
+
+  dbPromise = (async () => {
+    const [{ initializeApp }, { getFirestore }] = await Promise.all([
+      import("firebase/app"),
+      import("firebase/firestore"),
+    ]);
+    if (!appInstance) {
+      if (FIREBASE_LOGS_ENABLED) {
+        console.log("[firebase] initializing app for project:", config.projectId);
+      }
+      appInstance = initializeApp(config);
     }
-    appInstance = initializeApp(config);
-  }
-  if (!dbInstance) dbInstance = getFirestore(appInstance);
-  return dbInstance;
+    dbInstance = getFirestore(appInstance);
+    return dbInstance;
+  })();
+
+  return dbPromise;
 };

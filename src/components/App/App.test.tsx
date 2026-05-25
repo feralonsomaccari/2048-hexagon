@@ -9,7 +9,8 @@ import {
 import { vi } from "vitest";
 
 vi.mock("../../services/firebase", () => ({
-  getDb: () => null,
+  getDb: async () => null,
+  isFirebaseConfigured: () => false,
 }));
 
 vi.mock("firebase/firestore", () => ({

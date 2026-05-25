@@ -4,6 +4,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 const setDocMock = vi.fn();
 const getDocMock = vi.fn();
 const getDbMock = vi.fn();
+const isConfiguredMock = vi.fn();
 
 type Listener = {
   radius: number;
@@ -44,7 +45,8 @@ vi.mock("firebase/firestore", () => ({
 }));
 
 vi.mock("../services/firebase", () => ({
-  getDb: () => getDbMock(),
+  getDb: async () => getDbMock(),
+  isFirebaseConfigured: () => isConfiguredMock(),
 }));
 
 import useRemoteHighScores from "./useRemoteHighScores";
@@ -59,8 +61,13 @@ const makeSnapshot = (docs: Array<{ name: string; score: number }>) => ({
   })),
 });
 
-const emitInitialEmptySnapshots = () => {
-  // Fires every registered listener with an empty snapshot so initial loading resolves.
+const waitForListeners = (count = 4) =>
+  waitFor(() => expect(listeners).toHaveLength(count));
+
+const emitInitialEmptySnapshots = async () => {
+  // Listeners register after the lazy Firebase import resolves, so wait for them
+  // first, then fire every one with an empty snapshot so initial loading resolves.
+  await waitForListeners();
   act(() => {
     listeners.forEach((l) => l.onNext(makeSnapshot([])));
   });
@@ -71,6 +78,7 @@ beforeEach(() => {
   setDocMock.mockReset();
   getDocMock.mockReset();
   getDbMock.mockReset();
+  isConfiguredMock.mockReset();
   onSnapshotMock.mockClear();
   listeners.length = 0;
   vi.spyOn(console, "log").mockImplementation(() => {});
@@ -84,6 +92,7 @@ afterEach(() => {
 
 describe("useRemoteHighScores — no Firebase configured", () => {
   beforeEach(() => {
+    isConfiguredMock.mockReturnValue(false);
     getDbMock.mockReturnValue(null);
   });
 
@@ -93,8 +102,9 @@ describe("useRemoteHighScores — no Firebase configured", () => {
     expect(result.current.scores).toEqual({});
   });
 
-  it("does not register any Firestore listeners", () => {
+  it("does not register any Firestore listeners", async () => {
     renderHook(() => useRemoteHighScores());
+    await Promise.resolve();
     expect(onSnapshotMock).not.toHaveBeenCalled();
   });
 
@@ -117,17 +127,20 @@ describe("useRemoteHighScores — no Firebase configured", () => {
 
 describe("useRemoteHighScores — Firebase configured", () => {
   beforeEach(() => {
+    isConfiguredMock.mockReturnValue(true);
     getDbMock.mockReturnValue({ __db: true });
   });
 
-  it("registers one listener per board on mount", () => {
+  it("registers one listener per board on mount", async () => {
     renderHook(() => useRemoteHighScores());
+    await waitForListeners();
     expect(onSnapshotMock).toHaveBeenCalledTimes(4);
     expect(listeners.map((l) => l.radius).sort()).toEqual([1, 2, 3, 4]);
   });
 
   it("populates scores when snapshots arrive", async () => {
     const { result } = renderHook(() => useRemoteHighScores());
+    await waitForListeners();
     act(() => {
       listeners
         .find((l) => l.radius === 2)
@@ -141,7 +154,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
   it("clears isLoading once every board has emitted its first snapshot", async () => {
     const { result } = renderHook(() => useRemoteHighScores());
     expect(result.current.isLoading).toBe(true);
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
@@ -151,7 +164,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
     getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
     setDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     await act(async () => {
       await result.current.submit(1, 500, "Alice");
@@ -169,7 +182,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
     getDocMock.mockResolvedValue({ exists: () => true, data: () => ({ score: 300 }) });
     setDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     await act(async () => {
       await result.current.submit(1, 500, "Alice");
@@ -183,7 +196,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
   it("submit skips writing when the existing score is higher", async () => {
     getDocMock.mockResolvedValue({ exists: () => true, data: () => ({ score: 800 }) });
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     await act(async () => {
       await result.current.submit(1, 500, "Alice");
@@ -196,7 +209,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
     getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
     setDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     await act(async () => {
       await result.current.submit(2, 100, "PePe");
@@ -211,7 +224,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
     getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
     setDocMock.mockRejectedValue(new Error("permission-denied"));
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     let returned;
     await act(async () => {
@@ -226,6 +239,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
 
   it("captures listener errors", async () => {
     const { result } = renderHook(() => useRemoteHighScores());
+    await waitForListeners();
     act(() => {
       listeners.find((l) => l.radius === 1)?.onError(new Error("listener-failed"));
     });
@@ -234,8 +248,9 @@ describe("useRemoteHighScores — Firebase configured", () => {
     });
   });
 
-  it("unregisters all listeners on unmount", () => {
+  it("unregisters all listeners on unmount", async () => {
     const { unmount } = renderHook(() => useRemoteHighScores());
+    await waitForListeners();
     expect(listeners).toHaveLength(4);
     unmount();
     expect(listeners).toHaveLength(0);
@@ -243,7 +258,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
 
   it("applies live updates pushed after the initial snapshot", async () => {
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     act(() => {
       listeners
@@ -259,6 +274,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
 
 describe("useRemoteHighScores — input validation", () => {
   beforeEach(() => {
+    isConfiguredMock.mockReturnValue(true);
     getDbMock.mockReturnValue({ __db: true });
     getDocMock.mockResolvedValue({ exists: () => false, data: () => ({}) });
     setDocMock.mockResolvedValue(undefined);
@@ -272,7 +288,7 @@ describe("useRemoteHighScores — input validation", () => {
     { name: "Alice", score: 10_000_001, reason: "above sanity cap" },
   ])("rejects $reason", async ({ name, score }) => {
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     let returned;
     await act(async () => {
@@ -284,7 +300,7 @@ describe("useRemoteHighScores — input validation", () => {
 
   it("trims and caps name length at 16 characters", async () => {
     const { result } = renderHook(() => useRemoteHighScores());
-    emitInitialEmptySnapshots();
+    await emitInitialEmptySnapshots();
 
     let returned: { name: string; score: number; date: string } | null = null;
     await act(async () => {
