@@ -5,6 +5,8 @@ import {
   sortTileSet,
   createHexGrid,
   addIds,
+  isBlocked,
+  BLOCKED_VALUE,
 } from "./gameLogic";
 
 const tile = (x: number, y: number, z: number, value = 2): gridElement => ({ x, y, z, value });
@@ -70,9 +72,23 @@ describe("createHexGrid", () => {
     });
   });
 
-  it("all blocks start with value 0", () => {
-    createHexGrid(2).forEach(({ value }) => {
+  it("all blocks start with value 0 when there is no blocked center", () => {
+    // Radius 1 has no blocked center, so every cell is a playable empty cell.
+    createHexGrid(1).forEach(({ value }) => {
       expect(value).toBe(0);
+    });
+  });
+
+  it("marks the blocked center cell with BLOCKED_VALUE and leaves the rest empty", () => {
+    // Radius 2 blocks only the center (0,0,0); every other cell starts empty.
+    createHexGrid(2).forEach((cell) => {
+      if (cell.x === 0 && cell.y === 0 && cell.z === 0) {
+        expect(cell.value).toBe(BLOCKED_VALUE);
+        expect(isBlocked(cell)).toBe(true);
+      } else {
+        expect(cell.value).toBe(0);
+        expect(isBlocked(cell)).toBe(false);
+      }
     });
   });
 });
