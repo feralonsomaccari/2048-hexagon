@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-25
+
+### Added
+- SEO: `HowTo` JSON-LD structured data describing how to play, plus a free-game `Offer` on the existing `VideoGame` schema.
+- Open Graph image metadata (`og:image:type`, `og:image:width`, `og:image:height`) and `twitter:image:alt` for richer, more reliable social cards.
+- `public/CNAME` so every deploy re-asserts the `2048hexagon.com` custom domain on GitHub Pages.
+- `public/404.html` that redirects unknown URLs to the home page (with `noindex` and a visible fallback link).
+
+### Changed
+- Firebase is now lazy-loaded via dynamic `import()` so the Firestore SDK is code-split out of the main bundle and off the critical render path; high scores load after first paint. `getDb()` is now async and a synchronous `isFirebaseConfigured()` was added so the UI can decide remote-vs-local without pulling in the SDK.
+- `og:title` and `twitter:title` now use the full, keyword-rich title instead of the bare brand name.
+- Aligned the `manifest.json` description with the meta/Open Graph/Twitter description.
+- Regenerated `og-image.png` at the optimal 1200×630 social-card size (padded from the source artwork).
+- Bumped `sitemap.xml` `lastmod` to the current date.
+
+### Fixed
+- Accessibility: corrected the heading order — the `Score` titles are now `<h2>` instead of `<h3>`, so the document outline descends sequentially from the `<h1>` (resolves the "heading elements not in sequentially-descending order" audit).
+- Score component padding.
+
 ## [0.4.11] - 2026-05-21
 
 ### Changed
