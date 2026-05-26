@@ -5,6 +5,7 @@ import Tile from "../Tile";
 import { getPositionFromCoordinates } from "../../utils/gameLogic";
 import Button from "../Button";
 import HighScorePrompt from "../Leaderboard/HighScorePrompt";
+import Confetti from "../Confetti";
 import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 type props = {
@@ -67,6 +68,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
           aria-atomic="true"
           aria-modal="true"
         >
+          {isWin && <Confetti />}
           {isWin && <span className={styles.overlayIcon} aria-hidden="true">🏆</span>}
           <h2 id="overlay-title" className={styles.overlayTitle}>{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
           {hasBreakdown && (

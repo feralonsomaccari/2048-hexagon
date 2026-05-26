@@ -1,0 +1,48 @@
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1; /* behind the overlay's text/buttons (z-index: 2) */
+}
+
+.piece {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  opacity: 0;
+  will-change: top, transform, opacity;
+  animation-name: fall;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+}
+
+/* `top` is a percentage of the container height, so the piece falls the full
+   height of the overlay regardless of board size. */
+@keyframes fall {
+  0% {
+    top: -10%;
+    opacity: 0;
+    transform: translateX(0) rotate(var(--rotate)) scale(var(--scale));
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 105%;
+    opacity: 1;
+    transform: translateX(var(--drift)) rotate(calc(var(--rotate) + 360deg))
+      scale(var(--scale));
+  }
+}
+
+/* Confetti is celebratory but non-essential — respect motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+}

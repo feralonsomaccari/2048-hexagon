@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-26
+
+### Added
+- Confetti falls across the board when you win — a dependency-free burst (no added bundle weight), with pieces in the tile palette drifting and tumbling the full height of the win overlay. It's purely decorative (hidden from assistive tech) and is suppressed entirely for users who prefer reduced motion.
+
+### Changed
+- Reworked the win overlay's look. The backdrop is now a vibrant gold with deep-brown text, replacing the muddy yellow-on-brown that was low-contrast and hard to read. The new combination meets WCAG AA contrast (≈6.5:1 in light theme, ≈5.7:1 in dark).
+
+### Fixed
+- The "Enter your name" field's border is now clearly visible in light mode. It previously used a near-white color, leaving the input hard to make out; it now uses the secondary (brown) color, matching the focus state.
+
 ## [0.7.2] - 2026-05-26
 
 ### Changed

@@ -45,6 +45,13 @@
   animation-fill-mode: forwards;
 }
 
+/* Keep the overlay's content above the decorative confetti layer (z-index: 1). */
+.gameOverOverlay > *:not([aria-hidden="true"]),
+.overlayIcon {
+  position: relative;
+  z-index: 2;
+}
+
 .overlayIcon {
   font-size: 56px;
   line-height: 1;
@@ -96,7 +103,8 @@
 
 .gameOverOverlay.isWin {
   background-color: var(--color-bg-overlay-win);
-  color: var(--color-text-main);
+  color: var(--color-text-overlay-win);
+  text-shadow: 0 1px 1px rgba(255, 240, 190, 0.45);
 }
 
 

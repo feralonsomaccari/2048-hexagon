@@ -8,7 +8,8 @@
   --color-score-box-text: #fdfbf7;
   --color-disabled: #d6cec5;
   --color-bg-overlay-gameover: rgba(238, 228, 218, 0.73);
-  --color-bg-overlay-win: rgba(220, 213, 88, 0.73);
+  --color-bg-overlay-win: rgba(237, 194, 46, 0.92);
+  --color-text-overlay-win: #3d2f0c;
   --color-score-gain: #2d6a4f;
   --color-bg-page: #faf8ef;
 
@@ -41,7 +42,7 @@
   --color-score-box-text: #ede0c8;
   --color-disabled: #4a4640;
   --color-bg-overlay-gameover: rgba(28, 26, 22, 0.78);
-  --color-bg-overlay-win: rgba(120, 105, 30, 0.78);
+  --color-bg-overlay-win: rgba(212, 165, 35, 0.92);
   --color-bg-page: #1d1b17;
   --color-score-gain: #95d5b2;
 
