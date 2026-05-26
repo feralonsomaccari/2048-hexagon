@@ -288,6 +288,44 @@ describe("<App/> win overlay", () => {
     expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("512");
   });
 
+  it("breaks out the combo bonus earned from chained merges", async () => {
+    // Two 256 pairs aligned on the north axis (x=1 and x=-1 columns) both merge
+    // to 512 in a single "north" move. The first merge scores 512 (×1) and the
+    // second 1024 (×2) — so the raw score is 1536, of which 512 is the combo
+    // bonus and 1024 the base merge points. undoCount=3 zeroes the no-undo bonus
+    // so the breakdown isolates the combo line. The first 512 also wins, opening
+    // the overlay.
+    const comboPairs: gridElement[] = [
+      { x: 1, y: 0, z: -1, value: 256, id: 1 },
+      { x: 1, y: -1, z: 0, value: 256, id: 2 },
+      { x: -1, y: 1, z: 0, value: 256, id: 3 },
+      { x: -1, y: 0, z: 1, value: 256, id: 4 },
+    ];
+    seedSavedGame({
+      tileSet: comboPairs,
+      historyTileSet: comboPairs,
+      isWin: false,
+      hasKeptPlaying: false,
+      undoCount: 3,
+    });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // north: merges both 256 pairs
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    const breakdown = screen.getByTestId("score-breakdown");
+    expect(breakdown).toHaveTextContent("Combo bonus");
+    expect(breakdown).toHaveTextContent("+512"); // combo bonus
+    expect(breakdown).toHaveTextContent("1024"); // base merge points
+    // Final score = 1024 base + 512 combo = 1536 (no no-undo bonus).
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("1536");
+  });
+
   // ── Header "Score" / "My Best" sync ─────────────────────────────────────
   // The header Score and My Best components expose an aria-label of
   // `${title}: ${value}`, which uniquely targets the header (the overlay's

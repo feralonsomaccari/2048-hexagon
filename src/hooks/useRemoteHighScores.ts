@@ -11,9 +11,20 @@ const COLLECTION = "highScores";
 const MAX_SCORE_SANITY = 10_000_000;
 const RADII = [1, 2, 3, 4] as const;
 
+type ScoreBreakdown = {
+  undosUsed?: number;
+  comboBonus?: number;
+  noUndoBonus?: number;
+};
+
 type RemoteState = {
   scores: HighScores;
-  submit: (radius: number, score: number, name: string, undosUsed?: number) => Promise<HighScoreEntry | null>;
+  submit: (
+    radius: number,
+    score: number,
+    name: string,
+    breakdown?: ScoreBreakdown
+  ) => Promise<HighScoreEntry | null>;
   isRemote: boolean;
   isLoading: boolean;
   error: Error | null;
@@ -23,6 +34,8 @@ type FirestoreDocData = {
   name: string;
   score: number;
   undosUsed?: number;
+  comboBonus?: number;
+  noUndoBonus?: number;
   createdAt?: { toDate: () => Date };
 };
 
@@ -31,7 +44,15 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   score: data.score,
   date: data.createdAt?.toDate().toISOString() ?? new Date().toISOString(),
   ...(typeof data.undosUsed === "number" ? { undosUsed: data.undosUsed } : {}),
+  ...(typeof data.comboBonus === "number" ? { comboBonus: data.comboBonus } : {}),
+  ...(typeof data.noUndoBonus === "number" ? { noUndoBonus: data.noUndoBonus } : {}),
 });
+
+// Clamp an optional bonus to a safe non-negative integer for storage.
+const safeBonus = (value: number | undefined): number =>
+  typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? Math.floor(value)
+    : 0;
 
 const useRemoteHighScores = (): RemoteState => {
   const [scores, setScores] = useState<HighScores>({});
@@ -90,21 +111,27 @@ const useRemoteHighScores = (): RemoteState => {
   }, [isRemote]);
 
   const submit = useCallback(
-    async (radius: number, score: number, name: string, undosUsed?: number): Promise<HighScoreEntry | null> => {
+    async (
+      radius: number,
+      score: number,
+      name: string,
+      breakdown?: ScoreBreakdown
+    ): Promise<HighScoreEntry | null> => {
       const trimmedName = name.trim().slice(0, 16);
       if (!trimmedName || score <= 0 || score > MAX_SCORE_SANITY) return null;
       if (!isRemote) return null;
 
-      const safeUndosUsed =
-        typeof undosUsed === "number" && Number.isFinite(undosUsed) && undosUsed >= 0
-          ? Math.floor(undosUsed)
-          : 0;
+      const safeUndosUsed = safeBonus(breakdown?.undosUsed);
+      const safeComboBonus = safeBonus(breakdown?.comboBonus);
+      const safeNoUndoBonus = safeBonus(breakdown?.noUndoBonus);
 
       const entry: HighScoreEntry = {
         name: trimmedName,
         score,
         date: new Date().toISOString(),
         undosUsed: safeUndosUsed,
+        comboBonus: safeComboBonus,
+        noUndoBonus: safeNoUndoBonus,
       };
 
       try {
@@ -119,6 +146,8 @@ const useRemoteHighScores = (): RemoteState => {
           score,
           boardRadius: radius,
           undosUsed: safeUndosUsed,
+          comboBonus: safeComboBonus,
+          noUndoBonus: safeNoUndoBonus,
           createdAt: serverTimestamp(),
         });
       } catch (err) {

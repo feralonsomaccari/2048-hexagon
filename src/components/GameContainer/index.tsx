@@ -19,6 +19,7 @@ type props = {
   pendingHighScore?: boolean;
   score?: number;
   baseScore?: number;
+  comboBonus?: number;
   noUndoBonus?: number;
   noUndoBonusUndos?: number;
   onSubmitHighScore?: (name: string) => void;
@@ -35,7 +36,11 @@ const DEFAULT_VIEWPORT = { width: 576, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, noUndoBonus = 0, noUndoBonusUndos = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
+  // Pure merge points: the raw score with combo points peeled off so each
+  // breakdown line is an honest, additive component of the final score.
+  const mergeScore = baseScore - comboBonus;
+  const hasBreakdown = comboBonus > 0 || noUndoBonus > 0;
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
   const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
@@ -64,21 +69,29 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
         >
           {isWin && <span className={styles.overlayIcon} aria-hidden="true">🏆</span>}
           <h2 id="overlay-title" className={styles.overlayTitle}>{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
-          {noUndoBonus > 0 && (
+          {hasBreakdown && (
             <dl className={styles.scoreBreakdown} data-testid="score-breakdown">
               <div className={styles.scoreBreakdownRow}>
                 <dt>Score</dt>
-                <dd>{baseScore}</dd>
+                <dd>{mergeScore}</dd>
               </div>
-              <div className={styles.scoreBreakdownRow}>
-                <dt>No-undo bonus{noUndoBonusUndos > 1 ? ` (×${noUndoBonusUndos})` : ""}</dt>
-                <dd>+{noUndoBonus}</dd>
-              </div>
+              {comboBonus > 0 && (
+                <div className={styles.scoreBreakdownRow}>
+                  <dt>Combo bonus</dt>
+                  <dd>+{comboBonus}</dd>
+                </div>
+              )}
+              {noUndoBonus > 0 && (
+                <div className={styles.scoreBreakdownRow}>
+                  <dt>No-undo bonus{noUndoBonusUndos > 1 ? ` (×${noUndoBonusUndos})` : ""}</dt>
+                  <dd>+{noUndoBonus}</dd>
+                </div>
+              )}
             </dl>
           )}
           {!(pendingHighScore && onSubmitHighScore) && (
             <p className={styles.overlayScore}>
-              {noUndoBonus > 0 ? "Final score" : "Score"}: {score}
+              {hasBreakdown ? "Final score" : "Score"}: {score}
             </p>
           )}
           {pendingHighScore && onSubmitHighScore && (

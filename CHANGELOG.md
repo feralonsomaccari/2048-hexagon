@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.6.1] - 2026-05-26
+## [0.6.2] - 2026-05-26
+
+### Added
+- The win/Game Over overlay now breaks out the **combo bonus** — the extra points earned from chained merges within a single move — as its own line in the score breakdown, alongside the existing no-undo bonus. The "Score" line shows the base merge points, then each bonus is added on top, so the lines sum to the final score. This is purely informational: combo points were already part of the score, so the total is unchanged.
+- Leaderboard submissions now also record `comboBonus` and `noUndoBonus` in Firestore alongside the score, for future display/filtering. The combo total is snapshotted with the saved game and reverts on undo. Requires the Firestore rules to allow the two new fields.
 
 ### Fixed
 - "My Best" no longer shows an inflated value mid-game. Previously the personal best was recorded with the no-undo bonus baked in on every score change, so during play it leapt ahead of the live "Score" (e.g. Score 1000 / My Best 1300). Now "My Best" follows the raw live score during play and is bumped to the bonus-adjusted final score only at end-of-run, matching the leaderboard submission.

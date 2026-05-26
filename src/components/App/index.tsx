@@ -53,10 +53,16 @@ export const App: React.FC = () => {
   // which is distinct from a banked value of 0 (won with all undos used).
   const [bankedBonus, setBankedBonus] = useState<number | null>(initialSavedGame?.bankedBonus ?? null);
   const [score, setScore] = useState(initialSavedGame?.score ?? 0);
+  // Portion of `score` earned from chained merges (combos). The first merge in a
+  // move scores at ×1 (no combo bonus); each further merge in the same move
+  // scores at ×2, ×3, … and the extra above the base value is banked here so we
+  // can break it out at game-end.
+  const [comboBonus, setComboBonus] = useState(initialSavedGame?.comboBonus ?? 0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
   const [isMaxUndo, setIsMaxUndo] = useState(initialSavedGame?.isMaxUndo ?? false)
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
+  const [historyComboBonus, setHistoryComboBonus] = useState(initialSavedGame?.historyComboBonus ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
@@ -191,9 +197,11 @@ export const App: React.FC = () => {
       tileSet,
       grid,
       score,
+      comboBonus,
       radius,
       historyTileSet,
       historyScore,
+      historyComboBonus,
       undoCount,
       isUndoAvailable,
       isMaxUndo,
@@ -201,7 +209,7 @@ export const App: React.FC = () => {
       hasKeptPlaying,
       bankedBonus: bankedBonus ?? undefined,
     });
-  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, bankedBonus, isGameOver]);
+  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, bankedBonus, isGameOver]);
 
   const updateTile = (
     tile: gridElement,
@@ -227,6 +235,11 @@ export const App: React.FC = () => {
         mergeCounter.count += 1;
         const comboMultiplier = mergeCounter.count;
         setScore((prevScore) => prevScore + newValue * comboMultiplier);
+        // The base value counts once at ×1; anything above that (×2, ×3, … on
+        // chained merges) is the combo bonus.
+        if (comboMultiplier > 1) {
+          setComboBonus((prev) => prev + newValue * (comboMultiplier - 1));
+        }
         if (!hasKeptPlaying && newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
@@ -270,6 +283,7 @@ export const App: React.FC = () => {
     const clonedTileSet = structuredClone(tileSet);
     setHistoryTileSet(clonedTileSet);
     setHistoryScore(score);
+    setHistoryComboBonus(comboBonus);
     if (!isMaxUndo) {
       setIsUndoAvailable(true);
     }
@@ -347,6 +361,8 @@ export const App: React.FC = () => {
 
   const resetGameHandler = (newRadius: number): void => {
     setScore(0);
+    setComboBonus(0);
+    setHistoryComboBonus(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
     setUndoCount(0)
@@ -368,7 +384,11 @@ export const App: React.FC = () => {
 
   const submitHighScore = useCallback(
     async (name: string) => {
-      const entry = await submitRemoteHighScore(radius, finalScore, name, undoCount);
+      const entry = await submitRemoteHighScore(radius, finalScore, name, {
+        undosUsed: undoCount,
+        comboBonus,
+        noUndoBonus,
+      });
       if (entry) {
         setLastQualifyingEntry(entry);
         setLastQualifyingRadius(radius);
@@ -376,7 +396,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, finalScore, undoCount, submitRemoteHighScore]
+    [radius, finalScore, undoCount, comboBonus, noUndoBonus, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -391,9 +411,10 @@ export const App: React.FC = () => {
   const undoHandler = useCallback(() => {
     setTileSet(historyTileSet);
     setScore(historyScore);
+    setComboBonus(historyComboBonus);
     setIsUndoAvailable(false);
     setUndoCount(prev => prev + 1)
-  }, [historyTileSet, historyScore]);
+  }, [historyTileSet, historyScore, historyComboBonus]);
 
   const onNewGameHandler = useCallback(() => {
     setIsModalShown(true);
@@ -464,6 +485,7 @@ export const App: React.FC = () => {
           pendingHighScore={pendingHighScore}
           score={finalScore}
           baseScore={score}
+          comboBonus={comboBonus}
           noUndoBonus={noUndoBonus}
           noUndoBonusUndos={unusedUndos}
           onSubmitHighScore={submitHighScore}

@@ -4,6 +4,10 @@ export type HighScoreEntry = {
   date: string;
   /** Number of undos the player used during the run. Optional for legacy entries. */
   undosUsed?: number;
+  /** Extra points earned from chained merges (combos). Optional for legacy entries. */
+  comboBonus?: number;
+  /** Bonus points earned for leaving undos unused. Optional for legacy entries. */
+  noUndoBonus?: number;
 };
 
 export type HighScores = Record<string, HighScoreEntry[]>;
