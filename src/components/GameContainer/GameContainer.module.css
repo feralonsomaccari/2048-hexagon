@@ -26,6 +26,86 @@
   transform-origin: top center;
 }
 
+/* Win layout: keep the board on screen and place the result block beside it
+   (wide) or below it (narrow), instead of covering the board. The board shrinks
+   to make room. The whole thing is sized to its content and must never force
+   the page to scroll, so the board shrinks more on narrow screens. */
+.winLayout {
+  /* Wide screens: board and panel side by side, vertically centered. */
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: clamp(12px, 4vw, 32px);
+  /* Stay within the flex space the wrapper already occupies (`flex: 1` below the
+     header) instead of growing to fit content — that growth is what pushed the
+     page past 100dvh and caused scrolling. Content is shrunk to fit instead. */
+  min-height: 0;
+  overflow: visible;
+}
+
+.boardZone {
+  flex-shrink: 0;
+  transform-origin: center;
+  transition: transform 0.4s ease;
+}
+
+/* Wide: a gentle shrink is enough since the panel uses horizontal space. The
+   transform leaves the layout box at full size; negative margins on both sides
+   reclaim the freed width so the pair stays visually centered. */
+.boardZoneWin {
+  --win-scale: 0.8;
+  transform: scale(var(--win-scale));
+  margin-inline: calc((var(--win-scale) - 1) / 2 * var(--board-rendered-width, 0px));
+}
+
+@media (max-width: 600px) {
+  /* Narrow: stack the panel below a more-shrunk board. */
+  .winLayout {
+    flex-direction: column;
+    column-gap: 0;
+    row-gap: 10px;
+  }
+
+  .boardZone {
+    transform-origin: top center;
+  }
+
+  .boardZoneWin {
+    /* Scale computed in JS from the viewport height so the board + stacked panel
+       always fit without scrolling. Falls back to a safe constant. */
+    --win-scale: var(--win-scale-mobile, 0.55);
+    margin-inline: 0;
+    margin-bottom: calc((var(--win-scale) - 1) * var(--board-rendered-height, 0px));
+  }
+
+  /* On mobile the gold panel goes full-width, which gives the buttons room to
+     sit side by side — saving a row of height so the screen doesn't scroll. */
+  .gameOverOverlay.isWin {
+    max-width: none;
+    width: 100%;
+  }
+
+  /* Drop the trophy on mobile to reclaim vertical space (win only). */
+  .gameOverOverlay.isWin .overlayIcon {
+    display: none;
+  }
+
+  .gameOverOverlay.isWin .overlayActions {
+    flex-direction: row;
+    align-items: stretch;
+    column-gap: 10px;
+  }
+
+  .gameOverOverlay.isWin .overlayActions button {
+    /* Share the panel width evenly; height matches the menu buttons (42px). */
+    flex: 1 1 0;
+    width: auto;
+  }
+}
+
+/* Game Over: the classic full-cover overlay that covers the board. (The win
+   state overrides this in `.isWin` to a compact gold panel beside/below the
+   shrunk board.) */
 .gameOverOverlay {
   position: absolute;
   inset: 0;
@@ -101,20 +181,72 @@
   margin-top: 4px;
 }
 
+/* Win: a compact gold card in normal flow beside (wide) / below (narrow) the
+   shrunk board, instead of the full-cover overlay. */
 .gameOverOverlay.isWin {
+  position: relative;
+  inset: auto;
+  flex: 0 1 auto;
+  width: auto;
+  max-width: min(92%, 320px);
   background-color: var(--color-bg-overlay-win);
   color: var(--color-text-overlay-win);
   text-shadow: 0 1px 1px rgba(255, 240, 190, 0.45);
+  row-gap: 10px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  animation-name: panelFadeIn;
+  animation-delay: 0s;
 }
 
+/* Compact the gold panel's contents (win only). */
+.gameOverOverlay.isWin .overlayIcon {
+  font-size: 36px;
+}
 
+.gameOverOverlay.isWin .overlayTitle {
+  font-size: 22px;
+}
 
+.gameOverOverlay.isWin .overlayScore {
+  font-size: 14px;
+}
+
+.gameOverOverlay.isWin .scoreBreakdown {
+  font-size: 13px;
+}
+
+.gameOverOverlay.isWin .overlayActions {
+  flex-direction: column;
+  align-items: stretch;
+  row-gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.gameOverOverlay.isWin .overlayActions button {
+  max-width: none;
+  width: 100%;
+}
+
+@keyframes panelFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Full-cover Game Over overlay entrance. */
 @keyframes slowFadeIn {
   0% {
     opacity: 0;
     transform: translateY(-30px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);

@@ -10,7 +10,7 @@ const getAvailableWidth = () => {
   const isMobile = viewport <= MOBILE_BREAKPOINT;
   const padding = isMobile ? MOBILE_PADDING : DESKTOP_PADDING;
   const width = Math.min(viewport, MAX_WRAPPER_WIDTH) - padding;
-  return { width, isMobile };
+  return { width, height: window.innerHeight, isMobile };
 };
 
 const useViewport = () => {

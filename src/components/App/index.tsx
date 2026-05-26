@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import styles from "./App.module.css";
 import GameMenu from "../GameMenu";
-import Instructions from "../Instructions";
+// import Instructions from "../Instructions"; // hidden for now
 import GameContainer from "../GameContainer";
 import Score from "../Score";
 import NewGameModal from "../NewGameMenu";
@@ -138,7 +138,7 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
+  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown]);
 
   // During play, "My Best" follows the on-screen "Score" so it never lags or
   // leaps ahead of it: the raw score before a win, and the banked-bonus total
@@ -354,12 +354,12 @@ export const App: React.FC = () => {
   };
 
   useSwipe(boardRef, (direction) => {
-    if (isMovementBlocked || isGameOver || isModalShown) return;
+    if (isMovementBlocked || isGameOver || isWin || isModalShown) return;
     updateTilesPos(direction);
   });
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || isMovementBlocked || isGameOver || isModalShown) return;
+    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown) return;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
       event.preventDefault();
     }
@@ -511,7 +511,8 @@ export const App: React.FC = () => {
           isMuted={isMuted}
           onToggleMuted={toggleMuted}
         />
-        <Instructions radius={radius} />
+        {/* "How to Play" instructions hidden for now. */}
+        {/* <Instructions radius={radius} /> */}
         <p className={styles.topScoreLegend}>
           {highScores[radius]?.[0] && (
             <>
