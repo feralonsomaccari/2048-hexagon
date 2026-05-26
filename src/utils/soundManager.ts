@@ -18,7 +18,7 @@ const getContext = (): AudioContext | null => {
     if (!AudioCtor) return null;
     ctx = new AudioCtor();
     masterGain = ctx.createGain();
-    masterGain.gain.value = 0.5;
+    masterGain.gain.value = 0.3;
     masterGain.connect(ctx.destination);
   }
   if (ctx.state === "suspended") void ctx.resume();
@@ -33,28 +33,35 @@ const playTone = (
     gain = 0.3,
     delay = 0,
     glideTo,
+    attack = 0.01,
+    vary = 0,
   }: {
     duration?: number;
     type?: OscillatorType;
     gain?: number;
     delay?: number;
     glideTo?: number;
+    attack?: number;
+    vary?: number; // ± fraction of random pitch jitter per play (e.g. 0.06 = ±6%)
   } = {}
 ): void => {
   const audio = getContext();
   if (!audio || !masterGain) return;
+
+  // Nudge the pitch a touch each play so repeats don't sound identical.
+  const detune = vary ? 1 + (Math.random() * 2 - 1) * vary : 1;
 
   const start = audio.currentTime + delay;
   const osc = audio.createOscillator();
   const env = audio.createGain();
 
   osc.type = type;
-  osc.frequency.setValueAtTime(freq, start);
-  if (glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo, start + duration);
+  osc.frequency.setValueAtTime(freq * detune, start);
+  if (glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo * detune, start + duration);
 
   // Quick attack, exponential decay — a soft percussive blip rather than a beep.
   env.gain.setValueAtTime(0.0001, start);
-  env.gain.exponentialRampToValueAtTime(gain, start + 0.01);
+  env.gain.exponentialRampToValueAtTime(gain, start + attack);
   env.gain.exponentialRampToValueAtTime(0.0001, start + duration);
 
   osc.connect(env);
@@ -68,21 +75,13 @@ const SEMITONE = Math.pow(2, 1 / 12);
 
 type SoundOpts = { streak?: number; combo?: number };
 
-const MERGE_PITCH_CEILING = 12; // semitones above base the climb approaches
-const MERGE_PITCH_DECAY = 0.93; // <1: smaller share of the remaining gap each step (closer to 1 = slower, longer climb)
-const mergePitch = (streak: number): number => {
-  const n = Math.max(streak - 1, 0);
-  const step = MERGE_PITCH_CEILING * (1 - Math.pow(MERGE_PITCH_DECAY, n));
-  return MERGE_BASE * Math.pow(SEMITONE, step);
-};
-
 const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
   move: () =>
-    playTone(180, { duration: 0.08, type: "triangle", gain: 0.12, glideTo: 140 }),
+    playTone(180, { duration: 0.04, type: "triangle", gain: 0.12, glideTo: 140, vary: 0.08 }),
 
-  merge: ({ streak = 1 } = {}) => {
-    const freq = mergePitch(streak);
-    playTone(freq, { duration: 0.1, type: "triangle", gain: 0.22, glideTo: freq * 0.78 });
+  merge: () => {
+    // Same sound as a move.
+    playTone(180, { duration: 0.04, type: "triangle", gain: 0.12, glideTo: 140, vary: 0.08 });
   },
 
   combo: ({ combo = 2 } = {}) => {
@@ -91,10 +90,10 @@ const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
     for (let i = 0; i < steps; i++) {
       const freq = MERGE_BASE * Math.pow(SEMITONE, 7 + i * 2); // start a 5th up, climb
       playTone(freq, {
-        duration: 0.12,
+        duration: 0.06,
         type: "triangle",
         gain: 0.2,
-        delay: i * 0.07,
+        delay: i * 0.04,
         glideTo: freq * 0.9,
       });
     }
@@ -102,13 +101,13 @@ const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
 
   win: () => {
     [261.63, 329.63, 392.0, 523.25].forEach((freq, i) =>
-      playTone(freq, { duration: 0.55, type: "triangle", gain: 0.3, delay: i * 0.16 })
+      playTone(freq, { duration: 0.22, type: "triangle", gain: 0.3, delay: i * 0.08 })
     );
   },
 
   gameOver: () => {
     [196, 164.81, 130.81].forEach((freq, i) =>
-      playTone(freq, { duration: 0.6, type: "triangle", gain: 0.26, delay: i * 0.18 })
+      playTone(freq, { duration: 0.25, type: "triangle", gain: 0.26, delay: i * 0.09 })
     );
   },
 };
@@ -121,7 +120,7 @@ export const playSound = (name: SoundName, opts?: SoundOpts): void => {
 export const setMuted = (value: boolean): void => {
   muted = value;
   if (masterGain && ctx) {
-    masterGain.gain.setValueAtTime(value ? 0 : 0.5, ctx.currentTime);
+    masterGain.gain.setValueAtTime(value ? 0 : 0.3, ctx.currentTime);
   }
 };
 
