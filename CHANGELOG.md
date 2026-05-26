@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-26
+
+### Added
+- Sound effects, synthesized in-browser via the Web Audio API (no audio assets, so zero added bundle weight). Moves, merges, wins and Game Over each have their own tone. The merge sound rises in pitch the longer you keep merging across consecutive moves — a "merge streak" — and resets to its base pitch on a move that doesn't merge; the climb eases out so a long run never gets shrill. Audio only starts on the first key/swipe (respecting browser autoplay rules).
+- A sound on/off toggle (🔊/🔇) in the header menu, next to the theme toggle. The preference persists across sessions.
+
+### Removed
+- The "playing" / "game-over" status badge below the header divider. Game state is already clear from the board and the win/Game Over overlay, so the badge was redundant.
+
 ## [0.6.2] - 2026-05-26
 
 ### Added

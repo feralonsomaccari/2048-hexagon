@@ -1,9 +1,7 @@
 import styles from "./GameMenu.module.css";
-import GameStatus from "../GameStatus";
 import Button from "../Button";
 
 type props = {
-  isGameOver: boolean;
   onNewGameHandler?: () => void;
   undoHandler?: () => void;
   isUndoAvailable?: boolean;
@@ -13,10 +11,11 @@ type props = {
   theme?: "light" | "dark";
   onToggleTheme?: () => void;
   onHighScoresHandler?: () => void;
+  isMuted?: boolean;
+  onToggleMuted?: () => void;
 };
 
 const GameMenu = ({
-  isGameOver,
   undoHandler,
   onNewGameHandler,
   isUndoAvailable = true,
@@ -26,6 +25,8 @@ const GameMenu = ({
   theme,
   onToggleTheme,
   onHighScoresHandler,
+  isMuted,
+  onToggleMuted,
 }: props) => {
   return (
     <header data-testid="game-menu" className={styles.gameMenu}>
@@ -44,7 +45,6 @@ const GameMenu = ({
       </div>
       <div className={styles.divider} />
       <div className={styles.bottom}>
-        <GameStatus isGameOver={isGameOver} />
         <div className={styles.actions}>
           {showUndo && (
             <Button
@@ -89,6 +89,18 @@ const GameMenu = ({
                 title: `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
                 "data-testid": "theme-toggle-btn",
                 "aria-label": `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
+              }}
+            />
+          )}
+          {onToggleMuted && (
+            <Button
+              clickHandler={onToggleMuted}
+              text={isMuted ? "🔇" : "🔊"}
+              extraProps={{
+                title: isMuted ? "Unmute sound" : "Mute sound",
+                "data-testid": "sound-toggle-btn",
+                "aria-label": isMuted ? "Unmute sound" : "Mute sound",
+                "aria-pressed": isMuted,
               }}
             />
           )}

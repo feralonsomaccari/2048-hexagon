@@ -24,6 +24,7 @@ import useGameTiles from "../../hooks/useGameTiles";
 import useViewport from "../../hooks/useWindowScale";
 import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
+import useSound from "../../hooks/useSound";
 import useRemoteHighScores from "../../hooks/useRemoteHighScores";
 import {
   loadSavedGame,
@@ -71,9 +72,17 @@ export const App: React.FC = () => {
   const [lastQualifyingRadius, setLastQualifyingRadius] = useState<number | null>(null);
   const [serverResponse, fetchTiles] = useGameTiles([], initialRadius);
   const [theme, toggleTheme] = useTheme();
+  const { isMuted, toggleMuted, play } = useSound();
   const viewport = useViewport();
   const boardRef = useRef<HTMLElement>(null);
   const restoredRef = useRef<boolean>(!!initialSavedGame);
+  // Guards so end-of-game sounds fire on the in-session transition only, not
+  // when a finished/won game is restored from storage on page load.
+  const playedWinRef = useRef<boolean>(initialSavedGame?.isWin ?? false);
+  const playedGameOverRef = useRef<boolean>(false);
+  // Consecutive moves that merged. Drives the rising merge pitch; resets to 0
+  // when a move makes no merge (the streak "breaks").
+  const mergeStreakRef = useRef<number>(0);
 
   const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
 
@@ -161,6 +170,10 @@ export const App: React.FC = () => {
     if (!validMovementsAvailable(tileSet, grid)) {
       setIsGameOver(true);
       setIsUndoAvailable(false);
+      if (!playedGameOverRef.current) {
+        playedGameOverRef.current = true;
+        play("gameOver");
+      }
       if (qualifiesForHighScore(highScores, radius, finalScore)) {
         setPendingHighScore(true);
       }
@@ -175,6 +188,10 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (!isWin) return;
+    if (!playedWinRef.current) {
+      playedWinRef.current = true;
+      play("win");
+    }
     // Bank the bonus earned at win-time so it stays locked through "Keep
     // Playing". `liveBonus` reflects the winning score here; `finalScore` may
     // still be reading the not-yet-banked value this render, so qualify against
@@ -302,6 +319,20 @@ export const App: React.FC = () => {
       );
     });
 
+    // One cue for the move as a whole. No merge: a soft slide, and the merge
+    // streak breaks (pitch will restart next time). A merge: bump the streak and
+    // play a single blip whose pitch rises the longer the run goes, regardless
+    // of how many tiles merged this move. A combo flourish layers on for chains
+    // of two or more.
+    if (mergeCounter.count === 0) {
+      mergeStreakRef.current = 0;
+      play("move");
+    } else {
+      mergeStreakRef.current += 1;
+      play("merge", { streak: mergeStreakRef.current });
+      if (mergeCounter.count >= 2) play("combo", { combo: mergeCounter.count });
+    }
+
     setTileSet(updatedTileSet);
     setTimeout(() => {
       restoredRef.current = false;
@@ -376,6 +407,9 @@ export const App: React.FC = () => {
     setPendingHighScore(false);
     setLastQualifyingEntry(null);
     setLastQualifyingRadius(null);
+    playedWinRef.current = false;
+    playedGameOverRef.current = false;
+    mergeStreakRef.current = 0;
     clearSavedGame();
     saveLastRadius(newRadius);
     restoredRef.current = false;
@@ -453,7 +487,6 @@ export const App: React.FC = () => {
               />
             </>
           }
-          isGameOver={isGameOver}
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
@@ -462,6 +495,8 @@ export const App: React.FC = () => {
           theme={theme}
           onToggleTheme={toggleTheme}
           onHighScoresHandler={openLeaderboard}
+          isMuted={isMuted}
+          onToggleMuted={toggleMuted}
         />
         <Instructions radius={radius} />
         <p className={styles.topScoreLegend}>

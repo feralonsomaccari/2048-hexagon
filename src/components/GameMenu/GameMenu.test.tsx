@@ -1,9 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import GameMenu from ".";
 
-const props = {
-  isGameOver: false,
-};
+const props = {};
 
 describe("<GameMenu/>", () => {
   it("should render the game menu", () => {
