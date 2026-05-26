@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-26
+
+### Fixed
+- The header menu buttons span the full width again. Removing the status badge in 0.7.0 had left the button row clustered to one side; the actions row now stretches to fill the width with the buttons spread evenly across it, on both desktop and mobile.
+
 ## [0.7.0] - 2026-05-26
 
 ### Added
