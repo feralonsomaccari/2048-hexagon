@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-05-26
+
+### Changed
+- Reworked the sound effects to be gentler and less repetitive. Merges now play the same short, soft blip as a move, at a fixed pitch — the merge-streak pitch climb introduced in 0.7.0 has been removed. Every move and merge varies its pitch slightly (±8%) so repeated plays don't sound mechanically identical. All sounds are shorter, and the overall volume has been lowered.
+
+### Fixed
+- The win/Game Over overlay now fully covers the board. A leftover transform offset left it sitting ~30px too high for its whole lifetime, exposing a strip of the board along the bottom edge; the entrance slide is now part of the fade-in animation, so the overlay comes to rest covering the board completely.
+
 ## [0.7.1] - 2026-05-26
 
 ### Fixed
