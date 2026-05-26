@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-05-26
+
+### Fixed
+- The "enter your name" prompt no longer appears for scores that don't make the top N. The qualification check ran against the remote leaderboard, but if a run ended before that board's scores had loaded, the leaderboard looked empty and any positive score wrongly qualified. The prompt now waits until the board's leaderboard has actually loaded, and re-evaluates if the leaderboard finishes loading after the run ends — so a genuinely qualifying score still gets prompted and a non-qualifying one never does.
+
 ## [0.8.0] - 2026-05-26
 
 ### Added

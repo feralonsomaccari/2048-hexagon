@@ -65,7 +65,7 @@ export const App: React.FC = () => {
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
   const [historyComboBonus, setHistoryComboBonus] = useState(initialSavedGame?.historyComboBonus ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
-  const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading } = useRemoteHighScores();
+  const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading, isRemote: isHighScoresRemote } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
   const [pendingHighScore, setPendingHighScore] = useState(false);
   const [lastQualifyingEntry, setLastQualifyingEntry] = useState<HighScoreEntry | null>(null);
@@ -98,6 +98,21 @@ export const App: React.FC = () => {
   // it's the live, submit-time value.
   const noUndoBonus = bankedBonus ?? liveBonus;
   const finalScore = score + noUndoBonus;
+
+  // Whether a finished run should prompt for the player's name. Beyond the raw
+  // score check, the leaderboard for this board must have actually loaded:
+  // while a remote leaderboard is still loading (or the radius's snapshot hasn't
+  // arrived yet), `highScores[radius]` looks empty and every positive score
+  // would falsely qualify — which is how the prompt could appear for scores
+  // outside the top N. Once not loading, an absent list means there genuinely
+  // are no entries yet (or no remote configured), so any score legitimately
+  // qualifies.
+  const canPromptHighScore = (qualifyingScore: number): boolean => {
+    if (isHighScoresRemote && (isHighScoresLoading || highScores[radius] === undefined)) {
+      return false;
+    }
+    return qualifiesForHighScore(highScores, radius, qualifyingScore);
+  };
 
   useEffect(() => {
     if (initialSavedGame) return;
@@ -174,9 +189,6 @@ export const App: React.FC = () => {
         playedGameOverRef.current = true;
         play("gameOver");
       }
-      if (qualifiesForHighScore(highScores, radius, finalScore)) {
-        setPendingHighScore(true);
-      }
     }
   }, [tileSet]);
 
@@ -192,16 +204,17 @@ export const App: React.FC = () => {
       playedWinRef.current = true;
       play("win");
     }
-    // Bank the bonus earned at win-time so it stays locked through "Keep
-    // Playing". `liveBonus` reflects the winning score here; `finalScore` may
-    // still be reading the not-yet-banked value this render, so qualify against
-    // the freshly computed win total.
+
     setBankedBonus(liveBonus);
-    const winFinalScore = score + liveBonus;
-    if (qualifiesForHighScore(highScores, radius, winFinalScore)) {
+  }, [isWin]);
+
+  useEffect(() => {
+    if (!isGameOver && !isWin) return;
+    if (pendingHighScore) return;
+    if (canPromptHighScore(finalScore)) {
       setPendingHighScore(true);
     }
-  }, [isWin]);
+  }, [isGameOver, isWin, finalScore, highScores, isHighScoresLoading, isHighScoresRemote, radius, pendingHighScore]);
 
   useEffect(() => {
     if (isGameOver) {
