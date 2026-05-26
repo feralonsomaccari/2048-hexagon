@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.10] - 2026-05-26
+
+### Fixed
+- On iPhone, focusing the "Enter your name" field after a game no longer auto-zooms the page in (which previously left the player to manually zoom back out).
+
 ## [0.5.9] - 2026-05-26
 
 ### Fixed
