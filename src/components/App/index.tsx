@@ -389,8 +389,8 @@ export const App: React.FC = () => {
             <>
               <Score title="Score" score={score} historyScore={historyScore} />
               <Score
-                title="Best"
-                score={highScores[radius]?.[0]?.score ?? maxScore?.[radius] ?? 0}
+                title="My Best"
+                score={maxScore?.[radius] ?? 0}
               />
             </>
           }
