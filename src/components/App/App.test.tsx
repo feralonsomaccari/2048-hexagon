@@ -288,6 +288,78 @@ describe("<App/> win overlay", () => {
     expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("512");
   });
 
+  // ── Header "Score" / "My Best" sync ─────────────────────────────────────
+  // The header Score and My Best components expose an aria-label of
+  // `${title}: ${value}`, which uniquely targets the header (the overlay's
+  // breakdown uses separate testids), so we query them by label text.
+
+  it("tracks the live raw score in My Best during play (no bonus mid-game)", async () => {
+    // A saved game one merge short of winning, with an existing best below the
+    // score we are about to reach. Radius 1 has 3 undos; mid-play the bonus must
+    // NOT be applied, so both Score and My Best should read the raw 512.
+    seedSavedGame({ isWin: false, hasKeptPlaying: true, undoCount: 0 });
+    await renderFreshApp();
+
+    expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    // hasKeptPlaying: true keeps the win overlay suppressed, so the game is
+    // still "in play" — the raw score (512), not the bonus-adjusted 666.
+    await waitFor(() => {
+      expect(screen.getByLabelText("Score: 512")).toBeInTheDocument();
+    });
+    expect(screen.getByLabelText("My Best: 512")).toBeInTheDocument();
+  });
+
+  it("syncs header Score and My Best to the bonus-adjusted final score at win", async () => {
+    // 0 undos used on radius 1 → bonus round(512 * 0.1 * 3) = 154, final 666.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    // With the overlay up, both header values jump to the final score and match.
+    expect(screen.getByLabelText("Score: 666")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 666")).toBeInTheDocument();
+  });
+
+  it("reverts the header Score to the raw score after Keep Playing", async () => {
+    // Win first (final 666 with the bonus), then keep playing: the header Score
+    // must drop the bonus and show the raw 512 again, while My Best — already
+    // bumped to 666 at end-of-run — stays at the higher 666.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+    expect(screen.getByLabelText("Score: 666")).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText("Keep Playing"));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
+    });
+    // Header Score back to the raw value; My Best holds the end-of-run best.
+    expect(screen.getByLabelText("Score: 512")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 666")).toBeInTheDocument();
+  });
+
   it("does not show the win overlay again after Keep Playing when another winning tile is formed", async () => {
     // hasKeptPlaying: true represents a game where the player already won once
     // and chose to keep playing. Forming another 512 must NOT re-trigger the overlay.

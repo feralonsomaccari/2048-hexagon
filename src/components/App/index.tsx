@@ -101,13 +101,26 @@ export const App: React.FC = () => {
     };
   }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
 
+  // During play, "My Best" follows the live *raw* score (no bonus) so it tracks
+  // the on-screen "Score" rather than leaping ahead of it.
   useEffect(() => {
+    setMaxScore((prevState) => {
+      const previousBest = prevState[radius] ?? 0;
+      if (score <= previousBest) return prevState;
+      return { ...prevState, [radius]: score };
+    });
+  }, [score, radius]);
+
+  // At end-of-run, bump "My Best" up to the bonus-adjusted final score (score ×
+  // rate × unused undos) so it matches what gets submitted to the leaderboard.
+  useEffect(() => {
+    if (!isGameOver && !isWin) return;
     setMaxScore((prevState) => {
       const previousBest = prevState[radius] ?? 0;
       if (finalScore <= previousBest) return prevState;
       return { ...prevState, [radius]: finalScore };
     });
-  }, [finalScore, radius]);
+  }, [isGameOver, isWin, finalScore, radius]);
 
   useEffect(() => {
     if (!grid.length || !tileSet.length) return;
@@ -387,7 +400,11 @@ export const App: React.FC = () => {
         <GameMenu
           scores={
             <>
-              <Score title="Score" score={score} historyScore={historyScore} />
+              <Score
+                title="Score"
+                score={isGameOver || isWin ? finalScore : score}
+                historyScore={historyScore}
+              />
               <Score
                 title="My Best"
                 score={maxScore?.[radius] ?? 0}
