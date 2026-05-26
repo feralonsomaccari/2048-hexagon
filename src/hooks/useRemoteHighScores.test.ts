@@ -169,7 +169,21 @@ describe("useRemoteHighScores — Firebase configured", () => {
     expect(addDocMock).toHaveBeenCalledTimes(1);
     const [collRef, payload] = addDocMock.mock.calls[0];
     expect(collRef).toMatchObject({ name: "highScores" });
-    expect(payload).toMatchObject({ name: "Alice", score: 500, boardRadius: 1 });
+    expect(payload).toMatchObject({ name: "Alice", score: 500, boardRadius: 1, undosUsed: 0 });
+  });
+
+  it("submit records the number of undos used, defaulting to 0 when omitted", async () => {
+    addDocMock.mockResolvedValue(undefined);
+    const { result } = renderHook(() => useRemoteHighScores());
+    await emitInitialEmptySnapshots();
+
+    await act(async () => {
+      await result.current.submit(1, 500, "Alice", 2);
+      await result.current.submit(1, 400, "Bob");
+    });
+
+    expect(addDocMock.mock.calls[0][1]).toMatchObject({ name: "Alice", undosUsed: 2 });
+    expect(addDocMock.mock.calls[1][1]).toMatchObject({ name: "Bob", undosUsed: 0 });
   });
 
   it("submit adds a separate doc per submission, even for a repeated name", async () => {

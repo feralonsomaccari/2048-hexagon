@@ -23,6 +23,15 @@ export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
   4: 0,
 };
 
+/**
+ * End-of-run bonus, as a fraction of the score, for each undo left *unused*
+ * (0.10 = +10% per unused undo). Total bonus = (MAX_UNDO_BY_RADIUS[radius] -
+ * undosUsed) × this rate. Small board (3 undos): 0 used → +30%, 1 → +20%,
+ * 2 → +10%, 3 → +0%. Normal board (1 undo): 0 used → +10%, 1 → +0%. Boards
+ * with no undo budget award nothing.
+ */
+export const NO_UNDO_BONUS_RATE_PER_UNDO = 0.1;
+
 // ── Board shape ─────────────────────────────────────────────────────────────
 export const BLOCKED_RADIUS_BY_RADIUS: Record<number, number> = {
   // 1: -1, // No blocked cells

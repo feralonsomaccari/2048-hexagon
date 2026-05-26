@@ -227,6 +227,67 @@ describe("<App/> win overlay", () => {
     });
   });
 
+  it("awards the no-undo bonus in the win overlay when no undo was used", async () => {
+    // Radius 1 allows 3 undos (MAX_UNDO_BY_RADIUS[1] = 3), so the bonus scales
+    // to 3 × 10%. Merging the 256 pair scores 512; with 0 undos the bonus is
+    // round(512 * 0.1 * 3) = 154, for a final score of 666.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    const breakdown = screen.getByTestId("score-breakdown");
+    expect(breakdown).toHaveTextContent("512");
+    expect(breakdown).toHaveTextContent("+154");
+    // Empty leaderboard => the high-score prompt renders and shows the
+    // bonus-adjusted final score (512 + 154 = 666) as the value being submitted.
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("666");
+  });
+
+  it("awards a partial bonus scaled to the undos left unused", async () => {
+    // Radius 1 has 3 undos; using 1 leaves 2 unused → bonus = round(512*0.1*2)
+    // = 102, for a final score of 614.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 1 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    const breakdown = screen.getByTestId("score-breakdown");
+    expect(breakdown).toHaveTextContent("512");
+    expect(breakdown).toHaveTextContent("+102");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("614");
+  });
+
+  it("awards no bonus once all undos are used", async () => {
+    // Radius 1 has 3 undos; using all 3 leaves 0 unused → no bonus, raw score.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 3 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("score-breakdown")).not.toBeInTheDocument();
+    // No bonus: the prompt shows the raw score (512) unchanged.
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("512");
+  });
+
   it("does not show the win overlay again after Keep Playing when another winning tile is formed", async () => {
     // hasKeptPlaying: true represents a game where the player already won once
     // and chose to keep playing. Forming another 512 must NOT re-trigger the overlay.

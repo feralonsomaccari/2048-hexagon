@@ -13,7 +13,7 @@ const RADII = [1, 2, 3, 4] as const;
 
 type RemoteState = {
   scores: HighScores;
-  submit: (radius: number, score: number, name: string) => Promise<HighScoreEntry | null>;
+  submit: (radius: number, score: number, name: string, undosUsed?: number) => Promise<HighScoreEntry | null>;
   isRemote: boolean;
   isLoading: boolean;
   error: Error | null;
@@ -22,6 +22,7 @@ type RemoteState = {
 type FirestoreDocData = {
   name: string;
   score: number;
+  undosUsed?: number;
   createdAt?: { toDate: () => Date };
 };
 
@@ -29,6 +30,7 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   name: data.name,
   score: data.score,
   date: data.createdAt?.toDate().toISOString() ?? new Date().toISOString(),
+  ...(typeof data.undosUsed === "number" ? { undosUsed: data.undosUsed } : {}),
 });
 
 const useRemoteHighScores = (): RemoteState => {
@@ -88,15 +90,21 @@ const useRemoteHighScores = (): RemoteState => {
   }, [isRemote]);
 
   const submit = useCallback(
-    async (radius: number, score: number, name: string): Promise<HighScoreEntry | null> => {
+    async (radius: number, score: number, name: string, undosUsed?: number): Promise<HighScoreEntry | null> => {
       const trimmedName = name.trim().slice(0, 16);
       if (!trimmedName || score <= 0 || score > MAX_SCORE_SANITY) return null;
       if (!isRemote) return null;
+
+      const safeUndosUsed =
+        typeof undosUsed === "number" && Number.isFinite(undosUsed) && undosUsed >= 0
+          ? Math.floor(undosUsed)
+          : 0;
 
       const entry: HighScoreEntry = {
         name: trimmedName,
         score,
         date: new Date().toISOString(),
+        undosUsed: safeUndosUsed,
       };
 
       try {
@@ -110,6 +118,7 @@ const useRemoteHighScores = (): RemoteState => {
           name: trimmedName,
           score,
           boardRadius: radius,
+          undosUsed: safeUndosUsed,
           createdAt: serverTimestamp(),
         });
       } catch (err) {

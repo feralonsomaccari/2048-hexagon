@@ -67,6 +67,29 @@
   opacity: 0.85;
 }
 
+.scoreBreakdown {
+  margin: 0;
+  width: 100%;
+  max-width: 220px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.scoreBreakdownRow {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 16px;
+}
+
+.scoreBreakdownRow dt {
+  font-weight: 600;
+}
+
+.scoreBreakdownRow dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
 .overlayActions {
   display: flex;
   column-gap: 10px;

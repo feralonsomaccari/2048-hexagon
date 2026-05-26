@@ -2,6 +2,8 @@ export type HighScoreEntry = {
   name: string;
   score: number;
   date: string;
+  /** Number of undos the player used during the run. Optional for legacy entries. */
+  undosUsed?: number;
 };
 
 export type HighScores = Record<string, HighScoreEntry[]>;

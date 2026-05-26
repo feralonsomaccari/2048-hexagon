@@ -32,7 +32,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS, NO_UNDO_BONUS_RATE_PER_UNDO, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
@@ -64,6 +64,17 @@ export const App: React.FC = () => {
   const boardRef = useRef<HTMLElement>(null);
   const restoredRef = useRef<boolean>(!!initialSavedGame);
 
+  const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
+
+  // No-undo bonus: scales with the undos left *unused*. Each undo you decline
+  // is worth NO_UNDO_BONUS_RATE_PER_UNDO of the score, so the bonus is
+  // (maxUndo - undoCount) × rate. Small board: 0 used → +30%, 1 → +20%,
+  // 2 → +10%, 3 → +0%. Normal board: 0 used → +10%, 1 → +0%. Evaluated at
+  // submit-time, so undos used after "keep playing" reduce it too.
+  const unusedUndos = Math.max(0, maxUndo - undoCount);
+  const noUndoBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
+  const finalScore = score + noUndoBonus;
+
   useEffect(() => {
     if (initialSavedGame) return;
     setGrid(createHexGrid(radius));
@@ -93,10 +104,10 @@ export const App: React.FC = () => {
   useEffect(() => {
     setMaxScore((prevState) => {
       const previousBest = prevState[radius] ?? 0;
-      if (score <= previousBest) return prevState;
-      return { ...prevState, [radius]: score };
+      if (finalScore <= previousBest) return prevState;
+      return { ...prevState, [radius]: finalScore };
     });
-  }, [score, radius]);
+  }, [finalScore, radius]);
 
   useEffect(() => {
     if (!grid.length || !tileSet.length) return;
@@ -120,13 +131,11 @@ export const App: React.FC = () => {
     if (!validMovementsAvailable(tileSet, grid)) {
       setIsGameOver(true);
       setIsUndoAvailable(false);
-      if (qualifiesForHighScore(highScores, radius, score)) {
+      if (qualifiesForHighScore(highScores, radius, finalScore)) {
         setPendingHighScore(true);
       }
     }
   }, [tileSet]);
-
-  const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
 
   useEffect(() => {
     if (undoCount >= maxUndo) {
@@ -135,7 +144,7 @@ export const App: React.FC = () => {
   }, [undoCount, maxUndo])
 
   useEffect(() => {
-    if (isWin && qualifiesForHighScore(highScores, radius, score)) {
+    if (isWin && qualifiesForHighScore(highScores, radius, finalScore)) {
       setPendingHighScore(true);
     }
   }, [isWin]);
@@ -326,7 +335,7 @@ export const App: React.FC = () => {
 
   const submitHighScore = useCallback(
     async (name: string) => {
-      const entry = await submitRemoteHighScore(radius, score, name);
+      const entry = await submitRemoteHighScore(radius, finalScore, name, undoCount);
       if (entry) {
         setLastQualifyingEntry(entry);
         setLastQualifyingRadius(radius);
@@ -334,7 +343,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, score, submitRemoteHighScore]
+    [radius, finalScore, undoCount, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -415,9 +424,12 @@ export const App: React.FC = () => {
           dismissOverlay={dismissOverlay}
           viewport={viewport}
           pendingHighScore={pendingHighScore}
-          score={score}
+          score={finalScore}
+          baseScore={score}
+          noUndoBonus={noUndoBonus}
+          noUndoBonusUndos={unusedUndos}
           onSubmitHighScore={submitHighScore}
-          beatsHighScore={score > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
+          beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
         />
         <footer className={styles.footer}>
           Based on 2048 by{" "}

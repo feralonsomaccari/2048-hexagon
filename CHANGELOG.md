@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-26
+
+### Added
+- No-undo bonus: each undo you leave **unused** adds +10% of your score to the final total at the end of a run. The bonus scales with the board's undo budget — Small (3 undos): 0 used → +30%, 1 → +20%, 2 → +10%, 3 → +0%; Normal (1 undo): 0 used → +10%, 1 → +0%; Large/XL (no undos) award nothing. It's evaluated when the score is recorded, so undos used after choosing "Keep Playing" reduce it too. The win/Game Over overlay shows the breakdown (Score + No-undo bonus = Final), and the bonus applies to both the local best score and the leaderboard submission. The live in-game score stays raw; the bonus only materializes at the end.
+- Leaderboard submissions now also record how many undos the player used during the run (`undosUsed`), stored alongside the score in Firestore for future display/filtering. Requires the Firestore rules to allow the new field.
+
 ## [0.5.10] - 2026-05-26
 
 ### Fixed
