@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.9] - 2026-05-26
+
+### Fixed
+- Large-number tiles no longer overflow the hexagon: the tile font size now scales down with digit count (42px up to 4 digits, then 34px / 28px / 24px for 5 / 6 / 7+ digits) so big values like 16384, 131072 and beyond stay legible inside the tile instead of clipping against the edges.
+
 ## [0.5.8] - 2026-05-25
 
 ### Changed

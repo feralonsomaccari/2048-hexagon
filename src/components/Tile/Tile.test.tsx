@@ -29,4 +29,18 @@ describe("<Tile/>", () => {
     expect(tileEl.firstElementChild).toHaveClass("color-final");
     expect(tileEl.firstElementChild).not.toHaveClass("color-131072");
   });
+
+  const fontSizeCases: [number, string][] = [
+    [2048, "42px"],
+    [16384, "34px"],
+    [131072, "28px"],
+    [1048576, "24px"],
+  ];
+  fontSizeCases.forEach(([value, expected]) =>
+    it(`scales font size to ${expected} for ${value}`, () => {
+      render(<Tile value={value} />);
+      const tileEl = screen.getByTestId("tile");
+      expect(tileEl.firstElementChild).toHaveStyle({ fontSize: expected });
+    })
+  );
 });

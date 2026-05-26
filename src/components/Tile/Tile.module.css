@@ -21,7 +21,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 42px;
+  /* font-size is set inline per tile (scales down for longer numbers). */
   font-weight: bold;
   text-align: center;
   color: var(--color-text-main);

@@ -17,6 +17,17 @@ const COLORED_VALUES = new Set([
   65536,
 ]);
 
+// Shrink the font for longer numbers so big tiles still fit inside the
+// hexagon. The base 42px comfortably fits up to 4 digits (e.g. 2048); past
+// that we scale down by digit count.
+const fontSizeForValue = (value: number): number => {
+  const digits = String(value).length;
+  if (digits <= 4) return 42;
+  if (digits === 5) return 34;
+  if (digits === 6) return 28;
+  return 24;
+};
+
 const Tile = ({ value, left, top, merged }: props): JSX.Element => {
   const colorClass = COLORED_VALUES.has(value)
     ? styles[`color-${value}`]
@@ -29,7 +40,10 @@ const Tile = ({ value, left, top, merged }: props): JSX.Element => {
       role="img"
       aria-label={`Tile ${value}`}
     >
-      <div className={`${styles.tileInner} ${colorClass} ${merged ? styles.merged : ""}`}>
+      <div
+        className={`${styles.tileInner} ${colorClass} ${merged ? styles.merged : ""}`}
+        style={{ fontSize: fontSizeForValue(value) }}
+      >
         {value}
       </div>
     </div>
