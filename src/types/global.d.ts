@@ -21,6 +21,7 @@ declare global {
     isUndoAvailable?: boolean,
     isMaxUndo?: boolean,
     isWin?: boolean,
-    hasKeptPlaying?: boolean
+    hasKeptPlaying?: boolean,
+    bankedBonus?: number
   }
 }

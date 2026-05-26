@@ -12,7 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - "My Best" no longer shows an inflated value mid-game. Previously the personal best was recorded with the no-undo bonus baked in on every score change, so during play it leapt ahead of the live "Score" (e.g. Score 1000 / My Best 1300). Now "My Best" follows the raw live score during play and is bumped to the bonus-adjusted final score only at end-of-run, matching the leaderboard submission.
 
 ### Changed
-- The header "Score" now syncs with "My Best" at the end of a run: when the win/Game Over overlay is shown, it displays the bonus-adjusted final score (e.g. both read 666 instead of Score 512 / My Best 666). Choosing "Keep Playing" reverts the header back to the raw live score so it continues tracking merges.
+- The header "Score" now syncs with "My Best" at the end of a run: when the win/Game Over overlay is shown, it displays the bonus-adjusted final score (e.g. both read 666 instead of Score 512 / My Best 666).
+- The no-undo bonus is now **banked** at the moment of a win and stays applied through "Keep Playing": the won bonus is locked to a fixed amount, so the header keeps showing it (no longer dropping back to the raw score) and using an undo afterwards no longer shrinks it. The banked bonus persists in the saved game and resets on a new game.
 
 ## [0.6.0] - 2026-05-26
 

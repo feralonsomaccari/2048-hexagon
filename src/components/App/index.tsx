@@ -47,6 +47,11 @@ export const App: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isWin, setIsWin] = useState(initialSavedGame?.isWin ?? false);
   const [hasKeptPlaying, setHasKeptPlaying] = useState(initialSavedGame?.hasKeptPlaying ?? false);
+  // No-undo bonus banked at the moment of the first win. Once won, the bonus is
+  // locked to this fixed amount and stays applied through "Keep Playing" (it no
+  // longer shrinks if an undo is used afterwards). `null` until a win banks it,
+  // which is distinct from a banked value of 0 (won with all undos used).
+  const [bankedBonus, setBankedBonus] = useState<number | null>(initialSavedGame?.bankedBonus ?? null);
   const [score, setScore] = useState(initialSavedGame?.score ?? 0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
@@ -69,10 +74,14 @@ export const App: React.FC = () => {
   // No-undo bonus: scales with the undos left *unused*. Each undo you decline
   // is worth NO_UNDO_BONUS_RATE_PER_UNDO of the score, so the bonus is
   // (maxUndo - undoCount) × rate. Small board: 0 used → +30%, 1 → +20%,
-  // 2 → +10%, 3 → +0%. Normal board: 0 used → +10%, 1 → +0%. Evaluated at
-  // submit-time, so undos used after "keep playing" reduce it too.
+  // 2 → +10%, 3 → +0%. Normal board: 0 used → +10%, 1 → +0%.
   const unusedUndos = Math.max(0, maxUndo - undoCount);
-  const noUndoBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
+  const liveBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
+  // Once a win has banked the bonus, it's locked to that fixed amount and stays
+  // applied (through "Keep Playing", and a later Game Over too). Before banking
+  // — a plain Game Over, or the brief win render before the bank effect runs —
+  // it's the live, submit-time value.
+  const noUndoBonus = bankedBonus ?? liveBonus;
   const finalScore = score + noUndoBonus;
 
   useEffect(() => {
@@ -101,15 +110,17 @@ export const App: React.FC = () => {
     };
   }, [tileSet, isMovementBlocked, score, isGameOver, isModalShown]);
 
-  // During play, "My Best" follows the live *raw* score (no bonus) so it tracks
-  // the on-screen "Score" rather than leaping ahead of it.
+  // During play, "My Best" follows the on-screen "Score" so it never lags or
+  // leaps ahead of it: the raw score before a win, and the banked-bonus total
+  // (`finalScore`) once a win has locked the bonus in (e.g. while keeping play).
+  const displayedScore = bankedBonus !== null ? finalScore : score;
   useEffect(() => {
     setMaxScore((prevState) => {
       const previousBest = prevState[radius] ?? 0;
-      if (score <= previousBest) return prevState;
-      return { ...prevState, [radius]: score };
+      if (displayedScore <= previousBest) return prevState;
+      return { ...prevState, [radius]: displayedScore };
     });
-  }, [score, radius]);
+  }, [displayedScore, radius]);
 
   // At end-of-run, bump "My Best" up to the bonus-adjusted final score (score ×
   // rate × unused undos) so it matches what gets submitted to the leaderboard.
@@ -157,7 +168,14 @@ export const App: React.FC = () => {
   }, [undoCount, maxUndo])
 
   useEffect(() => {
-    if (isWin && qualifiesForHighScore(highScores, radius, finalScore)) {
+    if (!isWin) return;
+    // Bank the bonus earned at win-time so it stays locked through "Keep
+    // Playing". `liveBonus` reflects the winning score here; `finalScore` may
+    // still be reading the not-yet-banked value this render, so qualify against
+    // the freshly computed win total.
+    setBankedBonus(liveBonus);
+    const winFinalScore = score + liveBonus;
+    if (qualifiesForHighScore(highScores, radius, winFinalScore)) {
       setPendingHighScore(true);
     }
   }, [isWin]);
@@ -181,8 +199,9 @@ export const App: React.FC = () => {
       isMaxUndo,
       isWin,
       hasKeptPlaying,
+      bankedBonus: bankedBonus ?? undefined,
     });
-  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, isGameOver]);
+  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, bankedBonus, isGameOver]);
 
   const updateTile = (
     tile: gridElement,
@@ -336,6 +355,7 @@ export const App: React.FC = () => {
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
     setHasKeptPlaying(false);
+    setBankedBonus(null);
     setIsModalShown(false);
     setPendingHighScore(false);
     setLastQualifyingEntry(null);
@@ -402,8 +422,9 @@ export const App: React.FC = () => {
             <>
               <Score
                 title="Score"
-                score={isGameOver || isWin ? finalScore : score}
+                score={isGameOver ? finalScore : displayedScore}
                 historyScore={historyScore}
+                gain={score - historyScore}
               />
               <Score
                 title="My Best"

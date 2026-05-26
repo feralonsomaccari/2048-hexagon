@@ -332,10 +332,30 @@ describe("<App/> win overlay", () => {
     expect(screen.getByLabelText("My Best: 666")).toBeInTheDocument();
   });
 
-  it("reverts the header Score to the raw score after Keep Playing", async () => {
-    // Win first (final 666 with the bonus), then keep playing: the header Score
-    // must drop the bonus and show the raw 512 again, while My Best — already
-    // bumped to 666 at end-of-run — stays at the higher 666.
+  it("pops only the raw move gain (not the bonus) when the win applies the bonus", async () => {
+    // The "+N gained" pop animation must reflect the raw merge points (512),
+    // NOT the bonus-inflated jump in the displayed total. Regression guard for
+    // the bonus leaking into the gain animation as a fake +154-style pop.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    // The header Score shows 666 (with bonus) but the gain pop is the raw +512.
+    const headerScore = screen.getByLabelText("Score: 666");
+    expect(headerScore).toHaveAttribute("data-value", "+512");
+  });
+
+  it("keeps the banked bonus in the header Score after Keep Playing", async () => {
+    // Win first (final 666 = raw 512 + banked 154), then keep playing: the
+    // bonus stays banked, so the header Score remains 666 (not the raw 512) and
+    // My Best holds the same 666.
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -355,9 +375,40 @@ describe("<App/> win overlay", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
     });
-    // Header Score back to the raw value; My Best holds the end-of-run best.
-    expect(screen.getByLabelText("Score: 512")).toBeInTheDocument();
+    // Bonus stays banked: header Score and My Best both remain at 666.
+    expect(screen.getByLabelText("Score: 666")).toBeInTheDocument();
     expect(screen.getByLabelText("My Best: 666")).toBeInTheDocument();
+  });
+
+  it("keeps the banked bonus fixed even when an undo is used after Keep Playing", async () => {
+    // Win with 0 undos → banked bonus 154, final 666. After Keep Playing, using
+    // an undo must NOT shrink the banked bonus: the score reverts to the raw
+    // pre-win value (0 here) but the +154 stays, so the header reads 154.
+    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
+    await renderFreshApp();
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "w" }); // merges the 256 pair into 512
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText("Keep Playing"));
+    });
+    await waitFor(() => {
+      expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
+    });
+
+    // historyScore was 0 (captured before the winning move), so undo reverts the
+    // raw score to 0; the banked 154 remains → header Score 154.
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("undo-btn"));
+    });
+    await waitFor(() => {
+      expect(screen.getByLabelText("Score: 154")).toBeInTheDocument();
+    });
   });
 
   it("does not show the win overlay again after Keep Playing when another winning tile is formed", async () => {
