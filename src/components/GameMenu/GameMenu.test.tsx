@@ -120,6 +120,22 @@ describe("<GameMenu/>", () => {
     expect(screen.queryByTestId("menu-dropdown")).not.toBeInTheDocument();
   });
 
+  it("should return focus to the trigger after closing with Escape", () => {
+    render(<GameMenu {...props} onToggleMuted={vi.fn()} />);
+    const trigger = screen.getByTestId("menu-toggle-btn");
+    fireEvent.click(trigger);
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(trigger).toHaveFocus();
+  });
+
+  it("should return focus to the trigger after activating a menu item", () => {
+    render(<GameMenu {...props} onHighScoresHandler={vi.fn()} />);
+    const trigger = screen.getByTestId("menu-toggle-btn");
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByTestId("high-scores-btn"));
+    expect(trigger).toHaveFocus();
+  });
+
   it("should close the menu on an outside click", () => {
     render(<GameMenu {...props} onToggleMuted={vi.fn()} />);
     fireEvent.click(screen.getByTestId("menu-toggle-btn"));

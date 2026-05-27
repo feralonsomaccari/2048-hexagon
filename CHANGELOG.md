@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-05-27
+
+### Fixed
+- Accessibility follow-ups to the new hamburger menu:
+  - Closing the menu with Escape or by activating an item now returns focus to the hamburger trigger, so keyboard users are no longer stranded on the page body. (Closing via an outside click leaves focus where the click landed.)
+  - Replaced the menu's `role="menu"`/`role="menuitem"` with a plain `role="group"` (labelled "More options") and `aria-haspopup="true"` on the trigger. The previous roles implied arrow-key navigation between items that wasn't implemented; the items are ordinary Tab-navigable buttons, and the ARIA now matches that behavior.
+- The browser `theme-color` now follows the active theme (light/dark) instead of staying on the light value, so the mobile address-bar/chrome color matches the page in dark mode.
+
 ## [0.9.0] - 2026-05-27
 
 ### Added

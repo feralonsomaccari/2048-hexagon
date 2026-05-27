@@ -41,6 +41,14 @@ const GameMenu = ({
 }: props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // Close the dropdown and return focus to the trigger, so keyboard users aren't
+  // stranded on <body> after Escape or activating an item.
+  const closeMenuAndRefocus = () => {
+    setIsMenuOpen(false);
+    triggerRef.current?.focus();
+  };
 
   // Close the dropdown on an outside click or the Escape key. Only listen while
   // the menu is open so we don't keep handlers attached needlessly.
@@ -49,11 +57,12 @@ const GameMenu = ({
 
     const handlePointerDown = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        // Outside click: just close; don't yank focus back to the trigger.
         setIsMenuOpen(false);
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMenuOpen(false);
+      if (event.key === "Escape") closeMenuAndRefocus();
     };
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -64,10 +73,10 @@ const GameMenu = ({
     };
   }, [isMenuOpen]);
 
-  // Run the chosen action, then close the menu.
+  // Run the chosen action, then close the menu and restore focus to the trigger.
   const runAndClose = (handler?: () => void) => () => {
     handler?.();
-    setIsMenuOpen(false);
+    closeMenuAndRefocus();
   };
 
   const hasMenuItems = Boolean(onHighScoresHandler || onToggleTheme || onToggleMuted);
@@ -82,13 +91,14 @@ const GameMenu = ({
           {hasMenuItems && (
             <div className={styles.menu} ref={menuRef}>
               <button
+                ref={triggerRef}
                 type="button"
                 className={styles.hamburger}
                 onClick={() => setIsMenuOpen((open) => !open)}
                 title="More options"
                 data-testid="menu-toggle-btn"
                 aria-label="More options"
-                aria-haspopup="menu"
+                aria-haspopup="true"
                 aria-expanded={isMenuOpen}
                 aria-controls="game-menu-dropdown"
               >
@@ -101,7 +111,8 @@ const GameMenu = ({
                   id="game-menu-dropdown"
                   className={styles.menuDropdown}
                   data-testid="menu-dropdown"
-                  role="menu"
+                  role="group"
+                  aria-label="More options"
                 >
                   {onHighScoresHandler && (
                     <Button
@@ -116,7 +127,6 @@ const GameMenu = ({
                         title: "View high scores",
                         "data-testid": "high-scores-btn",
                         "aria-label": "View high scores",
-                        role: "menuitem",
                       }}
                     />
                   )}
@@ -137,7 +147,6 @@ const GameMenu = ({
                         title: `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
                         "data-testid": "theme-toggle-btn",
                         "aria-label": `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
-                        role: "menuitem",
                       }}
                     />
                   )}
@@ -159,7 +168,6 @@ const GameMenu = ({
                         "data-testid": "sound-toggle-btn",
                         "aria-label": isMuted ? "Unmute sound" : "Mute sound",
                         "aria-pressed": isMuted,
-                        role: "menuitem",
                       }}
                     />
                   )}
