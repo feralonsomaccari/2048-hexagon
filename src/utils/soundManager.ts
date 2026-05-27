@@ -117,6 +117,28 @@ export const playSound = (name: SoundName, opts?: SoundOpts): void => {
   sounds[name](opts);
 };
 
+// Haptic feedback for big moments. Honors the same mute flag as sound.
+// Note: the Vibration API is unsupported on iOS Safari, so this is a no-op
+// on iPhones/iPads — Android Chrome/Firefox will buzz.
+const vibrationPatterns: Partial<Record<SoundName, number | number[]>> = {
+  // A short triple buzz to celebrate.
+  win: [60, 50, 60, 50, 120],
+  // A single longer buzz for the loss.
+  gameOver: 250,
+};
+
+export const vibrate = (name: SoundName): void => {
+  if (muted) return;
+  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") return;
+  const pattern = vibrationPatterns[name];
+  if (pattern === undefined) return;
+  try {
+    navigator.vibrate(pattern);
+  } catch {
+    // Some browsers throw if called outside a user gesture; ignore.
+  }
+};
+
 export const setMuted = (value: boolean): void => {
   muted = value;
   if (masterGain && ctx) {

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.4] - 2026-05-27
+
+### Added
+- **Haptic feedback** on win and game over. The phone now buzzes when you reach the win tile (a short celebratory triple buzz) or run out of moves (a single longer buzz). It fires alongside the existing win/game-over sounds and is gated by the same sound mute toggle (so a muted game stays silent and still). Uses the Web Vibration API — supported on Android Chrome/Firefox; a no-op on iOS Safari, which doesn't expose the API.
+
 ## [0.9.3] - 2026-05-27
 
 ### Fixed
