@@ -3,7 +3,7 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  z-index: 1; /* behind the overlay's text/buttons (z-index: 2) */
+  z-index: 1;
 }
 
 .piece {
@@ -18,8 +18,6 @@
   animation-iteration-count: infinite;
 }
 
-/* `top` is a percentage of the container height, so the piece falls the full
-   height of the overlay regardless of board size. */
 @keyframes fall {
   0% {
     top: -10%;
@@ -40,7 +38,6 @@
   }
 }
 
-/* Confetti is celebratory but non-essential — respect motion preferences. */
 @media (prefers-reduced-motion: reduce) {
   .confetti {
     display: none;

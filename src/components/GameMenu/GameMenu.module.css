@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0; /* the title row keeps its size; scores yield space instead */
+  flex-shrink: 0;
 }
 
 .title {
@@ -40,7 +40,6 @@
   flex-shrink: 0;
 }
 
-/* Desktop shows just "hexagon"; the " version" suffix is revealed on mobile. */
 .subtitleVersion {
   display: none;
 }
@@ -63,6 +62,32 @@
   align-items: flex-end;
 }
 
+.collapsible {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.7s ease, opacity 0.5s ease;
+}
+
+.collapsible.collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.collapsibleInner {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsible {
+    transition: none;
+  }
+}
+
 .divider {
   width: 100%;
   height: 1px;
@@ -73,27 +98,27 @@
 .bottom {
   display: flex;
   align-items: center;
-  /* New Game, Undo and the top-score legend all grouped at the left. */
   justify-content: flex-start;
   column-gap: 12px;
   margin-bottom: 12px;
 }
 
-/* Right group of the bottom row: top-score legend + undo button. New Game sits
-   on the far left of the row (`.bottom` uses justify-content: space-between). */
 .actionsRight {
   display: flex;
   align-items: center;
   column-gap: 12px;
+  /* Fill the row's remaining width so the top-score legend can be pushed to the
+     far right while the Undo button stays grouped on the left next to New Game. */
+  flex: 1;
 }
 
-/* Cap the undo button's width on desktop so the icon + pips don't stretch it. */
 .actionsRight [data-testid="undo-btn"] {
   max-width: 80px;
 }
 
-/* Top-score line, sitting next to the undo button. */
 .topScoreLegend {
+  /* Pushed to the far right of the row; the Undo button stays on the left. */
+  margin-left: auto;
   font-size: 13px;
   color: var(--color-text-muted);
 }
@@ -102,7 +127,6 @@
   font-weight: 700;
 }
 
-/* Undo button: arrow icon stacked over a row of pips showing remaining undos. */
 .undoLabel {
   display: inline-flex;
   flex-direction: column;
@@ -113,16 +137,13 @@
 .undoIcon {
   width: 1.2em;
   height: 1.2em;
-  /* `currentColor` fill means it already matches the button's text color. */
 }
 
-/* One pip per available undo, sitting under the icon. */
 .undoPips {
   display: inline-flex;
   column-gap: 3px;
 }
 
-/* Empty slot: a dim outline of the pip. Filled slots paint solid below. */
 .undoPip {
   width: 6px;
   height: 4px;
@@ -136,16 +157,13 @@
   opacity: 1;
 }
 
-/* Anchor the dropdown to the hamburger trigger, sitting to the left of the title. */
 .menu {
   position: relative;
   align-self: center;
-  order: -1; /* place the hamburger before the "2048 ⬡" title */
+  order: -1;
   flex-shrink: 0;
 }
 
-/* Backgroundless hamburger: three bars in the theme's main text color so they
-   match the "2048 ⬡" title next to them. */
 .hamburger {
   display: flex;
   flex-direction: column;
@@ -173,9 +191,6 @@
   border-radius: 4px;
 }
 
-/* Floating panel below the trigger, styled like the modal "menu window"
-   (page-colored surface, rounded, soft shadow) and popping out from the
-   top-left corner nearest the hamburger trigger. */
 .menuDropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -194,11 +209,6 @@
   animation: menuPopIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Let menu items fill the panel width rather than sit at their natural size,
-   with their contents left-aligned. Strip the shared Button's background so
-   they read as plain rows in the popup, highlighting only on hover/focus. */
-/* `.menuDropdown button` (0,1,1) outranks the shared `.button` (0,1,0) so the
-   transparent background reliably wins regardless of stylesheet order. */
 .menuDropdown button {
   width: 100%;
   max-width: none;
@@ -217,7 +227,6 @@
   background-color: var(--color-disabled);
 }
 
-/* Menu item content with a leading icon (e.g. trophy on "Scores"). */
 .menuItemLabel {
   display: inline-flex;
   align-items: center;
@@ -227,15 +236,14 @@
 .menuItemIcon {
   width: 1.1em;
   height: 1.1em;
-  /* currentColor fill matches the menu button's text in both themes. */
 }
 
-/* Popup: scale up from the trigger corner with a slight overshoot. */
 @keyframes menuPopIn {
   0% {
     opacity: 0;
     transform: scale(0.85);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -276,7 +284,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* Mobile shows the full "hexagon version". */
   .subtitleVersion {
     display: inline;
   }
@@ -297,28 +304,22 @@
   }
 
   .bottom {
-    /* Keep New Game and Undo on one line even on narrow screens; the top-score
-       legend (inside .actionsRight) shrinks instead of the row wrapping. */
     flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 8px;
     margin-bottom: 8px;
   }
 
-  /* Keep the undo button at its natural width on mobile rather than stretching. */
   .actionsRight [data-testid="undo-btn"] {
     flex: 0 0 auto;
     max-width: fit-content;
   }
 
-  /* Let the undo + legend group give up space (so the legend can shrink) rather
-     than forcing the buttons to wrap. */
   .actionsRight {
     flex: 0 1 auto;
     min-width: 0;
   }
 
-  /* Cap New Game on mobile so it doesn't grow to fill the row. */
   .bottom [data-testid="new-game-btn"] {
     flex: 0 0 auto;
     max-width: 140px;

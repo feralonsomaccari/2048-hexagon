@@ -1,3 +1,31 @@
+/* Collapse the whole panel smoothly on a win (see GameMenu .collapsible for the
+   grid-template-rows technique) instead of unmounting it, so it eases out and
+   back in. The inner section clips its own overflow as the row shrinks. */
+.collapsible {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  overflow: hidden;
+  /* Matched to the board's 0.7s regrow (see GameContainer .boardZone) so this
+     eases out on a win and back in on Try Again in step with the board. */
+  transition: grid-template-rows 0.7s ease, opacity 0.5s ease;
+}
+
+.collapsible.collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.collapsible > * {
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsible {
+    transition: none;
+  }
+}
+
 .instructionsWrapper {
   padding: 10px 0;
   /* Match the title divider's tone (tertiary at 40% — see GameMenu .divider). */

@@ -455,6 +455,15 @@ export const App: React.FC = () => {
     setHasKeptPlaying(true);
   }, []);
 
+  // "Try Again" resets immediately, exactly like "Keep Playing" dismisses: the
+  // fresh board and chrome then ease from the win layout back to normal in one
+  // continuous transition. Deferring the reset until after an exit animation
+  // looked worse — the board content swapped at the very end, so the layout
+  // shifted just as the transition settled.
+  const handleTryAgain = useCallback(() => {
+    resetGameHandler(radius);
+  }, [radius]);
+
   const undoHandler = useCallback(() => {
     // No undoing once the run is decided — the win/Game Over result is final.
     if (isWin || isGameOver) return;
@@ -523,14 +532,18 @@ export const App: React.FC = () => {
           onToggleMuted={toggleMuted}
           isWin={isWin}
         />
-        {/* "How to Play" — hidden on a win so the win panel has more room. */}
-        {!isWin && <Instructions radius={radius} />}
+        {/* "How to Play" — collapses smoothly on a win (handled inside the
+            component) so the win panel has more room without a pop. It eases
+            back in as `isWin` clears on Keep Playing / Try Again, in step with
+            the board growing back. */}
+        <Instructions radius={radius} collapsed={isWin} />
         <GameContainer
           ref={boardRef}
           tileSet={sortTileSetById(tileSet)}
           grid={grid}
           radius={radius}
           resetGameHandler={resetGameHandler}
+          onTryAgain={handleTryAgain}
           isGameOver={isGameOver}
           isWin={isWin}
           dismissOverlay={dismissOverlay}

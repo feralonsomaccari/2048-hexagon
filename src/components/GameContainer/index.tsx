@@ -13,6 +13,9 @@ type props = {
   grid: gridElement[];
   radius: number;
   resetGameHandler?: (radius: number) => void;
+  // "Try Again": owned by App so the win panel, board, and surrounding chrome
+  // can run a single coordinated exit. Falls back to a plain reset if absent.
+  onTryAgain?: () => void;
   isGameOver: boolean;
   isWin: boolean;
   dismissOverlay?: () => void;
@@ -37,7 +40,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, onTryAgain, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
   // Measure the space the board area actually has from its top edge down to the
   // bottom of the viewport. Used to scale the board on a mobile win so the board
   // and the result panel together never overflow (which would scroll the page).
@@ -45,21 +48,13 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   // mobile browser's collapsing URL bar.
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
-  // On "Try Again" from the win panel, play an exit animation before resetting so
-  // the win window animates away instead of vanishing instantly.
-  const [isExiting, setIsExiting] = React.useState(false);
 
+  // "Try Again": App owns the coordinated exit (board regrow + panel pop-out +
+  // chrome ease-in, then reset). Fall back to a plain reset if no handler.
   const handleTryAgain = React.useCallback(() => {
-    if (isWin) {
-      // Play the exit animation, then reset. Use a timeout matched to the
-      // animation duration so the reset fires reliably even if the
-      // animationend event is missed.
-      setIsExiting(true);
-      window.setTimeout(() => resetGameHandler(radius), 280);
-    } else {
-      resetGameHandler(radius);
-    }
-  }, [isWin, resetGameHandler, radius]);
+    if (onTryAgain) onTryAgain();
+    else resetGameHandler(radius);
+  }, [onTryAgain, resetGameHandler, radius]);
   const setRefs = React.useCallback(
     (node: HTMLElement | null) => {
       innerRef.current = node;
@@ -142,7 +137,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
       </div>
       {overlayShown && (
         <div
-          className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""} ${isExiting ? styles.isExiting : ""}`}
+          className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`}
           data-testid="overlay"
           role="alertdialog"
           aria-labelledby="overlay-title"

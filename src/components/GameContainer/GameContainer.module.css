@@ -26,19 +26,11 @@
   transform-origin: top center;
 }
 
-/* Win layout: keep the board on screen and place the result block beside it
-   (wide) or below it (narrow), instead of covering the board. The board shrinks
-   to make room. The whole thing is sized to its content and must never force
-   the page to scroll, so the board shrinks more on narrow screens. */
 .winLayout {
-  /* Stack the panel below the board, board on top, centered. */
   flex-direction: column;
   justify-content: center;
   align-items: center;
   row-gap: clamp(12px, 3vh, 24px);
-  /* Stay within the flex space the wrapper already occupies (`flex: 1` below the
-     header) instead of growing to fit content — that growth is what pushed the
-     page past 100dvh and caused scrolling. Content is shrunk to fit instead. */
   min-height: 0;
   overflow: visible;
 }
@@ -46,14 +38,9 @@
 .boardZone {
   flex-shrink: 0;
   transform-origin: top center;
-  /* Slow, eased shrink to make room for the win panel. The panel waits for this
-     to finish before fading in (see `panelFadeIn` delay below). */
   transition: transform 0.7s ease;
 }
 
-/* A gentle shrink. The transform leaves the layout box at full size; a negative
-   bottom margin reclaims the freed height so the panel sits snug below the
-   board rather than after a tall gap. */
 .boardZoneWin {
   --win-scale: 0.8;
   transform: scale(var(--win-scale));
@@ -61,32 +48,23 @@
 }
 
 @media (max-width: 600px) {
-  /* Narrow: tighter gap above a more-shrunk board. */
   .winLayout {
     row-gap: 10px;
   }
 
   .boardZoneWin {
-    /* Scale computed in JS from the viewport height so the board + stacked panel
-       always fit without scrolling. Falls back to a safe constant. */
     --win-scale: var(--win-scale-mobile, 0.55);
   }
 
-  /* On mobile the gold panel goes full-width, which gives the buttons room to
-     sit side by side — saving a row of height so the screen doesn't scroll. */
   .gameOverOverlay.isWin {
     max-width: none;
     width: 100%;
   }
 
-  /* Drop the trophy on mobile to reclaim vertical space (win only). */
   .gameOverOverlay.isWin .overlayIcon {
     display: none;
   }
 
-  /* Stack the win actions full-width (the header's action row is hidden on a
-     win, so there's room). Each button then renders at the standard mobile
-     button size, matching the rest of the game's buttons. */
   .gameOverOverlay.isWin .overlayActions {
     flex-direction: column;
     align-items: stretch;
@@ -99,9 +77,6 @@
   }
 }
 
-/* Game Over: the classic full-cover overlay that covers the board. (The win
-   state overrides this in `.isWin` to a compact gold panel beside/below the
-   shrunk board.) */
 .gameOverOverlay {
   position: absolute;
   inset: 0;
@@ -121,7 +96,6 @@
   animation-fill-mode: forwards;
 }
 
-/* Keep the overlay's content above the decorative confetti layer (z-index: 1). */
 .gameOverOverlay > *:not([aria-hidden="true"]),
 .overlayIcon {
   position: relative;
@@ -177,8 +151,6 @@
   margin-top: 4px;
 }
 
-/* Win: a compact gold card in normal flow beside (wide) / below (narrow) the
-   shrunk board, instead of the full-cover overlay. */
 .gameOverOverlay.isWin {
   position: relative;
   inset: auto;
@@ -194,20 +166,15 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   animation-name: panelFadeIn;
   animation-duration: 0.5s;
-  /* Wait for the board's 0.7s shrink to finish, then fade the panel in.
-     `both` keeps it invisible during the delay and holds it visible after. */
   animation-delay: 0.7s;
   animation-fill-mode: both;
-  /* Gentle overshoot so the panel settles in rather than snapping. */
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* The trophy pops in just after the panel has appeared. */
 .gameOverOverlay.isWin .overlayIcon {
   animation: trophyPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1s both;
 }
 
-/* Compact the gold panel's contents (win only). */
 .gameOverOverlay.isWin .overlayIcon {
   font-size: 36px;
 }
@@ -248,27 +215,6 @@
   }
 }
 
-/* Win panel exit (on "Try Again"): shrink and fade away before the game resets. */
-.gameOverOverlay.isWin.isExiting {
-  animation-name: panelPopOut;
-  animation-duration: 0.28s;
-  animation-delay: 0s;
-  animation-fill-mode: both;
-  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
-}
-
-@keyframes panelPopOut {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(8px) scale(0.9);
-  }
-}
-
-/* Trophy pops in slightly after the panel, with a soft bounce. */
 @keyframes trophyPop {
   0% {
     opacity: 0;
@@ -280,7 +226,6 @@
   }
 }
 
-/* Full-cover Game Over overlay entrance. */
 @keyframes slowFadeIn {
   0% {
     opacity: 0;

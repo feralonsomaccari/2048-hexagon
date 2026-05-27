@@ -190,10 +190,11 @@ const GameMenu = ({
         {scores && <div className={styles.scores}>{scores}</div>}
       </div>
       {/* On a win the in-board panel provides Try Again / Keep Playing, so the
-          header's divider + New Game / Undo row are hidden to give the board
-          more room. */}
-      {!isWin && (
-      <>
+          header's divider + New Game / Undo row collapse away (smoothly) to give
+          the board more room. Kept mounted and collapsed via CSS so it eases out
+          and back in rather than popping. */}
+      <div className={`${styles.collapsible} ${isWin ? styles.collapsed : ""}`} aria-hidden={isWin}>
+      <div className={styles.collapsibleInner}>
       <div className={styles.divider} />
       <div className={styles.bottom}>
         <Button
@@ -241,8 +242,8 @@ const GameMenu = ({
           {topScore && <span className={styles.topScoreLegend}>{topScore}</span>}
         </div>
       </div>
-      </>
-      )}
+      </div>
+      </div>
     </header>
   );
 };

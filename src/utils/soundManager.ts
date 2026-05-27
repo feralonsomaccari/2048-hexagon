@@ -77,11 +77,11 @@ type SoundOpts = { streak?: number; combo?: number };
 
 const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
   move: () =>
-    playTone(180, { duration: 0.04, type: "triangle", gain: 0.12, glideTo: 140, vary: 0.08 }),
+    playTone(180, { duration: 0.04, type: "triangle", gain: 0.5, glideTo: 140, vary: 0.08 }),
 
   merge: () => {
     // Same sound as a move.
-    playTone(180, { duration: 0.04, type: "triangle", gain: 0.12, glideTo: 140, vary: 0.08 });
+    playTone(180, { duration: 0.04, type: "triangle", gain: 1, glideTo: 140, vary: 0.08 });
   },
 
   combo: ({ combo = 2 } = {}) => {

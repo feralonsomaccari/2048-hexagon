@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.3] - 2026-05-27
+
+### Fixed
+- The win panel no longer flashes and immediately vanishes on a **second** win in the same session. The panel's exit-animation flag was sticky after a "Try Again", so the next win mounted the panel already in its "exiting" state and it played its pop-out the moment it appeared. The panel now always opens in its entering state.
+
+### Changed
+- **Coordinated win/exit animations.** Leaving the win screen via "Try Again" now resets immediately and eases the board and surrounding chrome back from the win layout in one continuous transition — matching how "Keep Playing" already felt — instead of a deferred reset that swapped the board and shifted the layout right as the transition settled.
+- The **New Game / Undo** row and the **"How to Play"** panel now collapse and expand smoothly (height + opacity, matched to the board's 0.7s regrow) when entering and leaving the win state, in step with the board, rather than popping in and out. Both respect `prefers-reduced-motion`.
+- The **top-score legend** is now pushed to the far right of the New Game / Undo row on desktop, while the Undo button stays grouped on the left next to New Game.
+
 ## [0.9.2] - 2026-05-27
 
 ### Changed
