@@ -1,6 +1,7 @@
 .instructionsWrapper {
   padding: 10px 0;
-  border-top: 1px solid var(--color-tertiary);
+  /* Match the title divider's tone (tertiary at 40% — see GameMenu .divider). */
+  border-top: 1px solid color-mix(in srgb, var(--color-tertiary) 40%, transparent);
 }
 
 .text {

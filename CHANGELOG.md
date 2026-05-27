@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-05-27
+
+### Changed
+- On desktop the win panel now stacks **below** the board instead of sitting beside it, matching the mobile layout. The board shrinks (keeping its gentle 0.8 scale, trophy, and compact card width) and the gold result panel drops in directly beneath it.
+
 ## [0.9.1] - 2026-05-27
 
 ### Fixed

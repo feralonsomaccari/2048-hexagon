@@ -22,6 +22,9 @@ type props = {
   onHighScoresHandler?: () => void;
   isMuted?: boolean;
   onToggleMuted?: () => void;
+  // While a win is showing, the in-board win panel has its own actions, so the
+  // header's New Game / Undo row is hidden to free up space.
+  isWin?: boolean;
 };
 
 const GameMenu = ({
@@ -38,6 +41,7 @@ const GameMenu = ({
   onHighScoresHandler,
   isMuted,
   onToggleMuted,
+  isWin = false,
 }: props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -185,6 +189,11 @@ const GameMenu = ({
         </div>
         {scores && <div className={styles.scores}>{scores}</div>}
       </div>
+      {/* On a win the in-board panel provides Try Again / Keep Playing, so the
+          header's divider + New Game / Undo row are hidden to give the board
+          more room. */}
+      {!isWin && (
+      <>
       <div className={styles.divider} />
       <div className={styles.bottom}>
         <Button
@@ -232,6 +241,8 @@ const GameMenu = ({
           {topScore && <span className={styles.topScoreLegend}>{topScore}</span>}
         </div>
       </div>
+      </>
+      )}
     </header>
   );
 };

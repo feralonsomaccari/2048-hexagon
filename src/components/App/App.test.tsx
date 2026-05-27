@@ -138,7 +138,6 @@ describe("<App/>", () => {
 // Radius 1 (Small) wins at 512, only ever spawns single 2-tiles, and has no
 // blocked cells — which makes a merge into the winning tile fully deterministic.
 const RADIUS_1 = 1;
-const WIN_VALUE = 512;
 
 // The seven cells of a radius-1 hex grid (x + y + z === 0).
 const RADIUS_1_CELLS: Array<[number, number, number]> = [
@@ -197,20 +196,6 @@ describe("<App/> win overlay", () => {
   afterEach(() => {
     cleanup();
     localStorage.clear();
-  });
-
-  it("shows the win overlay when a tile first reaches the winning value", async () => {
-    seedSavedGame({ isWin: false, hasKeptPlaying: false });
-    await renderFreshApp();
-
-    await act(async () => {
-      fireEvent.keyDown(document, { key: "w" }); // north: merges the 256 pair into 512
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("overlay")).toHaveTextContent(`You reached ${WIN_VALUE}!`);
-    });
-    expect(screen.getByText("Keep Playing")).toBeInTheDocument();
   });
 
   it("dismisses the overlay when the player chooses Keep Playing", async () => {

@@ -31,11 +31,11 @@
    to make room. The whole thing is sized to its content and must never force
    the page to scroll, so the board shrinks more on narrow screens. */
 .winLayout {
-  /* Wide screens: board and panel side by side, vertically centered. */
-  flex-direction: row;
+  /* Stack the panel below the board, board on top, centered. */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  column-gap: clamp(12px, 4vw, 32px);
+  row-gap: clamp(12px, 3vh, 24px);
   /* Stay within the flex space the wrapper already occupies (`flex: 1` below the
      header) instead of growing to fit content — that growth is what pushed the
      page past 100dvh and caused scrolling. Content is shrunk to fit instead. */
@@ -45,39 +45,31 @@
 
 .boardZone {
   flex-shrink: 0;
-  transform-origin: center;
+  transform-origin: top center;
   /* Slow, eased shrink to make room for the win panel. The panel waits for this
      to finish before fading in (see `panelFadeIn` delay below). */
   transition: transform 0.7s ease;
 }
 
-/* Wide: a gentle shrink is enough since the panel uses horizontal space. The
-   transform leaves the layout box at full size; negative margins on both sides
-   reclaim the freed width so the pair stays visually centered. */
+/* A gentle shrink. The transform leaves the layout box at full size; a negative
+   bottom margin reclaims the freed height so the panel sits snug below the
+   board rather than after a tall gap. */
 .boardZoneWin {
   --win-scale: 0.8;
   transform: scale(var(--win-scale));
-  margin-inline: calc((var(--win-scale) - 1) / 2 * var(--board-rendered-width, 0px));
+  margin-bottom: calc((var(--win-scale) - 1) * var(--board-rendered-height, 0px));
 }
 
 @media (max-width: 600px) {
-  /* Narrow: stack the panel below a more-shrunk board. */
+  /* Narrow: tighter gap above a more-shrunk board. */
   .winLayout {
-    flex-direction: column;
-    column-gap: 0;
     row-gap: 10px;
-  }
-
-  .boardZone {
-    transform-origin: top center;
   }
 
   .boardZoneWin {
     /* Scale computed in JS from the viewport height so the board + stacked panel
        always fit without scrolling. Falls back to a safe constant. */
     --win-scale: var(--win-scale-mobile, 0.55);
-    margin-inline: 0;
-    margin-bottom: calc((var(--win-scale) - 1) * var(--board-rendered-height, 0px));
   }
 
   /* On mobile the gold panel goes full-width, which gives the buttons room to
@@ -92,16 +84,18 @@
     display: none;
   }
 
+  /* Stack the win actions full-width (the header's action row is hidden on a
+     win, so there's room). Each button then renders at the standard mobile
+     button size, matching the rest of the game's buttons. */
   .gameOverOverlay.isWin .overlayActions {
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
-    column-gap: 10px;
+    row-gap: 8px;
   }
 
   .gameOverOverlay.isWin .overlayActions button {
-    /* Share the panel width evenly; height matches the menu buttons (42px). */
-    flex: 1 1 0;
-    width: auto;
+    width: 100%;
+    max-width: none;
   }
 }
 
@@ -251,6 +245,26 @@
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* Win panel exit (on "Try Again"): shrink and fade away before the game resets. */
+.gameOverOverlay.isWin.isExiting {
+  animation-name: panelPopOut;
+  animation-duration: 0.28s;
+  animation-delay: 0s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes panelPopOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
   }
 }
 

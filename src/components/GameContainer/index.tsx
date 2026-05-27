@@ -45,6 +45,21 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   // mobile browser's collapsing URL bar.
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
+  // On "Try Again" from the win panel, play an exit animation before resetting so
+  // the win window animates away instead of vanishing instantly.
+  const [isExiting, setIsExiting] = React.useState(false);
+
+  const handleTryAgain = React.useCallback(() => {
+    if (isWin) {
+      // Play the exit animation, then reset. Use a timeout matched to the
+      // animation duration so the reset fires reliably even if the
+      // animationend event is missed.
+      setIsExiting(true);
+      window.setTimeout(() => resetGameHandler(radius), 280);
+    } else {
+      resetGameHandler(radius);
+    }
+  }, [isWin, resetGameHandler, radius]);
   const setRefs = React.useCallback(
     (node: HTMLElement | null) => {
       innerRef.current = node;
@@ -78,19 +93,18 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   const scale = targetWidth / naturalWidth;
   const marginBottom = natural * (scale - 1);
   const boardRenderedHeight = natural * scale;
-  const boardRenderedWidth = naturalWidth * scale;
 
-  // On a win we keep the board on screen and reveal the result panel below/
-  // beside it (the board shrinks). Game Over keeps the classic full-cover
-  // overlay. `overlayShown` just gates rendering the overlay element itself.
+  // On a win we keep the board on screen and reveal the result panel below the
+  // board (the board shrinks). Game Over keeps the classic full-cover overlay.
+  // `overlayShown` just gates rendering the overlay element itself.
   const overlayShown = isGameOver || isWin;
 
   // Extra shrink applied to the board on a mobile win so the board *and* the
   // result panel both fit in the space below the header without scrolling.
   // `availableHeight` is measured (top of the board area → bottom of viewport);
   // reserve room for the stacked panel and scale the board to fit the rest,
-  // capped so it never grows. On wider screens the panel sits beside the board,
-  // so a fixed gentle shrink (driven by CSS) is fine.
+  // capped so it never grows. On wider screens the panel also stacks below, but
+  // a fixed gentle shrink (driven by CSS) is fine.
   const PANEL_RESERVE = 170; // px reserved for the result panel + gap on mobile (no trophy)
   const mobilePanelScale =
     viewport.isMobile && availableHeight > 0
@@ -109,7 +123,6 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
         isWin
           ? ({
               "--board-rendered-height": `${boardRenderedHeight}px`,
-              "--board-rendered-width": `${boardRenderedWidth}px`,
               "--win-scale-mobile": mobilePanelScale,
             } as React.CSSProperties)
           : { height: `${boardRenderedHeight}px` }
@@ -129,7 +142,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
       </div>
       {overlayShown && (
         <div
-          className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""}`}
+          className={`${styles.gameOverOverlay} ${isWin ? styles.isWin : ""} ${isExiting ? styles.isExiting : ""}`}
           data-testid="overlay"
           role="alertdialog"
           aria-labelledby="overlay-title"
@@ -171,7 +184,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
             />
           )}
           <div className={styles.overlayActions}>
-            <Button clickHandler={() => resetGameHandler(radius)} text='Try Again'/>
+            <Button clickHandler={handleTryAgain} text='Try Again'/>
             {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing'/>}
           </div>
         </div>

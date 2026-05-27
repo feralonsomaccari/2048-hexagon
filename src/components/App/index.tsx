@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import styles from "./App.module.css";
 import GameMenu from "../GameMenu";
-// import Instructions from "../Instructions"; // hidden for now
+import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
 import Score from "../Score";
 import NewGameModal from "../NewGameMenu";
@@ -456,12 +456,14 @@ export const App: React.FC = () => {
   }, []);
 
   const undoHandler = useCallback(() => {
+    // No undoing once the run is decided — the win/Game Over result is final.
+    if (isWin || isGameOver) return;
     setTileSet(historyTileSet);
     setScore(historyScore);
     setComboBonus(historyComboBonus);
     setIsUndoAvailable(false);
     setUndoCount(prev => prev + 1)
-  }, [historyTileSet, historyScore, historyComboBonus]);
+  }, [historyTileSet, historyScore, historyComboBonus, isWin, isGameOver]);
 
   const onNewGameHandler = useCallback(() => {
     setIsModalShown(true);
@@ -502,7 +504,7 @@ export const App: React.FC = () => {
           }
           onNewGameHandler={onNewGameHandler}
           undoHandler={undoHandler}
-          isUndoAvailable={isUndoAvailable}
+          isUndoAvailable={isUndoAvailable && !isGameOver}
           remainingUndos={maxUndo - undoCount}
           maxUndos={maxUndo}
           showUndo={maxUndo > 0}
@@ -519,9 +521,10 @@ export const App: React.FC = () => {
           onHighScoresHandler={openLeaderboard}
           isMuted={isMuted}
           onToggleMuted={toggleMuted}
+          isWin={isWin}
         />
-        {/* "How to Play" instructions hidden for now. */}
-        {/* <Instructions radius={radius} /> */}
+        {/* "How to Play" — hidden on a win so the win panel has more room. */}
+        {!isWin && <Instructions radius={radius} />}
         <GameContainer
           ref={boardRef}
           tileSet={sortTileSetById(tileSet)}
