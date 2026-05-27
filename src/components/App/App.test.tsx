@@ -32,6 +32,10 @@ import { App } from ".";
 
 const MOVE_KEYS = ["q", "w", "e", "a", "s", "d"];
 
+// Count the filled undo pips currently rendered on the undo button.
+const filledPips = () =>
+  screen.queryByTestId("undo-pips")?.querySelectorAll('[data-pip="filled"]').length ?? 0;
+
 const makeAnyValidMove = async () => {
   for (const key of MOVE_KEYS) {
     fireEvent.keyDown(document, { key });
@@ -85,7 +89,7 @@ describe("<App/>", () => {
     it("should start with 1 remaining undo shown on the button", async () => {
       render(<App />);
       await waitFor(() => {
-        expect(screen.getByTestId("undo-btn")).toHaveTextContent("Undo (1)");
+        expect(filledPips()).toBe(1);
       });
     });
 
@@ -105,18 +109,18 @@ describe("<App/>", () => {
 
       for (let used = 0; used < 1; used += 1) {
         await makeAnyValidMove();
-        expect(screen.getByTestId("undo-btn")).toHaveTextContent(`Undo (${1 - used})`);
+        expect(filledPips()).toBe(1 - used);
 
         await act(async () => {
           fireEvent.click(screen.getByTestId("undo-btn"));
         });
 
         await waitFor(() => {
-          expect(screen.getByTestId("undo-btn")).toHaveTextContent(`Undo (${1 - used - 1})`);
+          expect(filledPips()).toBe(1 - used - 1);
         });
       }
 
-      expect(screen.getByTestId("undo-btn")).toHaveTextContent("Undo (0)");
+      expect(filledPips()).toBe(0);
 
       try {
         await makeAnyValidMove();

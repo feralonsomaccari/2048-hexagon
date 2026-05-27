@@ -504,7 +504,16 @@ export const App: React.FC = () => {
           undoHandler={undoHandler}
           isUndoAvailable={isUndoAvailable}
           remainingUndos={maxUndo - undoCount}
+          maxUndos={maxUndo}
           showUndo={maxUndo > 0}
+          topScore={
+            highScores[radius]?.[0] ? (
+              <>
+                Top score: <strong>{highScores[radius][0].score}</strong> by{" "}
+                <strong>{highScores[radius][0].name}</strong>
+              </>
+            ) : undefined
+          }
           theme={theme}
           onToggleTheme={toggleTheme}
           onHighScoresHandler={openLeaderboard}
@@ -513,14 +522,6 @@ export const App: React.FC = () => {
         />
         {/* "How to Play" instructions hidden for now. */}
         {/* <Instructions radius={radius} /> */}
-        <p className={styles.topScoreLegend}>
-          {highScores[radius]?.[0] && (
-            <>
-              Top score: <strong>{highScores[radius][0].score}</strong> by{" "}
-              <strong>{highScores[radius][0].name}</strong>
-            </>
-          )}
-        </p>
         <GameContainer
           ref={boardRef}
           tileSet={sortTileSetById(tileSet)}

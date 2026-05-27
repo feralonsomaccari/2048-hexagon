@@ -1,0 +1,28 @@
+type props = {
+  /** Pixel size of the (square) icon. Defaults to 1em so it scales with text. */
+  size?: number | string;
+  className?: string;
+};
+
+// Dark-mode (sun + crescent) icon, traced from darkmode.webp. Uses
+// `fill: currentColor` so it matches its label color in both themes, like the
+// other icons. Keeps potrace's flip/scale transform; the crescent renders as a
+// proper cutout. The viewBox matches the source image's 240px dimensions.
+const DarkModeIcon = ({ size = "1em", className }: props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 240 240"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+    focusable="false"
+  >
+    <g transform="translate(0,240) scale(0.1,-0.1)">
+      <path d="M1100 2186 l0 -215 -57 -11 c-84 -17 -200 -64 -262 -106 l-54 -36 -153 153 -154 154 -72 -73 -73 -72 154 -154 154 -155 -25 -33 c-50 -65 -106 -203 -124 -300 l-6 -38 -214 0 -214 0 0 -100 0 -100 214 0 214 0 16 -70 c18 -83 66 -197 109 -259 l30 -43 -152 -152 -151 -151 72 -73 73 -72 152 152 152 151 33 -25 c65 -50 203 -106 301 -124 l37 -6 0 -214 0 -214 100 0 100 0 0 214 0 214 70 16 c83 18 197 66 259 109 l43 30 152 -152 151 -151 73 72 72 73 -152 152 -151 152 25 33 c50 65 106 203 124 301 l6 37 214 0 214 0 0 100 0 100 -214 0 -214 0 -16 70 c-18 83 -66 197 -109 259 l-30 43 152 152 151 151 -72 73 -73 72 -152 -152 -152 -151 -33 25 c-65 50 -203 106 -300 124 l-38 6 0 214 0 214 -100 0 -100 0 0 -214z m-212 -811 c106 -308 394 -525 697 -525 l66 0 -22 -31 c-12 -17 -52 -53 -88 -80 -375 -277 -912 -11 -912 451 0 162 52 296 159 406 l56 59 7 -97 c5 -66 17 -125 37 -183z" />
+    </g>
+  </svg>
+);
+
+export default DarkModeIcon;

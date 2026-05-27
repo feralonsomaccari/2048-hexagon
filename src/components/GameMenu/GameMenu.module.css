@@ -16,6 +16,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0; /* the title row keeps its size; scores yield space instead */
 }
 
 .title {
@@ -24,6 +25,8 @@
   font-weight: 800;
   letter-spacing: -1px;
   color: var(--color-text-main);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .subtitle {
@@ -33,6 +36,13 @@
   letter-spacing: 1px;
   color: var(--color-text-muted);
   margin-top: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Desktop shows just "hexagon"; the " version" suffix is revealed on mobile. */
+.subtitleVersion {
+  display: none;
 }
 
 .srOnly {
@@ -63,15 +73,179 @@
 .bottom {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* New Game, Undo and the top-score legend all grouped at the left. */
+  justify-content: flex-start;
+  column-gap: 12px;
   margin-bottom: 12px;
 }
 
-.actions {
+/* Right group of the bottom row: top-score legend + undo button. New Game sits
+   on the far left of the row (`.bottom` uses justify-content: space-between). */
+.actionsRight {
   display: flex;
-  flex: 1;
-  column-gap: 10px;
-  justify-content: space-between;
+  align-items: center;
+  column-gap: 12px;
+}
+
+/* Cap the undo button's width on desktop so the icon + pips don't stretch it. */
+.actionsRight [data-testid="undo-btn"] {
+  max-width: 80px;
+}
+
+/* Top-score line, sitting next to the undo button. */
+.topScoreLegend {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.topScoreLegend strong {
+  color: var(--color-text-main);
+}
+
+/* Undo button: arrow icon stacked over a row of pips showing remaining undos. */
+.undoLabel {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 3px;
+}
+
+.undoIcon {
+  width: 1.2em;
+  height: 1.2em;
+  /* `currentColor` fill means it already matches the button's text color. */
+}
+
+/* One pip per available undo, sitting under the icon. */
+.undoPips {
+  display: inline-flex;
+  column-gap: 3px;
+}
+
+/* Empty slot: a dim outline of the pip. Filled slots paint solid below. */
+.undoPip {
+  width: 6px;
+  height: 4px;
+  border-radius: 1px;
+  background-color: currentColor;
+  opacity: 0.25;
+  transition: opacity 0.2s ease;
+}
+
+.undoPipFilled {
+  opacity: 1;
+}
+
+/* Anchor the dropdown to the hamburger trigger, sitting to the left of the title. */
+.menu {
+  position: relative;
+  align-self: center;
+  order: -1; /* place the hamburger before the "2048 ⬡" title */
+  flex-shrink: 0;
+}
+
+/* Backgroundless hamburger: three bars in the theme's main text color so they
+   match the "2048 ⬡" title next to them. */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.hamburgerBar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--color-text-main);
+}
+
+.hamburger:focus-visible {
+  outline: 3px solid var(--color-text-main);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Floating panel below the trigger, styled like the modal "menu window"
+   (page-colored surface, rounded, soft shadow) and popping out from the
+   top-left corner nearest the hamburger trigger. */
+.menuDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  min-width: 180px;
+  padding: 16px;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  transform-origin: top left;
+  animation: menuPopIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Let menu items fill the panel width rather than sit at their natural size,
+   with their contents left-aligned. Strip the shared Button's background so
+   they read as plain rows in the popup, highlighting only on hover/focus. */
+/* `.menuDropdown button` (0,1,1) outranks the shared `.button` (0,1,0) so the
+   transparent background reliably wins regardless of stylesheet order. */
+.menuDropdown button {
+  width: 100%;
+  max-width: none;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 0 10px;
+  font-size: 15px;
+  background-color: transparent;
+  color: var(--color-text-main);
+  border-radius: 8px;
+  transition: background-color 0.15s;
+}
+
+.menuDropdown button:hover,
+.menuDropdown button:focus-visible {
+  background-color: var(--color-disabled);
+}
+
+/* Menu item content with a leading icon (e.g. trophy on "Scores"). */
+.menuItemLabel {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.menuItemIcon {
+  width: 1.1em;
+  height: 1.1em;
+  /* currentColor fill matches the menu button's text in both themes. */
+}
+
+/* Popup: scale up from the trigger corner with a slight overshoot. */
+@keyframes menuPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuDropdown {
+    animation: none;
+  }
 }
 
 @media (max-width: 600px) {
@@ -102,6 +276,11 @@
     letter-spacing: 0.5px;
   }
 
+  /* Mobile shows the full "hexagon version". */
+  .subtitleVersion {
+    display: inline;
+  }
+
   .scores {
     width: 100%;
     column-gap: 8px;
@@ -118,13 +297,36 @@
   }
 
   .bottom {
-    flex-wrap: wrap;
+    /* Keep New Game and Undo on one line even on narrow screens; the top-score
+       legend (inside .actionsRight) shrinks instead of the row wrapping. */
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     gap: 8px;
     margin-bottom: 8px;
   }
 
-  .actions {
-    flex: 1;
-    justify-content: space-between;
+  /* Keep the undo button at its natural width on mobile rather than stretching. */
+  .actionsRight [data-testid="undo-btn"] {
+    flex: 0 0 auto;
+    max-width: fit-content;
+  }
+
+  /* Let the undo + legend group give up space (so the legend can shrink) rather
+     than forcing the buttons to wrap. */
+  .actionsRight {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  /* Cap New Game on mobile so it doesn't grow to fill the row. */
+  .bottom [data-testid="new-game-btn"] {
+    flex: 0 0 auto;
+    max-width: 140px;
+  }
+
+  .topScoreLegend {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 11px;
   }
 }

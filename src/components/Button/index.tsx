@@ -1,7 +1,7 @@
 import styles from "./Button.module.css";
 
 type props = {
-  text: string;
+  text: React.ReactNode;
   clickHandler?: () => void;
   disabled?: boolean;
   extraProps?: object

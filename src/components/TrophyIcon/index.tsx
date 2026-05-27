@@ -1,0 +1,28 @@
+type props = {
+  /** Pixel size of the (square) icon. Defaults to 1em so it scales with text. */
+  size?: number | string;
+  className?: string;
+};
+
+// Trophy icon, traced from trophy.png. Uses `fill: currentColor` so it inherits
+// the surrounding text color and matches its label in both themes (same pattern
+// as UndoIcon). The path keeps potrace's flip/scale transform, which renders the
+// handle and base cutouts as proper holes.
+const TrophyIcon = ({ size = "1em", className }: props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 512 512"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+    focusable="false"
+  >
+    <g transform="translate(0,512) scale(0.1,-0.1)">
+      <path d="M861 4688 c0 -24 4 -76 8 -115 l7 -73 -304 0 c-336 0 -351 -2 -395 -64 -19 -27 -22 -42 -21 -131 8 -511 334 -1024 801 -1259 131 -65 260 -109 414 -140 19 -4 47 -33 96 -98 222 -294 474 -480 757 -558 38 -11 71 -22 73 -24 10 -10 -40 -137 -85 -214 -83 -144 -239 -308 -387 -408 l-50 -34 -122 0 -123 0 0 -140 0 -139 73 -3 72 -3 3 -307 2 -308 -75 0 -75 0 0 -140 0 -140 1030 0 1030 0 0 140 0 140 -75 0 -75 0 2 307 3 308 73 3 72 3 0 139 0 140 -123 0 -122 0 -50 34 c-148 100 -304 264 -387 408 -45 77 -95 204 -85 214 2 2 36 13 75 24 272 76 541 273 752 553 51 69 81 99 99 103 488 98 866 388 1075 825 118 246 181 618 119 705 -44 62 -59 64 -395 64 l-304 0 7 73 c4 39 8 91 8 115 l1 42 -1700 0 -1700 0 1 -42z m53 -490 c3 -13 14 -70 26 -128 50 -249 137 -532 224 -729 24 -56 43 -101 41 -101 -1 0 -32 13 -68 30 -367 166 -625 505 -692 908 l-7 42 236 0 236 0 4 -22z m3761 -20 c-54 -324 -228 -604 -493 -795 -55 -40 -245 -143 -264 -143 -4 0 9 34 27 75 85 185 182 496 229 731 15 71 29 139 31 152 l5 22 236 0 236 0 -7 -42z" />
+    </g>
+  </svg>
+);
+
+export default TrophyIcon;

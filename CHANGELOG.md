@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-27
+
+### Added
+- **Hamburger menu** in the header (to the left of the "2048 ⬡" title) that collapses the secondary actions — **Scores**, the theme toggle, and the sound toggle — into a single popup. The popup is styled like the New Game modal window (page-colored surface, rounded, soft shadow), springs open from the trigger with a scale "pop" animation, and closes on outside-click or Escape. Menu items are borderless, left-aligned rows that highlight on hover/focus. Reduced-motion is respected.
+- **Custom SVG icons** for the menu and undo button, traced from source artwork and rendered inline with `fill: currentColor` so they match their label color in both themes (no image requests, crisp at any size): an undo arrow, a trophy on **Scores**, sun/moon on the theme toggle, and muted-speaker / speaker-with-waves on the sound toggle.
+
+### Changed
+- **Undo button redesigned**: the remaining-undo count is now shown as a depleting bar of pips beneath the undo arrow instead of an `(n)` label. The bar always renders at least three slots, so a one-undo board reads as "1 of 3" rather than a lone pip. The "Undo" wording is preserved for assistive tech via the `aria-label`/tooltip.
+- **Header bottom-row layout**: New Game, Undo, and the top-score legend are now grouped together on the left on desktop. The top-score legend ("Top score: … by …") moved out of the page body and into this row. On mobile, New Game and Undo stay on a single line (the legend shrinks rather than the buttons wrapping), and both buttons keep a capped width instead of stretching to fill the row.
+- The theme-toggle label is now the clearer **"Light Mode" / "Dark Mode"** (was a bare "Light" / "Dark"), and the sound toggle reads **"Mute" / "Unmute"** with its new icon.
+- **Smoother win animation**: the board now shrinks more slowly to make room for the win panel, and the gold result panel waits for that shrink to finish before popping in (with the trophy bouncing in just after), instead of fading in while the board is still moving.
+
 ## [0.8.1] - 2026-05-26
 
 ### Fixed
