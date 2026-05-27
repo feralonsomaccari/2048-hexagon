@@ -99,7 +99,7 @@
 }
 
 .topScoreLegend strong {
-  color: var(--color-text-main);
+  font-weight: 700;
 }
 
 /* Undo button: arrow icon stacked over a row of pips showing remaining undos. */
