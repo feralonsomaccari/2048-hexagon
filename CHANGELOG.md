@@ -6,11 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-05-28
+
+### Changed
+- **Remove power-up now requires a move first.** Like Undo, the **Remove** power-up stays disabled until you make at least one move in the run, so it can't be used on the starting board.
+- **New Remove icon** — a flat-top hexagon (matching the board tiles, with the same rounded corners) split into two offset halves along a diagonal crack, signalling a tile being broken off the board.
+
 ## [0.14.0] - 2026-05-28
 
 ### Added
 - **Power-up bar.** A new bar below the board holds the game's power-ups as icon tiles with a remaining-charge badge. **Undo** and **New Game** moved out of the top menu and into this bar.
-- **Remove power-up.** Tap **Remove** to enter targeting mode, then tap any tile to delete it from the board. It's a free edit — no new tile spawns and the move count is unchanged. Limited per board size (2 on small, 1 on normal) and shown as a charge badge. Cancel without spending a charge by tapping Remove again or pressing **Escape**; move keys and swipes are disabled while targeting.
+- **Remove power-up.** Tap **Remove** to enter targeting mode, then tap any tile to delete it from the board. It's a free edit — no new tile spawns and the move count is unchanged. The per-board-size budget is configurable (`MAX_REMOVE_BY_RADIUS`) and shown as a charge badge. Cancel without spending a charge by tapping Remove again or pressing **Escape**; move keys and swipes are disabled while targeting.
 
 ## [0.13.0] - 2026-05-28
 

@@ -29,6 +29,7 @@ vi.mock("firebase/firestore", () => ({
 }));
 
 import { App } from ".";
+import { MAX_REMOVE_BY_RADIUS } from "../../config/gameConfig";
 
 const MOVE_KEYS = ["q", "w", "e", "a", "s", "d"];
 
@@ -408,6 +409,8 @@ const threeTileSet = (): gridElement[] => [
   { x: -1, y: 1, z: 0, value: 8, id: 13 },
 ];
 
+const REMOVE_CHARGES = MAX_REMOVE_BY_RADIUS[RADIUS_1];
+
 describe("<App/> remove-tile power-up", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -419,14 +422,14 @@ describe("<App/> remove-tile power-up", () => {
   });
 
   it("removes a tapped tile and decrements the remaining charges", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true });
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 1 });
     await renderFreshApp();
 
     await waitFor(() => {
       expect(screen.getAllByTestId("tile")).toHaveLength(3);
     });
 
-    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent("2");
+    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent(String(REMOVE_CHARGES));
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("power-up-removeTile"));
@@ -440,12 +443,12 @@ describe("<App/> remove-tile power-up", () => {
     await waitFor(() => {
       expect(screen.getAllByTestId("tile")).toHaveLength(2);
     });
-    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent("1");
+    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent(String(REMOVE_CHARGES - 1));
     expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
   });
 
   it("cancels remove mode with Escape without consuming a charge", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true });
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 1 });
     await renderFreshApp();
 
     await waitFor(() => {
@@ -463,11 +466,11 @@ describe("<App/> remove-tile power-up", () => {
 
     expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
     expect(screen.getAllByTestId("tile")).toHaveLength(3);
-    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent("2");
+    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent(String(REMOVE_CHARGES));
   });
 
   it("toggles remove mode off when the power-up is clicked again", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true });
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 1 });
     await renderFreshApp();
 
     await waitFor(() => {
@@ -484,5 +487,19 @@ describe("<App/> remove-tile power-up", () => {
     });
     expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
     expect(screen.getAllByTestId("tile")).toHaveLength(3);
+  });
+
+  it("stays disabled until the first move is made", async () => {
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 0 });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-removeTile")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("power-up-removeTile")).toBeDisabled();
+
+    await makeAnyValidMove();
+
+    expect(screen.getByTestId("power-up-removeTile")).not.toBeDisabled();
   });
 });

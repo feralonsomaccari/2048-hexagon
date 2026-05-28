@@ -482,9 +482,9 @@ export const App: React.FC = () => {
   }, [historyTileSet, historyScore, historyComboBonus, isWin, isGameOver]);
 
   const toggleRemoveMode = useCallback(() => {
-    if (isWin || isGameOver || isMovementBlocked) return;
+    if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
     setIsRemoveMode((prev) => !prev);
-  }, [isWin, isGameOver, isMovementBlocked]);
+  }, [isWin, isGameOver, isMovementBlocked, movesCount]);
 
   const removeTileHandler = useCallback((tile: gridElement) => {
     setTileSet((prev) => prev.filter((t) => t.id !== tile.id));
@@ -586,7 +586,7 @@ export const App: React.FC = () => {
                 ? {
                     removeTile: {
                       onActivate: toggleRemoveMode,
-                      disabled: isGameOver,
+                      disabled: isGameOver || movesCount === 0,
                       charges: removesRemaining,
                       maxCharges: maxRemove,
                       active: isRemoveMode,

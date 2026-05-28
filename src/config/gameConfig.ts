@@ -36,8 +36,8 @@ export type PowerUpDef = {
   description: string;
 };
 
-// Registry of available power-ups, rendered in order by the PowerUpBar.
-// Add new power-ups here as they are implemented.
+// available power-ups, they rendered in order
+// Add new power-ups here
 export const POWER_UPS: PowerUpDef[] = [
   {
     id: "undo",
@@ -57,7 +57,7 @@ export const POWER_UPS: PowerUpDef[] = [
 ];
 
 export const BLOCKED_RADIUS_BY_RADIUS: Record<number, number> = {
-
+  1: -1,
   2: 0,
   3: 1,
   4: 2,
@@ -71,7 +71,7 @@ export const STARTER_SPAWN_COUNT_BY_RADIUS: Record<number, number> = {
 };
 
 export const FOUR_PROBABILITY_BY_RADIUS: Record<number, number> = {
-  1: 0,
+  1: 0.2,
   2: 0.2,
   3: 0.2,
   4: 0.25,
