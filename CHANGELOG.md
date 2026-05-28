@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-05-28
+
+### Added
+- **Animated score count-up.** The "Score" and "My Best" numbers now spin up to their new value over ~400ms with an ease-out, rounding as they tick — small gains read as a quick 1-by-1 climb, big combos as a smooth spin. The displayed number animates only on an increase; it snaps instantly on a decrease (undo, switching boards, new game) so it never plays a backwards spin. Respects `prefers-reduced-motion` (jumps straight to the value). Implemented as a small in-house `useCountUp` hook — no new dependency.
+
+### Changed
+- The win/Game Over overlay now folds the move count into the score line as **"Final Score: {n} in {x} moves"** (or "Score: …" when there's no bonus breakdown), replacing the separate standalone "{n} MOVES" line.
+- Replaced the floating green "+N" gain indicator on the score box with the new count-up animation, which now serves as the sole gain feedback.
+
 ## [0.10.0] - 2026-05-28
 
 ### Added

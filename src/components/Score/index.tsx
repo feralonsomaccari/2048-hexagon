@@ -1,27 +1,21 @@
 import styles from "./Score.module.css";
+import useCountUp from "../../hooks/useCountUp";
 
 type props = {
   title: string;
   score: number;
-  historyScore?: number;
-
-  gain?: number;
 };
 
-const Score = ({ title, score, historyScore, gain }: props) => {
-  const totalScore =
-    gain !== undefined ? gain : historyScore === undefined ? 0 : score - historyScore;
+const Score = ({ title, score }: props) => {
+  const displayScore = useCountUp(score);
   return (
     <div data-testid="score" className={styles.scoreWrapper}>
       <h2 className={styles.scoreTitle}>{title}</h2>
       <p
-        className={`${totalScore > 0 ? styles.score : ""}`}
-        key={score}
-        data-value={`+${totalScore}`}
         aria-live="polite"
         aria-atomic="true"
         aria-label={`${title}: ${score}`}>
-        {score}
+        {displayScore}
       </p>
     </div>
   );

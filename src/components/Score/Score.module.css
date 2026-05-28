@@ -29,29 +29,3 @@
   font-size: 12px;
   color: var(--color-score-box-text);
 }
-
-.score::before {
-  content: attr(data-value);
-  position: absolute;
-  animation: slowMoveUp ease-out 1s;
-  opacity: 0;
-  color: var(--color-score-gain);
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  pointer-events: none;
-}
-
-@keyframes slowMoveUp {
-  0% {
-    top: 0;
-    opacity: 1;
-    transform: scale(0.9);
-  }
-
-  100% {
-    top: -50px;
-    opacity: 0;
-    transform: scale(1.15);
-  }
-}

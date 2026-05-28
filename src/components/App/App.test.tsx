@@ -331,23 +331,6 @@ describe("<App/> win overlay", () => {
     expect(screen.getByLabelText("My Best: 666")).toBeInTheDocument();
   });
 
-  it("pops only the raw move gain (not the bonus) when the win applies the bonus", async () => {
-
-    seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
-    await renderFreshApp();
-
-    await act(async () => {
-      fireEvent.keyDown(document, { key: "w" });
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("overlay")).toBeInTheDocument();
-    });
-
-    const headerScore = screen.getByLabelText("Score: 666");
-    expect(headerScore).toHaveAttribute("data-value", "+512");
-  });
-
   it("keeps the banked bonus in the header Score after Keep Playing", async () => {
 
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });

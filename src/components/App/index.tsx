@@ -468,8 +468,6 @@ export const App: React.FC = () => {
               <Score
                 title="Score"
                 score={isGameOver ? finalScore : displayedScore}
-                historyScore={historyScore}
-                gain={score - historyScore}
               />
               <Score
                 title="My Best"
@@ -498,7 +496,6 @@ export const App: React.FC = () => {
           onToggleMuted={toggleMuted}
           isWin={isWin}
         />
-        {}
         <Instructions radius={radius} collapsed={isWin} />
         <GameContainer
           ref={boardRef}
