@@ -86,7 +86,17 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   const targetWidth = viewport.isMobile
     ? Math.min(viewport.width, naturalWidth)
     : desktopDesignWidth;
-  const scale = targetWidth / naturalWidth;
+  const widthScale = targetWidth / naturalWidth;
+  // Vertical room below the board top, reserving space for the power-up bar
+  // that renders after the board so the page fits without scrolling on mobile.
+  const POWER_UP_BAR_RESERVE = 110;
+  const heightScale =
+    viewport.isMobile && availableHeight > 0
+      ? (availableHeight - POWER_UP_BAR_RESERVE) / natural
+      : widthScale;
+  const scale = isWin
+    ? widthScale
+    : Math.max(0.4, Math.min(widthScale, heightScale));
   const marginBottom = natural * (scale - 1);
   const boardRenderedHeight = natural * scale;
 

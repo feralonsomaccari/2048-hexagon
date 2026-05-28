@@ -32,8 +32,10 @@ import { App } from ".";
 
 const MOVE_KEYS = ["q", "w", "e", "a", "s", "d"];
 
-const filledPips = () =>
-  screen.queryByTestId("undo-pips")?.querySelectorAll('[data-pip="filled"]').length ?? 0;
+const remainingUndos = () => {
+  const badge = screen.queryByTestId("power-up-undo-charges");
+  return badge ? Number(badge.textContent) : 0;
+};
 
 const makeAnyValidMove = async () => {
   for (const key of MOVE_KEYS) {
@@ -41,7 +43,7 @@ const makeAnyValidMove = async () => {
     try {
       await waitFor(
         () => {
-          expect(screen.getByTestId("undo-btn")).not.toBeDisabled();
+          expect(screen.getByTestId("power-up-undo")).not.toBeDisabled();
         },
         { timeout: 400 }
       );
@@ -60,7 +62,7 @@ describe("<App/>", () => {
 
   it("should render New Game Modal", () => {
     render(<App />);
-    const newgameBtn = screen.getByTestId("new-game-btn");
+    const newgameBtn = screen.getByTestId("power-up-newGame");
     fireEvent.click(newgameBtn);
     const newGameMenu = screen.getByTestId("new-game");
     expect(newGameMenu).toBeInTheDocument();
@@ -68,7 +70,7 @@ describe("<App/>", () => {
 
   it("should hide New Game Modal", () => {
     render(<App />);
-    const newgameButton = screen.getByTestId("new-game-btn");
+    const newgameButton = screen.getByTestId("power-up-newGame");
     fireEvent.click(newgameButton);
     const closBtn = screen.getByTestId("close-btn");
     const newGameMenu = screen.getByTestId("new-game");
@@ -85,41 +87,41 @@ describe("<App/>", () => {
   });
 
   describe("undo budget", () => {
-    it("should start with 1 remaining undo shown on the button", async () => {
+    it("should start with 1 remaining undo shown on the power-up", async () => {
       render(<App />);
       await waitFor(() => {
-        expect(filledPips()).toBe(1);
+        expect(remainingUndos()).toBe(1);
       });
     });
 
-    it("should keep the undo button disabled before any move is made", async () => {
+    it("should keep the undo power-up disabled before any move is made", async () => {
       render(<App />);
       await waitFor(() => {
-        expect(screen.getByTestId("undo-btn")).toBeInTheDocument();
+        expect(screen.getByTestId("power-up-undo")).toBeInTheDocument();
       });
-      expect(screen.getByTestId("undo-btn")).toBeDisabled();
+      expect(screen.getByTestId("power-up-undo")).toBeDisabled();
     });
 
     it("should decrement the counter after each undo and lock at 0", async () => {
       render(<App />);
       await waitFor(() => {
-        expect(screen.getByTestId("undo-btn")).toBeInTheDocument();
+        expect(screen.getByTestId("power-up-undo")).toBeInTheDocument();
       });
 
       for (let used = 0; used < 1; used += 1) {
         await makeAnyValidMove();
-        expect(filledPips()).toBe(1 - used);
+        expect(remainingUndos()).toBe(1 - used);
 
         await act(async () => {
-          fireEvent.click(screen.getByTestId("undo-btn"));
+          fireEvent.click(screen.getByTestId("power-up-undo"));
         });
 
         await waitFor(() => {
-          expect(filledPips()).toBe(1 - used - 1);
+          expect(remainingUndos()).toBe(1 - used - 1);
         });
       }
 
-      expect(filledPips()).toBe(0);
+      expect(remainingUndos()).toBe(0);
 
       try {
         await makeAnyValidMove();
@@ -128,7 +130,7 @@ describe("<App/>", () => {
         expect((err as Error).message).toMatch(/No movement direction enabled undo/);
       }
 
-      expect(screen.getByTestId("undo-btn")).toBeDisabled();
+      expect(screen.getByTestId("power-up-undo")).toBeDisabled();
     });
   });
 });
@@ -377,7 +379,7 @@ describe("<App/> win overlay", () => {
     });
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId("undo-btn"));
+      fireEvent.click(screen.getByTestId("power-up-undo"));
     });
     await waitFor(() => {
       expect(screen.getByLabelText("Score: 154")).toBeInTheDocument();

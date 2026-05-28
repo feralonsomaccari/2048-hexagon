@@ -21,6 +21,29 @@ export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
 
 export const NO_UNDO_BONUS_RATE_PER_UNDO = 0.1;
 
+export type PowerUpId = "undo" | "newGame";
+
+export type PowerUpDef = {
+  id: PowerUpId;
+  label: string;
+  description: string;
+};
+
+// Registry of available power-ups, rendered in order by the PowerUpBar.
+// Add new power-ups here as they are implemented.
+export const POWER_UPS: PowerUpDef[] = [
+  {
+    id: "undo",
+    label: "Undo",
+    description: "Undo your last move",
+  },
+  {
+    id: "newGame",
+    label: "New Game",
+    description: "Start a new game",
+  },
+];
+
 export const BLOCKED_RADIUS_BY_RADIUS: Record<number, number> = {
 
   2: 0,

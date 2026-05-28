@@ -32,19 +32,6 @@
   margin: 0;
 }
 
-.touchOnly {
-  display: none;
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .keyboardOnly {
-    display: none;
-  }
-  .touchOnly {
-    display: block;
-  }
-}
-
 @media (max-width: 600px) {
   .instructionsWrapper {
     padding: 6px 0;

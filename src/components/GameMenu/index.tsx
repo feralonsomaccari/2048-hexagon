@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./GameMenu.module.css";
 import Button from "../Button";
-import UndoIcon from "../UndoIcon";
 import TrophyIcon from "../TrophyIcon";
 import LightModeIcon from "../LightModeIcon";
 import DarkModeIcon from "../DarkModeIcon";
@@ -11,12 +10,6 @@ import TwitterIcon from "../TwitterIcon";
 import FacebookIcon from "../FacebookIcon";
 
 type props = {
-  onNewGameHandler?: () => void;
-  undoHandler?: () => void;
-  isUndoAvailable?: boolean;
-  remainingUndos?: number;
-  maxUndos?: number;
-  showUndo?: boolean;
   scores?: React.ReactNode;
   topScore?: React.ReactNode;
   theme?: "light" | "dark";
@@ -31,12 +24,6 @@ type props = {
 };
 
 const GameMenu = ({
-  undoHandler,
-  onNewGameHandler,
-  isUndoAvailable = true,
-  remainingUndos,
-  maxUndos,
-  showUndo = true,
   scores,
   topScore,
   theme,
@@ -225,48 +212,7 @@ const GameMenu = ({
       <div className={styles.collapsibleInner}>
       <div className={styles.divider} />
       <div className={styles.bottom}>
-        <Button
-          clickHandler={onNewGameHandler}
-          text="New Game"
-          extraProps={{
-            title: "Start a new game",
-            "data-testid": "new-game-btn",
-            "aria-label": "Start a new game",
-          }}
-        />
-        <div className={styles.actionsRight}>
-          {showUndo && (
-            <Button
-              clickHandler={undoHandler}
-              disabled={!isUndoAvailable || remainingUndos === 0}
-              text={
-                <span className={styles.undoLabel}>
-                  <UndoIcon className={styles.undoIcon} />
-                  {remainingUndos !== undefined && (maxUndos ?? 0) > 0 && (
-                    <span className={styles.undoPips} data-testid="undo-pips" aria-hidden="true">
-                      {Array.from({ length: Math.max(3, maxUndos ?? 0) }, (_, i) => (
-                        <span
-                          key={i}
-                          data-pip={i < remainingUndos ? "filled" : "empty"}
-                          className={`${styles.undoPip} ${i < remainingUndos ? styles.undoPipFilled : ""}`}
-                        />
-                      ))}
-                    </span>
-                  )}
-                </span>
-              }
-              extraProps={{
-                title: "Undo last action",
-                "data-testid": "undo-btn",
-                "aria-label":
-                  remainingUndos !== undefined
-                    ? `Undo last action, ${remainingUndos} remaining`
-                    : "Undo last action",
-              }}
-            />
-          )}
-          {topScore && <span className={styles.topScoreLegend}>{topScore}</span>}
-        </div>
+        {topScore && <span className={styles.topScoreLegend}>{topScore}</span>}
       </div>
       </div>
       </div>

@@ -3,6 +3,7 @@ import styles from "./App.module.css";
 import GameMenu from "../GameMenu";
 import Instructions from "../Instructions";
 import GameContainer from "../GameContainer";
+import PowerUpBar from "../PowerUpBar";
 import Score from "../Score";
 import NewGameModal from "../NewGameMenu";
 import Modal from "../Modal";
@@ -495,12 +496,6 @@ export const App: React.FC = () => {
               />
             </>
           }
-          onNewGameHandler={onNewGameHandler}
-          undoHandler={undoHandler}
-          isUndoAvailable={isUndoAvailable && !isGameOver}
-          remainingUndos={maxUndo - undoCount}
-          maxUndos={maxUndo}
-          showUndo={maxUndo > 0}
           topScore={
             highScores[radius]?.[0] ? (
               <>
@@ -540,6 +535,25 @@ export const App: React.FC = () => {
           onSubmitHighScore={submitHighScore}
           beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
         />
+        {!isWin && (
+          <PowerUpBar
+            powerUps={{
+              ...(maxUndo > 0
+                ? {
+                    undo: {
+                      onActivate: undoHandler,
+                      disabled: !isUndoAvailable || isGameOver,
+                      charges: maxUndo - undoCount,
+                      maxCharges: maxUndo,
+                    },
+                  }
+                : {}),
+              newGame: {
+                onActivate: onNewGameHandler,
+              },
+            }}
+          />
+        )}
         <footer className={styles.footer}>
           Based on 2048 by{" "}
           <a

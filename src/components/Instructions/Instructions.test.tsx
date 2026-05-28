@@ -9,7 +9,7 @@ describe("<Instructions/>", () => {
 
   it("should mention the movement keys", () => {
     render(<Instructions />);
-    expect(screen.getByTestId("instructions")).toHaveTextContent("q, w, e, a, s, d");
+    expect(screen.getByTestId("instructions")).toHaveTextContent("Q, W, E, A, S, D");
   });
 
   it("should mention arrow keys", () => {

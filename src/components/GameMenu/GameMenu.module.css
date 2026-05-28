@@ -101,59 +101,19 @@
   justify-content: flex-start;
   column-gap: 12px;
   margin-bottom: 12px;
-}
-
-.actionsRight {
-  display: flex;
-  align-items: center;
-  column-gap: 12px;
-  flex: 1;
-}
-
-.actionsRight [data-testid="undo-btn"] {
-  max-width: 80px;
+  /* Reserve one line so the top-score legend loading in does not shift layout (CLS). */
+  min-height: 18px;
 }
 
 .topScoreLegend {
   display: block;
-  text-align: right;
-  margin-left: auto;
+  text-align: left;
   font-size: 13px;
   color: var(--color-text-muted);
 }
 
 .topScoreLegend strong {
   font-weight: 700;
-}
-
-.undoLabel {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 3px;
-}
-
-.undoIcon {
-  width: 1.2em;
-  height: 1.2em;
-}
-
-.undoPips {
-  display: inline-flex;
-  column-gap: 3px;
-}
-
-.undoPip {
-  width: 6px;
-  height: 4px;
-  border-radius: 1px;
-  background-color: currentColor;
-  opacity: 0.25;
-  transition: opacity 0.2s ease;
-}
-
-.undoPipFilled {
-  opacity: 1;
 }
 
 .menu {
@@ -308,21 +268,7 @@
     justify-content: flex-start;
     gap: 8px;
     margin-bottom: 8px;
-  }
-
-  .actionsRight [data-testid="undo-btn"] {
-    flex: 0 0 auto;
-    max-width: fit-content;
-  }
-
-  .actionsRight {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .bottom [data-testid="new-game-btn"] {
-    flex: 0 0 auto;
-    max-width: 140px;
+    min-height: 16px;
   }
 
   .topScoreLegend {
