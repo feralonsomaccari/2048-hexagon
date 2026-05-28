@@ -29,6 +29,21 @@ describe("<Tile/>", () => {
     expect(tileEl.firstElementChild).not.toHaveClass("color-131072");
   });
 
+  it("labels the tile as a swap target in swap targeting mode", () => {
+    render(<Tile value={8} targeting targetingAction="swap" onSelect={() => {}} />);
+    const tileEl = screen.getByRole("button", { name: "Swap tile 8" });
+    expect(tileEl).toBeInTheDocument();
+    expect(tileEl).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("marks a selected swap target via aria-pressed", () => {
+    render(<Tile value={8} targeting targetingAction="swap" selected onSelect={() => {}} />);
+    expect(screen.getByRole("button", { name: "Swap tile 8" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+  });
+
   const fontSizeCases: [number, string][] = [
     [2048, "42px"],
     [16384, "34px"],

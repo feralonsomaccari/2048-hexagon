@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-05-28
+
+### Added
+- **Swap power-up.** Tap **Swap** to enter targeting mode, then tap two tiles to exchange their positions on the board. It's a free edit — no new tile spawns and the move count is unchanged. The first tile you pick is highlighted; tapping it again deselects, and tapping a second tile performs the swap and spends the charge. The per-board-size budget is configurable (`MAX_SWAP_BY_RADIUS`) and shown as a charge badge. Cancel without spending a charge by tapping Swap again or pressing **Escape**; move keys and swipes are disabled while targeting. The swap state persists with the saved game across reloads and resets on a new game. Ships with a custom inline-SVG icon (two offset hexagons and circular swap arrows, `fill: currentColor`).
+- Leaderboard submissions now also record `removesUsed` and `swapsUsed` in Firestore alongside the score (clamped to non-negative integers), mirroring the existing `undosUsed` tracking. Requires the Firestore rules to allow the new fields.
+
 ## [0.14.1] - 2026-05-28
 
 ### Changed

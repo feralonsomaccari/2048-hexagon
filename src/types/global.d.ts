@@ -23,6 +23,7 @@ declare global {
     isUndoAvailable?: boolean,
     isMaxUndo?: boolean,
     removeCount?: number,
+    swapCount?: number,
     isWin?: boolean,
     hasKeptPlaying?: boolean,
     bankedBonus?: number,

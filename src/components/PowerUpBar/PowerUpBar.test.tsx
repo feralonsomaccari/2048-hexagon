@@ -87,6 +87,33 @@ describe("<PowerUpBar/>", () => {
     ]);
   });
 
+  it("should render the swap power-up between remove and new game", () => {
+    render(
+      <PowerUpBar
+        powerUps={{
+          newGame: { onActivate: vi.fn() },
+          swap: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          undo: { onActivate: vi.fn() },
+        }}
+      />
+    );
+    const tiles = screen.getAllByTestId(/^power-up-(undo|removeTile|swap|newGame)$/);
+    expect(tiles.map((t) => t.getAttribute("data-testid"))).toEqual([
+      "power-up-undo",
+      "power-up-removeTile",
+      "power-up-swap",
+      "power-up-newGame",
+    ]);
+  });
+
+  it("should call onActivate when the swap tile is clicked", () => {
+    const onActivate = vi.fn();
+    render(<PowerUpBar powerUps={{ swap: { onActivate, charges: 1, maxCharges: 1 } }} />);
+    fireEvent.click(screen.getByTestId("power-up-swap"));
+    expect(onActivate).toHaveBeenCalledTimes(1);
+  });
+
   it("should reflect active state via aria-pressed on a toggleable power-up", () => {
     const { rerender } = render(
       <PowerUpBar powerUps={{ removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1, active: false } }} />

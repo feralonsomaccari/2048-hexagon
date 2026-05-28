@@ -31,6 +31,9 @@ type props = {
   beatsHighScore?: boolean;
   isRemoveMode?: boolean;
   onRemoveTile?: (tile: gridElement) => void;
+  isSwapMode?: boolean;
+  selectedSwapTileId?: number | null;
+  onSwapSelect?: (tile: gridElement) => void;
 };
 
 const EDGE_LENGTH = 66.5;
@@ -43,7 +46,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, isSwapMode = false, selectedSwapTileId = null, onSwapSelect }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -137,8 +140,18 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
               {...getPositionFromCoordinates(tile, radius)}
               value={tile.value}
               merged={tile.merged}
-              targeting={isRemoveMode}
-              onSelect={onRemoveTile ? () => onRemoveTile(tile) : undefined}
+              targeting={isRemoveMode || isSwapMode}
+              targetingAction={isSwapMode ? "swap" : "remove"}
+              selected={isSwapMode && tile.id === selectedSwapTileId}
+              onSelect={
+                isSwapMode
+                  ? onSwapSelect
+                    ? () => onSwapSelect(tile)
+                    : undefined
+                  : onRemoveTile
+                    ? () => onRemoveTile(tile)
+                    : undefined
+              }
             />
           ))}
           {grid.map((coords, index) => (

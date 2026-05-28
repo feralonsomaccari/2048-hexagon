@@ -207,6 +207,28 @@ describe("useRemoteHighScores — Firebase configured", () => {
     });
   });
 
+  it("submit records removes and swaps used, defaulting to 0 when omitted", async () => {
+    addDocMock.mockResolvedValue(undefined);
+    const { result } = renderHook(() => useRemoteHighScores());
+    await emitInitialEmptySnapshots();
+
+    await act(async () => {
+      await result.current.submit(1, 1536, "Alice", { removesUsed: 1, swapsUsed: 2 });
+      await result.current.submit(1, 400, "Bob");
+    });
+
+    expect(addDocMock.mock.calls[0][1]).toMatchObject({
+      name: "Alice",
+      removesUsed: 1,
+      swapsUsed: 2,
+    });
+    expect(addDocMock.mock.calls[1][1]).toMatchObject({
+      name: "Bob",
+      removesUsed: 0,
+      swapsUsed: 0,
+    });
+  });
+
   it("submit adds a separate doc per submission, even for a repeated name", async () => {
     addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());

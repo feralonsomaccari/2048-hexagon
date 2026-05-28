@@ -5,6 +5,10 @@ export type HighScoreEntry = {
 
   undosUsed?: number;
 
+  removesUsed?: number;
+
+  swapsUsed?: number;
+
   comboBonus?: number;
 
   noUndoBonus?: number;

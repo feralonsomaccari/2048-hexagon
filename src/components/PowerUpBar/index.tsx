@@ -1,6 +1,7 @@
 import styles from "./PowerUpBar.module.css";
 import UndoIcon from "../UndoIcon";
 import RemoveIcon from "../RemoveIcon";
+import SwapIcon from "../SwapIcon";
 import NewGameIcon from "../NewGameIcon";
 import { POWER_UPS, PowerUpId } from "../../config/gameConfig";
 
@@ -19,6 +20,7 @@ type props = {
 const ICONS: Record<PowerUpId, React.FC<{ className?: string }>> = {
   undo: UndoIcon,
   removeTile: RemoveIcon,
+  swap: SwapIcon,
   newGame: NewGameIcon,
 };
 

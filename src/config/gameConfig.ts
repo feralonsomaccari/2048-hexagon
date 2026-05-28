@@ -26,9 +26,16 @@ export const MAX_REMOVE_BY_RADIUS: Record<number, number> = {
   4: 0,
 };
 
+export const MAX_SWAP_BY_RADIUS: Record<number, number> = {
+  1: 1,
+  2: 0,
+  3: 0,
+  4: 0,
+};
+
 export const NO_UNDO_BONUS_RATE_PER_UNDO = 0.1;
 
-export type PowerUpId = "undo" | "removeTile" | "newGame";
+export type PowerUpId = "undo" | "removeTile" | "swap" | "newGame";
 
 export type PowerUpDef = {
   id: PowerUpId;
@@ -48,6 +55,11 @@ export const POWER_UPS: PowerUpDef[] = [
     id: "removeTile",
     label: "Remove",
     description: "Remove a tile from the board",
+  },
+  {
+    id: "swap",
+    label: "Swap",
+    description: "Swap two tiles on the board",
   },
   {
     id: "newGame",

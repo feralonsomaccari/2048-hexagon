@@ -54,6 +54,16 @@
   outline-offset: -3px;
 }
 
+.selected .tileInner {
+  filter: brightness(0.7) saturate(1.2);
+  animation: none;
+}
+
+.selected {
+  outline: 3px solid var(--color-text-main);
+  outline-offset: -3px;
+}
+
 @keyframes targetPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }

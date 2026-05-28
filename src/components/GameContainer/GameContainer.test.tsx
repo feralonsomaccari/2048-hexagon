@@ -111,6 +111,34 @@ describe("<GameContainer/>", () => {
     expect(onRemoveTile).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(Number) }));
   });
 
+  it("should expose tiles as swap buttons in swap mode", () => {
+    render(<GameContainer {...props} isSwapMode={true} onSwapSelect={vi.fn()} />);
+    expect(screen.getAllByRole("button", { name: /Swap tile/ })).toHaveLength(3);
+  });
+
+  it("should call onSwapSelect with the tapped tile in swap mode", () => {
+    const onSwapSelect = vi.fn();
+    render(<GameContainer {...props} isSwapMode={true} onSwapSelect={onSwapSelect} />);
+    fireEvent.click(screen.getAllByRole("button", { name: /Swap tile/ })[0]);
+    expect(onSwapSelect).toHaveBeenCalledTimes(1);
+    expect(onSwapSelect).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(Number) }));
+  });
+
+  it("should mark the selected swap tile via aria-pressed", () => {
+    render(
+      <GameContainer
+        {...props}
+        isSwapMode={true}
+        onSwapSelect={vi.fn()}
+        selectedSwapTileId={tileSet[0].id}
+      />
+    );
+    const pressed = screen
+      .getAllByRole("button", { name: /Swap tile/ })
+      .filter((el) => el.getAttribute("aria-pressed") === "true");
+    expect(pressed).toHaveLength(1);
+  });
+
   it("should not consume taps on the Try Again button via swipe gestures", () => {
     const TestHarness = () => {
       const ref = React.useRef<HTMLElement>(null);

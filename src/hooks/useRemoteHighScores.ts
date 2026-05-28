@@ -13,6 +13,8 @@ const RADII = [1, 2, 3, 4] as const;
 
 type ScoreBreakdown = {
   undosUsed?: number;
+  removesUsed?: number;
+  swapsUsed?: number;
   comboBonus?: number;
   noUndoBonus?: number;
   movesCount?: number;
@@ -35,6 +37,8 @@ type FirestoreDocData = {
   name: string;
   score: number;
   undosUsed?: number;
+  removesUsed?: number;
+  swapsUsed?: number;
   comboBonus?: number;
   noUndoBonus?: number;
   movesCount?: number;
@@ -46,6 +50,8 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   score: data.score,
   date: data.createdAt?.toDate().toISOString() ?? new Date().toISOString(),
   ...(typeof data.undosUsed === "number" ? { undosUsed: data.undosUsed } : {}),
+  ...(typeof data.removesUsed === "number" ? { removesUsed: data.removesUsed } : {}),
+  ...(typeof data.swapsUsed === "number" ? { swapsUsed: data.swapsUsed } : {}),
   ...(typeof data.comboBonus === "number" ? { comboBonus: data.comboBonus } : {}),
   ...(typeof data.noUndoBonus === "number" ? { noUndoBonus: data.noUndoBonus } : {}),
   ...(typeof data.movesCount === "number" ? { movesCount: data.movesCount } : {}),
@@ -124,6 +130,8 @@ const useRemoteHighScores = (): RemoteState => {
       if (!isRemote) return null;
 
       const safeUndosUsed = safeBonus(breakdown?.undosUsed);
+      const safeRemovesUsed = safeBonus(breakdown?.removesUsed);
+      const safeSwapsUsed = safeBonus(breakdown?.swapsUsed);
       const safeComboBonus = safeBonus(breakdown?.comboBonus);
       const safeNoUndoBonus = safeBonus(breakdown?.noUndoBonus);
       const safeMovesCount = safeBonus(breakdown?.movesCount);
@@ -133,6 +141,8 @@ const useRemoteHighScores = (): RemoteState => {
         score,
         date: new Date().toISOString(),
         undosUsed: safeUndosUsed,
+        removesUsed: safeRemovesUsed,
+        swapsUsed: safeSwapsUsed,
         comboBonus: safeComboBonus,
         noUndoBonus: safeNoUndoBonus,
         movesCount: safeMovesCount,
@@ -150,6 +160,8 @@ const useRemoteHighScores = (): RemoteState => {
           score,
           boardRadius: radius,
           undosUsed: safeUndosUsed,
+          removesUsed: safeRemovesUsed,
+          swapsUsed: safeSwapsUsed,
           comboBonus: safeComboBonus,
           noUndoBonus: safeNoUndoBonus,
           movesCount: safeMovesCount,

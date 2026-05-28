@@ -34,7 +34,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_REMOVE_BY_RADIUS, MAX_UNDO_BY_RADIUS, NO_UNDO_BONUS_RATE_PER_UNDO, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_REMOVE_BY_RADIUS, MAX_SWAP_BY_RADIUS, MAX_UNDO_BY_RADIUS, NO_UNDO_BONUS_RATE_PER_UNDO, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
@@ -60,6 +60,9 @@ export const App: React.FC = () => {
   const [isMaxUndo, setIsMaxUndo] = useState(initialSavedGame?.isMaxUndo ?? false)
   const [removeCount, setRemoveCount] = useState(initialSavedGame?.removeCount ?? 0)
   const [isRemoveMode, setIsRemoveMode] = useState(false)
+  const [swapCount, setSwapCount] = useState(initialSavedGame?.swapCount ?? 0)
+  const [isSwapMode, setIsSwapMode] = useState(false)
+  const [selectedSwapTileId, setSelectedSwapTileId] = useState<number | null>(null)
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
   const [historyComboBonus, setHistoryComboBonus] = useState(initialSavedGame?.historyComboBonus ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
@@ -83,6 +86,8 @@ export const App: React.FC = () => {
   const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
   const maxRemove = MAX_REMOVE_BY_RADIUS[radius] ?? 0;
   const removesRemaining = Math.max(0, maxRemove - removeCount);
+  const maxSwap = MAX_SWAP_BY_RADIUS[radius] ?? 0;
+  const swapsRemaining = Math.max(0, maxSwap - swapCount);
 
   const unusedUndos = Math.max(0, maxUndo - undoCount);
   const liveBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
@@ -123,19 +128,26 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown, isRemoveMode]);
+  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown, isRemoveMode, isSwapMode]);
 
   useEffect(() => {
-    if (!isRemoveMode) return;
+    if (!isRemoveMode && !isSwapMode) return;
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsRemoveMode(false);
+      if (event.key !== "Escape") return;
+      setIsRemoveMode(false);
+      setIsSwapMode(false);
+      setSelectedSwapTileId(null);
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isRemoveMode]);
+  }, [isRemoveMode, isSwapMode]);
 
   useEffect(() => {
-    if (isGameOver || isWin) setIsRemoveMode(false);
+    if (isGameOver || isWin) {
+      setIsRemoveMode(false);
+      setIsSwapMode(false);
+      setSelectedSwapTileId(null);
+    }
   }, [isGameOver, isWin]);
 
   const displayedScore = bankedBonus !== null ? finalScore : score;
@@ -229,12 +241,13 @@ export const App: React.FC = () => {
       isUndoAvailable,
       isMaxUndo,
       removeCount,
+      swapCount,
       isWin,
       hasKeptPlaying,
       bankedBonus: bankedBonus ?? undefined,
       movesCount,
     });
-  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, removeCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
+  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
 
   const updateTile = (
     tile: gridElement,
@@ -344,12 +357,12 @@ export const App: React.FC = () => {
   };
 
   useSwipe(boardRef, (direction) => {
-    if (isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode) return;
+    if (isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode || isSwapMode) return;
     updateTilesPos(direction);
   });
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode) return;
+    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode || isSwapMode) return;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
       event.preventDefault();
     }
@@ -404,6 +417,9 @@ export const App: React.FC = () => {
     setIsMaxUndo(false)
     setRemoveCount(0)
     setIsRemoveMode(false)
+    setSwapCount(0)
+    setIsSwapMode(false)
+    setSelectedSwapTileId(null)
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
@@ -426,6 +442,8 @@ export const App: React.FC = () => {
     async (name: string) => {
       const entry = await submitRemoteHighScore(radius, finalScore, name, {
         undosUsed: undoCount,
+        removesUsed: removeCount,
+        swapsUsed: swapCount,
         comboBonus,
         noUndoBonus,
         movesCount,
@@ -437,7 +455,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, finalScore, undoCount, comboBonus, noUndoBonus, movesCount, submitRemoteHighScore]
+    [radius, finalScore, undoCount, removeCount, swapCount, comboBonus, noUndoBonus, movesCount, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -483,6 +501,8 @@ export const App: React.FC = () => {
 
   const toggleRemoveMode = useCallback(() => {
     if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
+    setIsSwapMode(false);
+    setSelectedSwapTileId(null);
     setIsRemoveMode((prev) => !prev);
   }, [isWin, isGameOver, isMovementBlocked, movesCount]);
 
@@ -491,6 +511,36 @@ export const App: React.FC = () => {
     setRemoveCount((prev) => prev + 1);
     setIsRemoveMode(false);
     play("move");
+  }, [play]);
+
+  const toggleSwapMode = useCallback(() => {
+    if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
+    setIsRemoveMode(false);
+    setSelectedSwapTileId(null);
+    setIsSwapMode((prev) => !prev);
+  }, [isWin, isGameOver, isMovementBlocked, movesCount]);
+
+  const swapSelectHandler = useCallback((tile: gridElement) => {
+    if (tile.id === undefined) return;
+    setSelectedSwapTileId((prevSelected) => {
+      if (prevSelected === null) return tile.id ?? null;
+      if (prevSelected === tile.id) return null;
+
+      setTileSet((prev) => {
+        const first = prev.find((t) => t.id === prevSelected);
+        const second = prev.find((t) => t.id === tile.id);
+        if (!first || !second) return prev;
+        return prev.map((t) => {
+          if (t.id === first.id) return { ...t, x: second.x, y: second.y, z: second.z };
+          if (t.id === second.id) return { ...t, x: first.x, y: first.y, z: first.z };
+          return t;
+        });
+      });
+      setSwapCount((prev) => prev + 1);
+      setIsSwapMode(false);
+      play("move");
+      return null;
+    });
   }, [play]);
 
   const onNewGameHandler = useCallback(() => {
@@ -568,6 +618,9 @@ export const App: React.FC = () => {
           beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
           isRemoveMode={isRemoveMode}
           onRemoveTile={removeTileHandler}
+          isSwapMode={isSwapMode}
+          selectedSwapTileId={selectedSwapTileId}
+          onSwapSelect={swapSelectHandler}
         />
         {!isWin && (
           <PowerUpBar
@@ -576,7 +629,7 @@ export const App: React.FC = () => {
                 ? {
                     undo: {
                       onActivate: undoHandler,
-                      disabled: !isUndoAvailable || isGameOver || isRemoveMode,
+                      disabled: !isUndoAvailable || isGameOver || isRemoveMode || isSwapMode,
                       charges: maxUndo - undoCount,
                       maxCharges: maxUndo,
                     },
@@ -590,6 +643,17 @@ export const App: React.FC = () => {
                       charges: removesRemaining,
                       maxCharges: maxRemove,
                       active: isRemoveMode,
+                    },
+                  }
+                : {}),
+              ...(maxSwap > 0
+                ? {
+                    swap: {
+                      onActivate: toggleSwapMode,
+                      disabled: isGameOver || movesCount === 0,
+                      charges: swapsRemaining,
+                      maxCharges: maxSwap,
+                      active: isSwapMode,
                     },
                   }
                 : {}),
