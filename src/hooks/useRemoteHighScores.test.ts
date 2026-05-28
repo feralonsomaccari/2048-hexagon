@@ -185,25 +185,25 @@ describe("useRemoteHighScores — Firebase configured", () => {
     expect(addDocMock.mock.calls[1][1]).toMatchObject({ name: "Bob", undosUsed: 0 });
   });
 
-  it("submit records the combo and no-undo bonuses, defaulting to 0 when omitted", async () => {
+  it("submit records the combo and power-up bonuses, defaulting to 0 when omitted", async () => {
     addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());
     await emitInitialEmptySnapshots();
 
     await act(async () => {
-      await result.current.submit(1, 1536, "Alice", { comboBonus: 512, noUndoBonus: 0 });
+      await result.current.submit(1, 1536, "Alice", { comboBonus: 512, nonUsedPowerUpBonus: 0 });
       await result.current.submit(1, 400, "Bob");
     });
 
     expect(addDocMock.mock.calls[0][1]).toMatchObject({
       name: "Alice",
       comboBonus: 512,
-      noUndoBonus: 0,
+      nonUsedPowerUpBonus: 0,
     });
     expect(addDocMock.mock.calls[1][1]).toMatchObject({
       name: "Bob",
       comboBonus: 0,
-      noUndoBonus: 0,
+      nonUsedPowerUpBonus: 0,
     });
   });
 

@@ -11,7 +11,7 @@ export type HighScoreEntry = {
 
   comboBonus?: number;
 
-  noUndoBonus?: number;
+  nonUsedPowerUpBonus?: number;
 
   movesCount?: number;
 };

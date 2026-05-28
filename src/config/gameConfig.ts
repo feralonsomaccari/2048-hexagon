@@ -33,7 +33,7 @@ export const MAX_SWAP_BY_RADIUS: Record<number, number> = {
   4: 0,
 };
 
-export const NO_UNDO_BONUS_RATE_PER_UNDO = 0.1;
+export const UNUSED_POWER_UP_BONUS_RATE = 0.05;
 
 export type PowerUpId = "undo" | "removeTile" | "swap" | "newGame";
 

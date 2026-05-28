@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-05-28
+
+### Changed
+- **Win bonus now rewards every unused power-up, at 5% each.** Previously the end-of-game bonus was 10% of the score per unused **undo** only. It now grants **5% of the score per unused power-up** — summing unused undo, remove, and swap charges (`UNUSED_POWER_UP_BONUS_RATE`). The win-overlay breakdown line is relabelled from **"No-undo bonus"** to **"Unused power-up"** (with a `×N` multiplier showing how many charges went unused), so it no longer reads as a reward for *using* power-ups.
+- Larger **Swap** and **Remove** icons in the power-up bar — their thin open-stroke glyphs were rendering smaller than the filled icons, so they're scaled up to match visually.
+
+### Changed (data)
+- Renamed the leaderboard Firestore field `noUndoBonus` → `nonUsedPowerUpBonus` to reflect the new bonus. The app reads and writes the new key; existing documents keep the old key. **Requires the Firestore rules to be updated to the new field name** (deploy rules and app together, since the rules' `hasOnly` makes the key match exact).
+
 ## [0.15.1] - 2026-05-28
 
 ### Added

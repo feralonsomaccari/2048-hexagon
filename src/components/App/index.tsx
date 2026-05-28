@@ -34,7 +34,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_REMOVE_BY_RADIUS, MAX_SWAP_BY_RADIUS, MAX_UNDO_BY_RADIUS, NO_UNDO_BONUS_RATE_PER_UNDO, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_REMOVE_BY_RADIUS, MAX_SWAP_BY_RADIUS, MAX_UNDO_BY_RADIUS, UNUSED_POWER_UP_BONUS_RATE, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
@@ -90,10 +90,11 @@ export const App: React.FC = () => {
   const swapsRemaining = Math.max(0, maxSwap - swapCount);
 
   const unusedUndos = Math.max(0, maxUndo - undoCount);
-  const liveBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
+  const unusedPowerUps = unusedUndos + removesRemaining + swapsRemaining;
+  const liveBonus = Math.round(score * UNUSED_POWER_UP_BONUS_RATE * unusedPowerUps);
 
-  const noUndoBonus = bankedBonus ?? liveBonus;
-  const finalScore = score + noUndoBonus;
+  const powerUpBonus = bankedBonus ?? liveBonus;
+  const finalScore = score + powerUpBonus;
 
   const SHARE_URL = "https://2048hexagon.com";
 
@@ -445,7 +446,7 @@ export const App: React.FC = () => {
         removesUsed: removeCount,
         swapsUsed: swapCount,
         comboBonus,
-        noUndoBonus,
+        nonUsedPowerUpBonus: powerUpBonus,
         movesCount,
       });
       if (entry) {
@@ -455,7 +456,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, finalScore, undoCount, removeCount, swapCount, comboBonus, noUndoBonus, movesCount, submitRemoteHighScore]
+    [radius, finalScore, undoCount, removeCount, swapCount, comboBonus, powerUpBonus, movesCount, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -611,8 +612,8 @@ export const App: React.FC = () => {
           score={finalScore}
           baseScore={score}
           comboBonus={comboBonus}
-          noUndoBonus={noUndoBonus}
-          noUndoBonusUndos={unusedUndos}
+          powerUpBonus={powerUpBonus}
+          unusedPowerUps={unusedPowerUps}
           movesCount={movesCount}
           onSubmitHighScore={submitHighScore}
           beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}

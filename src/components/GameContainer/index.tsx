@@ -24,8 +24,8 @@ type props = {
   score?: number;
   baseScore?: number;
   comboBonus?: number;
-  noUndoBonus?: number;
-  noUndoBonusUndos?: number;
+  powerUpBonus?: number;
+  unusedPowerUps?: number;
   movesCount?: number;
   onSubmitHighScore?: (name: string) => void;
   beatsHighScore?: boolean;
@@ -46,7 +46,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, isSwapMode = false, selectedSwapTileId = null, onSwapSelect }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, isSwapMode = false, selectedSwapTileId = null, onSwapSelect }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -84,7 +84,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   }, [isWin, viewport.width, viewport.height, radius]);
 
   const mergeScore = baseScore - comboBonus;
-  const hasBreakdown = comboBonus > 0 || noUndoBonus > 0;
+  const hasBreakdown = comboBonus > 0 || powerUpBonus > 0;
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
   const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
@@ -196,10 +196,10 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
                   <dd>+{comboBonus}</dd>
                 </div>
               )}
-              {noUndoBonus > 0 && (
+              {powerUpBonus > 0 && (
                 <div className={styles.scoreBreakdownRow}>
-                  <dt>No-undo bonus{noUndoBonusUndos > 1 ? ` (×${noUndoBonusUndos})` : ""}</dt>
-                  <dd>+{noUndoBonus}</dd>
+                  <dt>Unused power-up{unusedPowerUps > 1 ? ` (×${unusedPowerUps})` : ""}</dt>
+                  <dd>+{powerUpBonus}</dd>
                 </div>
               )}
             </dl>

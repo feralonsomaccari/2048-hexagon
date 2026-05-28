@@ -16,7 +16,7 @@ type ScoreBreakdown = {
   removesUsed?: number;
   swapsUsed?: number;
   comboBonus?: number;
-  noUndoBonus?: number;
+  nonUsedPowerUpBonus?: number;
   movesCount?: number;
 };
 
@@ -40,7 +40,7 @@ type FirestoreDocData = {
   removesUsed?: number;
   swapsUsed?: number;
   comboBonus?: number;
-  noUndoBonus?: number;
+  nonUsedPowerUpBonus?: number;
   movesCount?: number;
   createdAt?: { toDate: () => Date };
 };
@@ -53,7 +53,7 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   ...(typeof data.removesUsed === "number" ? { removesUsed: data.removesUsed } : {}),
   ...(typeof data.swapsUsed === "number" ? { swapsUsed: data.swapsUsed } : {}),
   ...(typeof data.comboBonus === "number" ? { comboBonus: data.comboBonus } : {}),
-  ...(typeof data.noUndoBonus === "number" ? { noUndoBonus: data.noUndoBonus } : {}),
+  ...(typeof data.nonUsedPowerUpBonus === "number" ? { nonUsedPowerUpBonus: data.nonUsedPowerUpBonus } : {}),
   ...(typeof data.movesCount === "number" ? { movesCount: data.movesCount } : {}),
 });
 
@@ -133,7 +133,7 @@ const useRemoteHighScores = (): RemoteState => {
       const safeRemovesUsed = safeBonus(breakdown?.removesUsed);
       const safeSwapsUsed = safeBonus(breakdown?.swapsUsed);
       const safeComboBonus = safeBonus(breakdown?.comboBonus);
-      const safeNoUndoBonus = safeBonus(breakdown?.noUndoBonus);
+      const safeNonUsedPowerUpBonus = safeBonus(breakdown?.nonUsedPowerUpBonus);
       const safeMovesCount = safeBonus(breakdown?.movesCount);
 
       const entry: HighScoreEntry = {
@@ -144,7 +144,7 @@ const useRemoteHighScores = (): RemoteState => {
         removesUsed: safeRemovesUsed,
         swapsUsed: safeSwapsUsed,
         comboBonus: safeComboBonus,
-        noUndoBonus: safeNoUndoBonus,
+        nonUsedPowerUpBonus: safeNonUsedPowerUpBonus,
         movesCount: safeMovesCount,
       };
 
@@ -163,7 +163,7 @@ const useRemoteHighScores = (): RemoteState => {
           removesUsed: safeRemovesUsed,
           swapsUsed: safeSwapsUsed,
           comboBonus: safeComboBonus,
-          noUndoBonus: safeNoUndoBonus,
+          nonUsedPowerUpBonus: safeNonUsedPowerUpBonus,
           movesCount: safeMovesCount,
           createdAt: serverTimestamp(),
         });
