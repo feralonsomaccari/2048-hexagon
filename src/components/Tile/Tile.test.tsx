@@ -44,6 +44,15 @@ describe("<Tile/>", () => {
     );
   });
 
+  it("renders two splitting halves while removing", () => {
+    render(<Tile value={8} removing />);
+    const tileEl = screen.getByRole("img", { name: "Removing tile 8" });
+    expect(tileEl).toBeInTheDocument();
+    // Both halves keep the value visible as they split apart.
+    expect(tileEl.querySelectorAll("div")).toHaveLength(2);
+    expect(tileEl).toHaveTextContent("88");
+  });
+
   const fontSizeCases: [number, string][] = [
     [2048, "42px"],
     [16384, "34px"],

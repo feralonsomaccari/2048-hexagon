@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-05-28
+
+### Added
+- **Tile-split animation on Remove.** Removing a tile with the Remove power-up now plays a short split: the hexagon cracks along a diagonal into two halves that slide apart, rotate slightly, and fade out (each half keeps the tile's color and number) before the tile is cleared. Respects `prefers-reduced-motion` (falls back to a plain fade).
+
 ## [0.16.0] - 2026-05-28
 
 ### Changed

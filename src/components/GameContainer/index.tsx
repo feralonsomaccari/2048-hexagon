@@ -31,6 +31,7 @@ type props = {
   beatsHighScore?: boolean;
   isRemoveMode?: boolean;
   onRemoveTile?: (tile: gridElement) => void;
+  removingTileId?: number | null;
   isSwapMode?: boolean;
   selectedSwapTileId?: number | null;
   onSwapSelect?: (tile: gridElement) => void;
@@ -46,7 +47,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, isSwapMode = false, selectedSwapTileId = null, onSwapSelect }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -134,13 +135,16 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
       {isWin && <Confetti />}
       <div className={`${styles.boardZone} ${isWin ? styles.boardZoneWin : ""}`}>
         <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
-          {tileSet.map((tile) => (
+          {tileSet.map((tile) => {
+            const isRemoving = tile.id != null && tile.id === removingTileId;
+            return (
             <Tile
               key={tile.id}
               {...getPositionFromCoordinates(tile, radius)}
               value={tile.value}
               merged={tile.merged}
-              targeting={isRemoveMode || isSwapMode}
+              removing={isRemoving}
+              targeting={!isRemoving && (isRemoveMode || isSwapMode)}
               targetingAction={isSwapMode ? "swap" : "remove"}
               selected={isSwapMode && tile.id === selectedSwapTileId}
               onSelect={
@@ -153,7 +157,8 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
                     : undefined
               }
             />
-          ))}
+            );
+          })}
           {grid.map((coords, index) => (
             <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
           ))}

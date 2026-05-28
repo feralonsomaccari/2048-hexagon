@@ -64,6 +64,67 @@
   outline-offset: -3px;
 }
 
+/* Remove power-up: the tile splits along a diagonal crack into two halves that
+   slide apart and fade. The container drops its own hexagon mask and clipping so
+   the halves can travel outward; each half carries the mask to keep the hex shape. */
+.removing {
+  overflow: visible;
+  -webkit-mask-image: none;
+          mask-image: none;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.splitHalf {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  text-align: center;
+  color: var(--color-text-main);
+  -webkit-mask-image: url("./tile-hexagon.svg");
+          mask-image: url("./tile-hexagon.svg");
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: cover;
+          mask-size: cover;
+}
+
+/* Top-right half: kept above a top-left -> bottom-right diagonal crack. */
+.splitTop {
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  animation: splitTop 0.36s cubic-bezier(0.4, 0, 0.5, 1) both;
+}
+
+/* Bottom-left half: below the same diagonal crack. */
+.splitBottom {
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+  animation: splitBottom 0.36s cubic-bezier(0.4, 0, 0.5, 1) both;
+}
+
+@keyframes splitTop {
+  0%   { transform: translate(0, 0)      rotate(0deg);   opacity: 1; }
+  100% { transform: translate(14px, -16px) rotate(10deg); opacity: 0; }
+}
+
+@keyframes splitBottom {
+  0%   { transform: translate(0, 0)        rotate(0deg);    opacity: 1; }
+  100% { transform: translate(-14px, 16px) rotate(-10deg);  opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splitTop,
+  .splitBottom {
+    animation: fadeOut 0.2s ease both;
+  }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
 @keyframes targetPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }

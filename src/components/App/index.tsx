@@ -60,6 +60,7 @@ export const App: React.FC = () => {
   const [isMaxUndo, setIsMaxUndo] = useState(initialSavedGame?.isMaxUndo ?? false)
   const [removeCount, setRemoveCount] = useState(initialSavedGame?.removeCount ?? 0)
   const [isRemoveMode, setIsRemoveMode] = useState(false)
+  const [removingTileId, setRemovingTileId] = useState<number | null>(null)
   const [swapCount, setSwapCount] = useState(initialSavedGame?.swapCount ?? 0)
   const [isSwapMode, setIsSwapMode] = useState(false)
   const [selectedSwapTileId, setSelectedSwapTileId] = useState<number | null>(null)
@@ -418,6 +419,7 @@ export const App: React.FC = () => {
     setIsMaxUndo(false)
     setRemoveCount(0)
     setIsRemoveMode(false)
+    setRemovingTileId(null)
     setSwapCount(0)
     setIsSwapMode(false)
     setSelectedSwapTileId(null)
@@ -508,10 +510,15 @@ export const App: React.FC = () => {
   }, [isWin, isGameOver, isMovementBlocked, movesCount]);
 
   const removeTileHandler = useCallback((tile: gridElement) => {
-    setTileSet((prev) => prev.filter((t) => t.id !== tile.id));
+    if (tile.id == null) return;
     setRemoveCount((prev) => prev + 1);
     setIsRemoveMode(false);
+    setRemovingTileId(tile.id);
     play("move");
+    window.setTimeout(() => {
+      setTileSet((prev) => prev.filter((t) => t.id !== tile.id));
+      setRemovingTileId(null);
+    }, 360);
   }, [play]);
 
   const toggleSwapMode = useCallback(() => {
@@ -619,6 +626,7 @@ export const App: React.FC = () => {
           beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
           isRemoveMode={isRemoveMode}
           onRemoveTile={removeTileHandler}
+          removingTileId={removingTileId}
           isSwapMode={isSwapMode}
           selectedSwapTileId={selectedSwapTileId}
           onSwapSelect={swapSelectHandler}

@@ -10,6 +10,7 @@ type props = {
   targeting?: boolean;
   targetingAction?: "remove" | "swap";
   selected?: boolean;
+  removing?: boolean;
   onSelect?: () => void;
 };
 
@@ -26,12 +27,33 @@ const fontSizeForValue = (value: number): number => {
   return 24;
 };
 
-const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "remove", selected = false, onSelect }: props): JSX.Element => {
+const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "remove", selected = false, removing = false, onSelect }: props): JSX.Element => {
   const colorClass = COLORED_VALUES.has(value)
     ? styles[`color-${value}`]
     : styles["color-final"];
   const targetingLabel =
     targetingAction === "swap" ? `Swap tile ${value}` : `Remove tile ${value}`;
+  const fontSize = fontSizeForValue(value);
+
+  if (removing) {
+    return (
+      <div
+        data-testid="tile"
+        style={{ left, top, ...getGridElementSizeFromRadius() }}
+        className={`${styles.tile} ${styles.removing}`}
+        role="img"
+        aria-label={`Removing tile ${value}`}
+      >
+        <div className={`${styles.splitHalf} ${styles.splitTop} ${colorClass}`} style={{ fontSize }}>
+          {value}
+        </div>
+        <div className={`${styles.splitHalf} ${styles.splitBottom} ${colorClass}`} style={{ fontSize }}>
+          {value}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       data-testid="tile"
@@ -55,7 +77,7 @@ const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "
     >
       <div
         className={`${styles.tileInner} ${colorClass} ${merged ? styles.merged : ""}`}
-        style={{ fontSize: fontSizeForValue(value) }}
+        style={{ fontSize }}
       >
         {value}
       </div>
