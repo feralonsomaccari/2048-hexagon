@@ -20,8 +20,8 @@ export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
 };
 
 export const MAX_REMOVE_BY_RADIUS: Record<number, number> = {
-  1: 2,
-  2: 1,
+  1: 1,
+  2: 0,
   3: 0,
   4: 0,
 };
