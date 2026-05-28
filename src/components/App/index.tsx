@@ -61,6 +61,7 @@ export const App: React.FC = () => {
   const [comboBonus, setComboBonus] = useState(initialSavedGame?.comboBonus ?? 0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
+  const [movesCount, setMovesCount] = useState(initialSavedGame?.movesCount ?? 0)
   const [isMaxUndo, setIsMaxUndo] = useState(initialSavedGame?.isMaxUndo ?? false)
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
   const [historyComboBonus, setHistoryComboBonus] = useState(initialSavedGame?.historyComboBonus ?? 0);
@@ -238,8 +239,9 @@ export const App: React.FC = () => {
       isWin,
       hasKeptPlaying,
       bankedBonus: bankedBonus ?? undefined,
+      movesCount,
     });
-  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, bankedBonus, isGameOver]);
+  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
 
   const updateTile = (
     tile: gridElement,
@@ -309,6 +311,7 @@ export const App: React.FC = () => {
     if (!validMovementsAvailable(tileSet, grid, [direction])) return;
 
     setIsMovementBlocked(true);
+    setMovesCount((prev) => prev + 1);
 
     const clonedTileSet = structuredClone(tileSet);
     setHistoryTileSet(clonedTileSet);
@@ -410,6 +413,7 @@ export const App: React.FC = () => {
     setIsGameOver(false);
     setIsUndoAvailable(false);
     setUndoCount(0)
+    setMovesCount(0)
     setIsMaxUndo(false)
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
@@ -435,6 +439,7 @@ export const App: React.FC = () => {
         undosUsed: undoCount,
         comboBonus,
         noUndoBonus,
+        movesCount,
       });
       if (entry) {
         setLastQualifyingEntry(entry);
@@ -443,7 +448,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, finalScore, undoCount, comboBonus, noUndoBonus, submitRemoteHighScore]
+    [radius, finalScore, undoCount, comboBonus, noUndoBonus, movesCount, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -554,6 +559,7 @@ export const App: React.FC = () => {
           comboBonus={comboBonus}
           noUndoBonus={noUndoBonus}
           noUndoBonusUndos={unusedUndos}
+          movesCount={movesCount}
           onSubmitHighScore={submitHighScore}
           beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
         />

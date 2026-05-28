@@ -8,6 +8,8 @@ export type HighScoreEntry = {
   comboBonus?: number;
   /** Bonus points earned for leaving undos unused. Optional for legacy entries. */
   noUndoBonus?: number;
+  /** Number of valid moves the player made during the run. Optional for legacy entries. */
+  movesCount?: number;
 };
 
 export type HighScores = Record<string, HighScoreEntry[]>;

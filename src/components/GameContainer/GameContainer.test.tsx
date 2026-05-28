@@ -68,6 +68,16 @@ describe("<GameContainer/>", () => {
     expect(gameContainerEl).not.toBeInTheDocument();
   });
 
+  it("should show the move count in the overlay (pluralized)", () => {
+    render(<GameContainer {...props} isGameOver={true} movesCount={42} />);
+    expect(screen.getByTestId("overlay-moves")).toHaveTextContent("42 moves");
+  });
+
+  it("should show the move count in the overlay (singular)", () => {
+    render(<GameContainer {...props} isGameOver={true} movesCount={1} />);
+    expect(screen.getByTestId("overlay-moves")).toHaveTextContent("1 move");
+  });
+
   it("should call resetGameHandler with the current radius when Try Again is clicked", () => {
     const resetGameHandler = vi.fn();
     render(

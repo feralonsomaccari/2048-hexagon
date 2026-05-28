@@ -26,6 +26,7 @@ type props = {
   comboBonus?: number;
   noUndoBonus?: number;
   noUndoBonusUndos?: number;
+  movesCount?: number;
   onSubmitHighScore?: (name: string) => void;
   beatsHighScore?: boolean;
 };
@@ -40,7 +41,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, onTryAgain, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, onTryAgain, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
   // Measure the space the board area actually has from its top edge down to the
   // bottom of the viewport. Used to scale the board on a mobile win so the board
   // and the result panel together never overflow (which would scroll the page).
@@ -146,6 +147,9 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
         >
           {isWin && <span className={styles.overlayIcon} aria-hidden="true">🏆</span>}
           <h2 id="overlay-title" className={styles.overlayTitle}>{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
+          <p className={styles.overlayMoves} data-testid="overlay-moves">
+            {movesCount} move{movesCount === 1 ? "" : "s"}
+          </p>
           {hasBreakdown && (
             <dl className={styles.scoreBreakdown} data-testid="score-breakdown">
               <div className={styles.scoreBreakdownRow}>

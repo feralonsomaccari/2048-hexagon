@@ -15,6 +15,7 @@ type ScoreBreakdown = {
   undosUsed?: number;
   comboBonus?: number;
   noUndoBonus?: number;
+  movesCount?: number;
 };
 
 type RemoteState = {
@@ -36,6 +37,7 @@ type FirestoreDocData = {
   undosUsed?: number;
   comboBonus?: number;
   noUndoBonus?: number;
+  movesCount?: number;
   createdAt?: { toDate: () => Date };
 };
 
@@ -46,6 +48,7 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   ...(typeof data.undosUsed === "number" ? { undosUsed: data.undosUsed } : {}),
   ...(typeof data.comboBonus === "number" ? { comboBonus: data.comboBonus } : {}),
   ...(typeof data.noUndoBonus === "number" ? { noUndoBonus: data.noUndoBonus } : {}),
+  ...(typeof data.movesCount === "number" ? { movesCount: data.movesCount } : {}),
 });
 
 // Clamp an optional bonus to a safe non-negative integer for storage.
@@ -124,6 +127,7 @@ const useRemoteHighScores = (): RemoteState => {
       const safeUndosUsed = safeBonus(breakdown?.undosUsed);
       const safeComboBonus = safeBonus(breakdown?.comboBonus);
       const safeNoUndoBonus = safeBonus(breakdown?.noUndoBonus);
+      const safeMovesCount = safeBonus(breakdown?.movesCount);
 
       const entry: HighScoreEntry = {
         name: trimmedName,
@@ -132,6 +136,7 @@ const useRemoteHighScores = (): RemoteState => {
         undosUsed: safeUndosUsed,
         comboBonus: safeComboBonus,
         noUndoBonus: safeNoUndoBonus,
+        movesCount: safeMovesCount,
       };
 
       try {
@@ -148,6 +153,7 @@ const useRemoteHighScores = (): RemoteState => {
           undosUsed: safeUndosUsed,
           comboBonus: safeComboBonus,
           noUndoBonus: safeNoUndoBonus,
+          movesCount: safeMovesCount,
           createdAt: serverTimestamp(),
         });
       } catch (err) {

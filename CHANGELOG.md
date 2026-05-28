@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-28
+
+### Added
+- **Move counter.** The game now tracks how many moves you make in a run and shows it on the win and Game Over overlay (e.g. "42 MOVES", with a singular "1 MOVE"). Only moves that actually shift or merge tiles count — a blocked swipe/keypress against a wall doesn't, and undos don't decrement it (they're already tracked separately). The count persists with the saved game across reloads and resets on a new game.
+- Leaderboard submissions now also record `movesCount` in Firestore alongside the score, clamped to a non-negative integer for future display/filtering. Requires the Firestore rules to allow the new field.
+
 ## [0.9.4] - 2026-05-27
 
 ### Added

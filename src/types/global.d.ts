@@ -24,6 +24,7 @@ declare global {
     isMaxUndo?: boolean,
     isWin?: boolean,
     hasKeptPlaying?: boolean,
-    bankedBonus?: number
+    bankedBonus?: number,
+    movesCount?: number
   }
 }

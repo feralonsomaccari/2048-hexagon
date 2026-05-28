@@ -117,7 +117,8 @@
 }
 
 .topScoreLegend {
-  /* Pushed to the far right of the row; the Undo button stays on the left. */
+  display: block;
+  text-align: right;
   margin-left: auto;
   font-size: 13px;
   color: var(--color-text-muted);
@@ -316,7 +317,9 @@
   }
 
   .actionsRight {
-    flex: 0 1 auto;
+    /* Fill remaining width so the top-score legend is pushed to the far right
+       while New Game + Undo stay grouped on the left. */
+    flex: 1;
     min-width: 0;
   }
 
