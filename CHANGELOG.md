@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.15.1] - 2026-05-28
+
+### Added
+- **Power-up availability on the New Game menu.** Each board-size card now shows whether that board has power-ups — **"Power ups"** on Small, **"No power ups"** on Normal. The label is derived from the per-radius power-up budgets (`MAX_UNDO_BY_RADIUS`, `MAX_REMOVE_BY_RADIUS`, `MAX_SWAP_BY_RADIUS`), so it stays accurate if a board's power-ups change.
+
 ## [0.15.0] - 2026-05-28
 
 ### Added

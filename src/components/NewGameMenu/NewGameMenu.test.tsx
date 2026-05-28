@@ -15,6 +15,12 @@ describe("<NewGameMenu/>", () => {
     expect(screen.queryByText("XL")).not.toBeInTheDocument();
   });
 
+  it("should note power ups on Small and none on Normal", () => {
+    render(<NewGameMenu {...props} />);
+    expect(screen.getByText("Power ups")).toBeInTheDocument();
+    expect(screen.getByText("No power ups")).toBeInTheDocument();
+  });
+
   it("should render the start button", () => {
     render(<NewGameMenu {...props} />);
     expect(screen.getByText("Start Game")).toBeInTheDocument();

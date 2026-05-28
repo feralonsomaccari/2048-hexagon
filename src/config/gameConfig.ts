@@ -14,7 +14,7 @@ export const LEADERBOARD_SIZE = 5;
 export const MAX_NAME_LENGTH = 16;
 export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
   1: 3,
-  2: 1,
+  2: 0,
   3: 0,
   4: 0,
 };

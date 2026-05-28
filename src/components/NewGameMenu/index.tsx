@@ -1,12 +1,22 @@
 import { useRef, useState } from "react";
 import styles from "./NewGameMenu.module.css";
 import Button from "../Button";
-import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import {
+  MAX_REMOVE_BY_RADIUS,
+  MAX_SWAP_BY_RADIUS,
+  MAX_UNDO_BY_RADIUS,
+  WIN_TILE_BY_RADIUS,
+} from "../../config/gameConfig";
 
 type props = {
   resetGameHandler: (radius: number) => void;
   currentRadius?: number;
 };
+
+const hasPowerUps = (radius: number): boolean =>
+  (MAX_UNDO_BY_RADIUS[radius] ?? 0) > 0 ||
+  (MAX_REMOVE_BY_RADIUS[radius] ?? 0) > 0 ||
+  (MAX_SWAP_BY_RADIUS[radius] ?? 0) > 0;
 
 const sizes = [
   { radius: 1, label: "Small", description: "7 cells" },
@@ -72,6 +82,7 @@ const NewGameMenu = ({ resetGameHandler, currentRadius = 2 }: props) => {
               <span className={styles.cardLabel}>{label}</span>
               <span className={styles.cardDesc}>{description}</span>
               <span className={styles.cardDesc}>Reach {WIN_TILE_BY_RADIUS[radius] ?? 2048}</span>
+              <span className={styles.cardDesc}>{hasPowerUps(radius) ? "Power ups" : "No power ups"}</span>
             </button>
           );
         })}
