@@ -34,7 +34,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_UNDO_BY_RADIUS, NO_UNDO_BONUS_RATE_PER_UNDO, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_REMOVE_BY_RADIUS, MAX_UNDO_BY_RADIUS, NO_UNDO_BONUS_RATE_PER_UNDO, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
@@ -58,6 +58,8 @@ export const App: React.FC = () => {
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
   const [movesCount, setMovesCount] = useState(initialSavedGame?.movesCount ?? 0)
   const [isMaxUndo, setIsMaxUndo] = useState(initialSavedGame?.isMaxUndo ?? false)
+  const [removeCount, setRemoveCount] = useState(initialSavedGame?.removeCount ?? 0)
+  const [isRemoveMode, setIsRemoveMode] = useState(false)
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
   const [historyComboBonus, setHistoryComboBonus] = useState(initialSavedGame?.historyComboBonus ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
@@ -79,6 +81,8 @@ export const App: React.FC = () => {
   const mergeStreakRef = useRef<number>(0);
 
   const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
+  const maxRemove = MAX_REMOVE_BY_RADIUS[radius] ?? 0;
+  const removesRemaining = Math.max(0, maxRemove - removeCount);
 
   const unusedUndos = Math.max(0, maxUndo - undoCount);
   const liveBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
@@ -119,7 +123,20 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown]);
+  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown, isRemoveMode]);
+
+  useEffect(() => {
+    if (!isRemoveMode) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsRemoveMode(false);
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isRemoveMode]);
+
+  useEffect(() => {
+    if (isGameOver || isWin) setIsRemoveMode(false);
+  }, [isGameOver, isWin]);
 
   const displayedScore = bankedBonus !== null ? finalScore : score;
   useEffect(() => {
@@ -211,12 +228,13 @@ export const App: React.FC = () => {
       undoCount,
       isUndoAvailable,
       isMaxUndo,
+      removeCount,
       isWin,
       hasKeptPlaying,
       bankedBonus: bankedBonus ?? undefined,
       movesCount,
     });
-  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
+  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, removeCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
 
   const updateTile = (
     tile: gridElement,
@@ -326,12 +344,12 @@ export const App: React.FC = () => {
   };
 
   useSwipe(boardRef, (direction) => {
-    if (isMovementBlocked || isGameOver || isWin || isModalShown) return;
+    if (isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode) return;
     updateTilesPos(direction);
   });
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown) return;
+    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode) return;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
       event.preventDefault();
     }
@@ -384,6 +402,8 @@ export const App: React.FC = () => {
     setUndoCount(0)
     setMovesCount(0)
     setIsMaxUndo(false)
+    setRemoveCount(0)
+    setIsRemoveMode(false)
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
@@ -461,6 +481,18 @@ export const App: React.FC = () => {
     setUndoCount(prev => prev + 1)
   }, [historyTileSet, historyScore, historyComboBonus, isWin, isGameOver]);
 
+  const toggleRemoveMode = useCallback(() => {
+    if (isWin || isGameOver || isMovementBlocked) return;
+    setIsRemoveMode((prev) => !prev);
+  }, [isWin, isGameOver, isMovementBlocked]);
+
+  const removeTileHandler = useCallback((tile: gridElement) => {
+    setTileSet((prev) => prev.filter((t) => t.id !== tile.id));
+    setRemoveCount((prev) => prev + 1);
+    setIsRemoveMode(false);
+    play("move");
+  }, [play]);
+
   const onNewGameHandler = useCallback(() => {
     setIsModalShown(true);
   }, []);
@@ -534,6 +566,8 @@ export const App: React.FC = () => {
           movesCount={movesCount}
           onSubmitHighScore={submitHighScore}
           beatsHighScore={finalScore > (highScores[radius]?.[LEADERBOARD_SIZE - 1]?.score ?? 0)}
+          isRemoveMode={isRemoveMode}
+          onRemoveTile={removeTileHandler}
         />
         {!isWin && (
           <PowerUpBar
@@ -542,9 +576,20 @@ export const App: React.FC = () => {
                 ? {
                     undo: {
                       onActivate: undoHandler,
-                      disabled: !isUndoAvailable || isGameOver,
+                      disabled: !isUndoAvailable || isGameOver || isRemoveMode,
                       charges: maxUndo - undoCount,
                       maxCharges: maxUndo,
+                    },
+                  }
+                : {}),
+              ...(maxRemove > 0
+                ? {
+                    removeTile: {
+                      onActivate: toggleRemoveMode,
+                      disabled: isGameOver,
+                      charges: removesRemaining,
+                      maxCharges: maxRemove,
+                      active: isRemoveMode,
                     },
                   }
                 : {}),

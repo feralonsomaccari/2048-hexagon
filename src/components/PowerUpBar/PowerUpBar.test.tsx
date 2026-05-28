@@ -68,4 +68,38 @@ describe("<PowerUpBar/>", () => {
       "power-up-newGame",
     ]);
   });
+
+  it("should render the remove-tile power-up between undo and new game", () => {
+    render(
+      <PowerUpBar
+        powerUps={{
+          newGame: { onActivate: vi.fn() },
+          removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          undo: { onActivate: vi.fn() },
+        }}
+      />
+    );
+    const tiles = screen.getAllByTestId(/^power-up-(undo|removeTile|newGame)$/);
+    expect(tiles.map((t) => t.getAttribute("data-testid"))).toEqual([
+      "power-up-undo",
+      "power-up-removeTile",
+      "power-up-newGame",
+    ]);
+  });
+
+  it("should reflect active state via aria-pressed on a toggleable power-up", () => {
+    const { rerender } = render(
+      <PowerUpBar powerUps={{ removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1, active: false } }} />
+    );
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
+    rerender(
+      <PowerUpBar powerUps={{ removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1, active: true } }} />
+    );
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("should not set aria-pressed on a non-toggleable power-up", () => {
+    render(<PowerUpBar powerUps={{ undo: { onActivate: vi.fn() } }} />);
+    expect(screen.getByTestId("power-up-undo")).not.toHaveAttribute("aria-pressed");
+  });
 });

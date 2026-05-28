@@ -56,6 +56,27 @@
   outline-offset: 2px;
 }
 
+.tileActive {
+  background-color: var(--color-score-box);
+  box-shadow: 0 0 0 3px var(--color-score-box);
+  animation: powerUpPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes powerUpPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px var(--color-score-box);
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--color-score-box);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tileActive {
+    animation: none;
+  }
+}
+
 .icon {
   width: 24px;
   height: 24px;

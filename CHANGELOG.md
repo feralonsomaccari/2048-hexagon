@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-05-28
+
+### Added
+- **Power-up bar.** A new bar below the board holds the game's power-ups as icon tiles with a remaining-charge badge. **Undo** and **New Game** moved out of the top menu and into this bar.
+- **Remove power-up.** Tap **Remove** to enter targeting mode, then tap any tile to delete it from the board. It's a free edit — no new tile spawns and the move count is unchanged. Limited per board size (2 on small, 1 on normal) and shown as a charge badge. Cancel without spending a charge by tapping Remove again or pressing **Escape**; move keys and swipes are disabled while targeting.
+
 ## [0.13.0] - 2026-05-28
 
 ### Added

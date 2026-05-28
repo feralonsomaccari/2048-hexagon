@@ -29,6 +29,8 @@ type props = {
   movesCount?: number;
   onSubmitHighScore?: (name: string) => void;
   beatsHighScore?: boolean;
+  isRemoveMode?: boolean;
+  onRemoveTile?: (tile: gridElement) => void;
 };
 
 const EDGE_LENGTH = 66.5;
@@ -41,7 +43,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -130,7 +132,14 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
       <div className={`${styles.boardZone} ${isWin ? styles.boardZoneWin : ""}`}>
         <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
           {tileSet.map((tile) => (
-            <Tile key={tile.id} {...getPositionFromCoordinates(tile, radius)} value={tile.value} merged={tile.merged} />
+            <Tile
+              key={tile.id}
+              {...getPositionFromCoordinates(tile, radius)}
+              value={tile.value}
+              merged={tile.merged}
+              targeting={isRemoveMode}
+              onSelect={onRemoveTile ? () => onRemoveTile(tile) : undefined}
+            />
           ))}
           {grid.map((coords, index) => (
             <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />

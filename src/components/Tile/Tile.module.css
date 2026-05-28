@@ -32,6 +32,39 @@
   animation-delay: 100ms;
 }
 
+.targeting {
+  cursor: pointer;
+  /* Tiles render before grid blocks, so blocks paint on top by default.
+     Lift targeted tiles above the blocks so taps land on the tile, not the block. */
+  z-index: 1;
+}
+
+.targeting .tileInner {
+  animation: targetPulse 1s ease-in-out infinite;
+}
+
+.targeting:hover .tileInner,
+.targeting:focus-visible .tileInner {
+  filter: brightness(0.7) saturate(1.2);
+  animation: none;
+}
+
+.targeting:focus-visible {
+  outline: 3px solid var(--color-text-main);
+  outline-offset: -3px;
+}
+
+@keyframes targetPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .targeting .tileInner {
+    animation: none;
+  }
+}
+
 .color-2  { background-color: var(--bg-color-2); }
 .color-4  { background-color: var(--bg-color-4); }
 .color-8  { background-color: var(--bg-color-8);   color: var(--color-text-secondary); }

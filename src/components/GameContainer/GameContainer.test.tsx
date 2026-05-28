@@ -92,6 +92,25 @@ describe("<GameContainer/>", () => {
     expect(resetGameHandler).toHaveBeenCalledWith(3);
   });
 
+  it("should expose tiles as buttons in remove mode", () => {
+    render(<GameContainer {...props} isRemoveMode={true} onRemoveTile={vi.fn()} />);
+    expect(screen.getAllByRole("button", { name: /Remove tile/ })).toHaveLength(3);
+  });
+
+  it("should keep tiles as images when not in remove mode", () => {
+    render(<GameContainer {...props} />);
+    expect(screen.queryAllByRole("button", { name: /Remove tile/ })).toHaveLength(0);
+    expect(screen.getAllByRole("img", { name: /^Tile/ })).toHaveLength(3);
+  });
+
+  it("should call onRemoveTile with the tapped tile in remove mode", () => {
+    const onRemoveTile = vi.fn();
+    render(<GameContainer {...props} isRemoveMode={true} onRemoveTile={onRemoveTile} />);
+    fireEvent.click(screen.getAllByRole("button", { name: /Remove tile/ })[0]);
+    expect(onRemoveTile).toHaveBeenCalledTimes(1);
+    expect(onRemoveTile).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(Number) }));
+  });
+
   it("should not consume taps on the Try Again button via swipe gestures", () => {
     const TestHarness = () => {
       const ref = React.useRef<HTMLElement>(null);

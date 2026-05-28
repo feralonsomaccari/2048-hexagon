@@ -401,3 +401,88 @@ describe("<App/> win overlay", () => {
     expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
   });
 });
+
+const threeTileSet = (): gridElement[] => [
+  { x: 0, y: 0, z: 0, value: 2, id: 11 },
+  { x: 1, y: 0, z: -1, value: 4, id: 12 },
+  { x: -1, y: 1, z: 0, value: 8, id: 13 },
+];
+
+describe("<App/> remove-tile power-up", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+    localStorage.clear();
+  });
+
+  it("removes a tapped tile and decrements the remaining charges", async () => {
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId("tile")).toHaveLength(3);
+    });
+
+    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent("2");
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-removeTile"));
+    });
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
+
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole("button", { name: /Remove tile/ })[0]);
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId("tile")).toHaveLength(2);
+    });
+    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent("1");
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("cancels remove mode with Escape without consuming a charge", async () => {
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId("tile")).toHaveLength(3);
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-removeTile"));
+    });
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "Escape" });
+    });
+
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getAllByTestId("tile")).toHaveLength(3);
+    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent("2");
+  });
+
+  it("toggles remove mode off when the power-up is clicked again", async () => {
+    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId("tile")).toHaveLength(3);
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-removeTile"));
+    });
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-removeTile"));
+    });
+    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getAllByTestId("tile")).toHaveLength(3);
+  });
+});

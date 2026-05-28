@@ -1,5 +1,6 @@
 import styles from "./PowerUpBar.module.css";
 import UndoIcon from "../UndoIcon";
+import RemoveIcon from "../RemoveIcon";
 import NewGameIcon from "../NewGameIcon";
 import { POWER_UPS, PowerUpId } from "../../config/gameConfig";
 
@@ -8,6 +9,7 @@ type PowerUpState = {
   disabled?: boolean;
   charges?: number;
   maxCharges?: number;
+  active?: boolean;
 };
 
 type props = {
@@ -16,6 +18,7 @@ type props = {
 
 const ICONS: Record<PowerUpId, React.FC<{ className?: string }>> = {
   undo: UndoIcon,
+  removeTile: RemoveIcon,
   newGame: NewGameIcon,
 };
 
@@ -32,6 +35,7 @@ const PowerUpBar = ({ powerUps }: props) => {
           const hasCharges = state.maxCharges !== undefined && state.maxCharges > 0;
           const charges = state.charges ?? 0;
           const isDisabled = state.disabled || (hasCharges && charges === 0);
+          const isActive = state.active ?? false;
           const ariaLabel = hasCharges
             ? `${def.description}, ${charges} remaining`
             : def.description;
@@ -40,14 +44,15 @@ const PowerUpBar = ({ powerUps }: props) => {
             <li key={def.id} className={styles.item}>
               <button
                 type="button"
-                className={styles.tile}
+                className={`${styles.tile} ${isActive ? styles.tileActive : ""}`}
                 onClick={state.onActivate}
                 disabled={isDisabled}
                 title={def.description}
                 data-testid={`power-up-${def.id}`}
                 aria-label={ariaLabel}
+                aria-pressed={state.active !== undefined ? isActive : undefined}
               >
-                <Icon className={styles.icon} />
+                <Icon className={`${styles.icon} ${styles[`icon-${def.id}`] ?? ""}`} />
                 {hasCharges && (
                   <span className={styles.badge} data-testid={`power-up-${def.id}-charges`} aria-hidden="true">
                     {charges}

@@ -7,6 +7,8 @@ type props = {
   left?: number;
   top?: number;
   merged?: boolean;
+  targeting?: boolean;
+  onSelect?: () => void;
 };
 
 const COLORED_VALUES = new Set([
@@ -22,7 +24,7 @@ const fontSizeForValue = (value: number): number => {
   return 24;
 };
 
-const Tile = ({ value, left, top, merged }: props): JSX.Element => {
+const Tile = ({ value, left, top, merged, targeting = false, onSelect }: props): JSX.Element => {
   const colorClass = COLORED_VALUES.has(value)
     ? styles[`color-${value}`]
     : styles["color-final"];
@@ -30,9 +32,21 @@ const Tile = ({ value, left, top, merged }: props): JSX.Element => {
     <div
       data-testid="tile"
       style={{ left, top, ...getGridElementSizeFromRadius() }}
-      className={styles.tile}
-      role="img"
-      aria-label={`Tile ${value}`}
+      className={`${styles.tile} ${targeting ? styles.targeting : ""}`}
+      role={targeting ? "button" : "img"}
+      aria-label={targeting ? `Remove tile ${value}` : `Tile ${value}`}
+      tabIndex={targeting ? 0 : undefined}
+      onClick={targeting ? onSelect : undefined}
+      onKeyDown={
+        targeting
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onSelect?.();
+              }
+            }
+          : undefined
+      }
     >
       <div
         className={`${styles.tileInner} ${colorClass} ${merged ? styles.merged : ""}`}
