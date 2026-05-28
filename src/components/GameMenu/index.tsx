@@ -7,6 +7,8 @@ import LightModeIcon from "../LightModeIcon";
 import DarkModeIcon from "../DarkModeIcon";
 import MuteIcon from "../MuteIcon";
 import UnmuteIcon from "../UnmuteIcon";
+import TwitterIcon from "../TwitterIcon";
+import FacebookIcon from "../FacebookIcon";
 
 type props = {
   onNewGameHandler?: () => void;
@@ -22,6 +24,8 @@ type props = {
   onHighScoresHandler?: () => void;
   isMuted?: boolean;
   onToggleMuted?: () => void;
+  onShareTwitter?: () => void;
+  onShareFacebook?: () => void;
 
   isWin?: boolean;
 };
@@ -40,6 +44,8 @@ const GameMenu = ({
   onHighScoresHandler,
   isMuted,
   onToggleMuted,
+  onShareTwitter,
+  onShareFacebook,
   isWin = false,
 }: props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -77,7 +83,7 @@ const GameMenu = ({
     closeMenuAndRefocus();
   };
 
-  const hasMenuItems = Boolean(onHighScoresHandler || onToggleTheme || onToggleMuted);
+  const hasMenuItems = Boolean(onHighScoresHandler || onToggleTheme || onToggleMuted || onShareTwitter || onShareFacebook);
 
   return (
     <header data-testid="game-menu" className={styles.gameMenu}>
@@ -166,6 +172,38 @@ const GameMenu = ({
                         "data-testid": "sound-toggle-btn",
                         "aria-label": isMuted ? "Unmute sound" : "Mute sound",
                         "aria-pressed": isMuted,
+                      }}
+                    />
+                  )}
+                  {onShareTwitter && (
+                    <Button
+                      clickHandler={runAndClose(onShareTwitter)}
+                      text={
+                        <span className={styles.menuItemLabel}>
+                          <TwitterIcon className={styles.menuItemIcon} />
+                          Share on Twitter
+                        </span>
+                      }
+                      extraProps={{
+                        title: "Share on Twitter",
+                        "data-testid": "share-twitter-btn",
+                        "aria-label": "Share on Twitter",
+                      }}
+                    />
+                  )}
+                  {onShareFacebook && (
+                    <Button
+                      clickHandler={runAndClose(onShareFacebook)}
+                      text={
+                        <span className={styles.menuItemLabel}>
+                          <FacebookIcon className={styles.menuItemIcon} />
+                          Share on Facebook
+                        </span>
+                      }
+                      extraProps={{
+                        title: "Share on Facebook",
+                        "data-testid": "share-facebook-btn",
+                        "aria-label": "Share on Facebook",
                       }}
                     />
                   )}

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-05-28
+
+### Added
+- **Share from the hamburger menu.** The "More options" menu now has **Share on Twitter** and **Share on Facebook** items (with custom inline-SVG logo icons). Twitter opens a pre-filled post with your current score — and, on a win, the reached tile and move count — linking to https://2048hexagon.com; Facebook opens its sharer for the same URL (Facebook ignores pre-filled text, so it shares the link only). Both open in a new tab.
+
 ## [0.12.0] - 2026-05-28
 
 ### Added

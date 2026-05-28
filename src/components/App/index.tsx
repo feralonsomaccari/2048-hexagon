@@ -85,6 +85,8 @@ export const App: React.FC = () => {
   const noUndoBonus = bankedBonus ?? liveBonus;
   const finalScore = score + noUndoBonus;
 
+  const SHARE_URL = "https://2048hexagon.com";
+
   const canPromptHighScore = (qualifyingScore: number): boolean => {
     if (isHighScoresRemote && (isHighScoresLoading || highScores[radius] === undefined)) {
       return false;
@@ -430,6 +432,24 @@ export const App: React.FC = () => {
     resetGameHandler(radius);
   }, [radius]);
 
+  const buildShareText = useCallback(() => {
+    const target = WIN_TILE_BY_RADIUS[radius] ?? 2048;
+    const headline = isWin
+      ? `I reached ${target} on 2048 Hexagon with ${displayedScore} points in ${movesCount} move${movesCount === 1 ? "" : "s"}!`
+      : `I'm playing 2048 Hexagon — ${displayedScore} points and counting!`;
+    return `${headline} Can you beat me?`;
+  }, [radius, isWin, displayedScore, movesCount]);
+
+  const shareOnTwitter = useCallback(() => {
+    const intent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}&url=${encodeURIComponent(SHARE_URL)}`;
+    window.open(intent, "_blank", "noopener,noreferrer");
+  }, [buildShareText]);
+
+  const shareOnFacebook = useCallback(() => {
+    const intent = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SHARE_URL)}`;
+    window.open(intent, "_blank", "noopener,noreferrer");
+  }, []);
+
   const undoHandler = useCallback(() => {
 
     if (isWin || isGameOver) return;
@@ -494,6 +514,8 @@ export const App: React.FC = () => {
           onHighScoresHandler={openLeaderboard}
           isMuted={isMuted}
           onToggleMuted={toggleMuted}
+          onShareTwitter={shareOnTwitter}
+          onShareFacebook={shareOnFacebook}
           isWin={isWin}
         />
         <Instructions radius={radius} collapsed={isWin} />
