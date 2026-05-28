@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-05-28
+
+### Added
+- **Share your win on Twitter.** The win panel now shows a small circular Twitter logo button in its top-right corner. Tapping it opens a pre-filled tweet — "I reached {tile} on 2048 Hexagon with {score} points in {n} moves! Can you beat me?" — linking to https://2048hexagon.com, via the `twitter.com/intent/tweet` URL in a new tab. The icon is a custom inline SVG (`fill: currentColor`, no image request) and only appears on a win.
+
 ## [0.11.0] - 2026-05-28
 
 ### Added
