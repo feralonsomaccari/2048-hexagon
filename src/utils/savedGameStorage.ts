@@ -18,7 +18,7 @@ export const saveLastRadius = (radius: number): void => {
   try {
     localStorage.setItem(RADIUS_KEY, String(radius));
   } catch {
-    // ignore
+
   }
 };
 
@@ -37,7 +37,7 @@ export const saveGame = (state: savedGame): void => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    // ignore quota / serialization errors
+
   }
 };
 
@@ -45,6 +45,6 @@ export const clearSavedGame = (): void => {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch {
-    // ignore
+
   }
 };

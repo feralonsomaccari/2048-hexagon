@@ -15,8 +15,6 @@ let appInstance: FirebaseApp | null = null;
 let dbInstance: Firestore | null = null;
 let dbPromise: Promise<Firestore | null> | null = null;
 
-// Synchronous check so callers can decide whether to bother loading the SDK
-// (and surface "remote vs local" state) without pulling Firebase into the main bundle.
 export const isFirebaseConfigured = (): boolean =>
   Boolean(config.apiKey && config.projectId);
 
@@ -29,8 +27,6 @@ if (FIREBASE_LOGS_ENABLED) {
   });
 }
 
-// Lazily loads the Firebase SDK via dynamic import so it is code-split into its
-// own chunk and kept off the critical path. Resolves to null when not configured.
 export const getDb = async (): Promise<Firestore | null> => {
   if (!isFirebaseConfigured()) {
     if (FIREBASE_LOGS_ENABLED) {

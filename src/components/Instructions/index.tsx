@@ -3,9 +3,7 @@ import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 type props = {
   radius?: number;
-  // When true, the panel eases its height + opacity to zero (used on a win to
-  // make room for the win panel) instead of being unmounted, so it animates out
-  // and back in smoothly.
+
   collapsed?: boolean;
 };
 

@@ -68,14 +68,14 @@ describe("<GameContainer/>", () => {
     expect(gameContainerEl).not.toBeInTheDocument();
   });
 
-  it("should show the move count in the overlay (pluralized)", () => {
-    render(<GameContainer {...props} isGameOver={true} movesCount={42} />);
-    expect(screen.getByTestId("overlay-moves")).toHaveTextContent("42 moves");
+  it("should show the score and move count in the overlay (pluralized)", () => {
+    render(<GameContainer {...props} isGameOver={true} score={512} movesCount={42} />);
+    expect(screen.getByTestId("overlay-moves")).toHaveTextContent("Score: 512 in 42 moves");
   });
 
-  it("should show the move count in the overlay (singular)", () => {
-    render(<GameContainer {...props} isGameOver={true} movesCount={1} />);
-    expect(screen.getByTestId("overlay-moves")).toHaveTextContent("1 move");
+  it("should show the score and move count in the overlay (singular)", () => {
+    render(<GameContainer {...props} isGameOver={true} score={512} movesCount={1} />);
+    expect(screen.getByTestId("overlay-moves")).toHaveTextContent("Score: 512 in 1 move");
   });
 
   it("should call resetGameHandler with the current radius when Try Again is clicked", () => {

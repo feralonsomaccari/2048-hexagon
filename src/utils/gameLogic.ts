@@ -5,7 +5,6 @@ const getPositionFromCoordinates = (block: gridElement, radius: number = 2): { l
   const edgeW = (edgeLength * 3) / 2;
   const edgeH = (edgeLength * Math.sqrt(3)) / 2;
 
-  // Zero-base both axes so content starts at (0,0) for any radius
   const leftOffset = radius * edgeW;
   const topOffset = 2 * radius * edgeH;
 

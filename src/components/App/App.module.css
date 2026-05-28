@@ -28,7 +28,7 @@
 }
 
 .footer a {
-  color: inherit; /* blend with the muted footer text; underline keeps it identifiable as a link */
+  color: inherit;
   font-weight: 600;
   text-decoration: underline;
 }

@@ -22,8 +22,7 @@ type props = {
   onHighScoresHandler?: () => void;
   isMuted?: boolean;
   onToggleMuted?: () => void;
-  // While a win is showing, the in-board win panel has its own actions, so the
-  // header's New Game / Undo row is hidden to free up space.
+
   isWin?: boolean;
 };
 
@@ -47,21 +46,17 @@ const GameMenu = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  // Close the dropdown and return focus to the trigger, so keyboard users aren't
-  // stranded on <body> after Escape or activating an item.
   const closeMenuAndRefocus = () => {
     setIsMenuOpen(false);
     triggerRef.current?.focus();
   };
 
-  // Close the dropdown on an outside click or the Escape key. Only listen while
-  // the menu is open so we don't keep handlers attached needlessly.
   useEffect(() => {
     if (!isMenuOpen) return;
 
     const handlePointerDown = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        // Outside click: just close; don't yank focus back to the trigger.
+
         setIsMenuOpen(false);
       }
     };
@@ -77,7 +72,6 @@ const GameMenu = ({
     };
   }, [isMenuOpen]);
 
-  // Run the chosen action, then close the menu and restore focus to the trigger.
   const runAndClose = (handler?: () => void) => () => {
     handler?.();
     closeMenuAndRefocus();
@@ -189,10 +183,6 @@ const GameMenu = ({
         </div>
         {scores && <div className={styles.scores}>{scores}</div>}
       </div>
-      {/* On a win the in-board panel provides Try Again / Keep Playing, so the
-          header's divider + New Game / Undo row collapse away (smoothly) to give
-          the board more room. Kept mounted and collapsed via CSS so it eases out
-          and back in rather than popping. */}
       <div className={`${styles.collapsible} ${isWin ? styles.collapsed : ""}`} aria-hidden={isWin}>
       <div className={styles.collapsibleInner}>
       <div className={styles.divider} />
@@ -216,8 +206,6 @@ const GameMenu = ({
                   <UndoIcon className={styles.undoIcon} />
                   {remainingUndos !== undefined && (maxUndos ?? 0) > 0 && (
                     <span className={styles.undoPips} data-testid="undo-pips" aria-hidden="true">
-                      {/* Always show at least 3 slots so a 1-undo budget still
-                          reads as a bar (e.g. 1 filled + 2 empty). */}
                       {Array.from({ length: Math.max(3, maxUndos ?? 0) }, (_, i) => (
                         <span
                           key={i}

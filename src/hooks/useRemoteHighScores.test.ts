@@ -63,8 +63,7 @@ const waitForListeners = (count = 4) =>
   waitFor(() => expect(listeners).toHaveLength(count));
 
 const emitInitialEmptySnapshots = async () => {
-  // Listeners register after the lazy Firebase import resolves, so wait for them
-  // first, then fire every one with an empty snapshot so initial loading resolves.
+
   await waitForListeners();
   act(() => {
     listeners.forEach((l) => l.onNext(makeSnapshot([])));

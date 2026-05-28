@@ -51,7 +51,6 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   ...(typeof data.movesCount === "number" ? { movesCount: data.movesCount } : {}),
 });
 
-// Clamp an optional bonus to a safe non-negative integer for storage.
 const safeBonus = (value: number | undefined): number =>
   typeof value === "number" && Number.isFinite(value) && value >= 0
     ? Math.floor(value)

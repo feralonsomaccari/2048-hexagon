@@ -1,13 +1,9 @@
 type props = {
-  /** Pixel size of the (square) icon. Defaults to 1em so it scales with text. */
+
   size?: number | string;
   className?: string;
 };
 
-// Trophy icon, traced from trophy.png. Uses `fill: currentColor` so it inherits
-// the surrounding text color and matches its label in both themes (same pattern
-// as UndoIcon). The path keeps potrace's flip/scale transform, which renders the
-// handle and base cutouts as proper holes.
 const TrophyIcon = ({ size = "1em", className }: props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

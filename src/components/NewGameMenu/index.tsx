@@ -11,8 +11,7 @@ type props = {
 const sizes = [
   { radius: 1, label: "Small", description: "7 cells" },
   { radius: 2, label: "Normal", description: "19 cells" },
-  // { radius: 3, label: "Large", description: "37 cells" },
-  // { radius: 4, label: "XL", description: "61 cells" },
+
 ];
 
 const NewGameMenu = ({ resetGameHandler, currentRadius = 2 }: props) => {

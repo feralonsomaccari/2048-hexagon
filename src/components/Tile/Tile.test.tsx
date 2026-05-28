@@ -25,7 +25,6 @@ describe("<Tile/>", () => {
   it("falls back to the final color for values beyond the defined tiers", () => {
     render(<Tile value={131072} />);
     const tileEl = screen.getByTestId("tile");
-    // No dedicated color-131072 class exists, so it must not render uncolored.
     expect(tileEl.firstElementChild).toHaveClass("color-final");
     expect(tileEl.firstElementChild).not.toHaveClass("color-131072");
   });

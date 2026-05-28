@@ -1,13 +1,9 @@
 type props = {
-  /** Pixel size of the (square) icon. Defaults to 1em so it scales with text. */
+
   size?: number | string;
   className?: string;
 };
 
-// Light-mode (brightness) icon, traced from lightmode.webp. Uses
-// `fill: currentColor` so it matches its label color in both themes, like the
-// other icons. Keeps potrace's flip/scale transform; the half-circle renders as
-// a proper cutout. The viewBox matches the source image's 300px dimensions.
 const LightModeIcon = ({ size = "1em", className }: props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -48,16 +48,10 @@ export const App: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isWin, setIsWin] = useState(initialSavedGame?.isWin ?? false);
   const [hasKeptPlaying, setHasKeptPlaying] = useState(initialSavedGame?.hasKeptPlaying ?? false);
-  // No-undo bonus banked at the moment of the first win. Once won, the bonus is
-  // locked to this fixed amount and stays applied through "Keep Playing" (it no
-  // longer shrinks if an undo is used afterwards). `null` until a win banks it,
-  // which is distinct from a banked value of 0 (won with all undos used).
+
   const [bankedBonus, setBankedBonus] = useState<number | null>(initialSavedGame?.bankedBonus ?? null);
   const [score, setScore] = useState(initialSavedGame?.score ?? 0);
-  // Portion of `score` earned from chained merges (combos). The first merge in a
-  // move scores at ×1 (no combo bonus); each further merge in the same move
-  // scores at ×2, ×3, … and the extra above the base value is banked here so we
-  // can break it out at game-end.
+
   const [comboBonus, setComboBonus] = useState(initialSavedGame?.comboBonus ?? 0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
@@ -77,37 +71,20 @@ export const App: React.FC = () => {
   const viewport = useViewport();
   const boardRef = useRef<HTMLElement>(null);
   const restoredRef = useRef<boolean>(!!initialSavedGame);
-  // Guards so end-of-game sounds fire on the in-session transition only, not
-  // when a finished/won game is restored from storage on page load.
+
   const playedWinRef = useRef<boolean>(initialSavedGame?.isWin ?? false);
   const playedGameOverRef = useRef<boolean>(false);
-  // Consecutive moves that merged. Drives the rising merge pitch; resets to 0
-  // when a move makes no merge (the streak "breaks").
+
   const mergeStreakRef = useRef<number>(0);
 
   const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
 
-  // No-undo bonus: scales with the undos left *unused*. Each undo you decline
-  // is worth NO_UNDO_BONUS_RATE_PER_UNDO of the score, so the bonus is
-  // (maxUndo - undoCount) × rate. Small board: 0 used → +30%, 1 → +20%,
-  // 2 → +10%, 3 → +0%. Normal board: 0 used → +10%, 1 → +0%.
   const unusedUndos = Math.max(0, maxUndo - undoCount);
   const liveBonus = Math.round(score * NO_UNDO_BONUS_RATE_PER_UNDO * unusedUndos);
-  // Once a win has banked the bonus, it's locked to that fixed amount and stays
-  // applied (through "Keep Playing", and a later Game Over too). Before banking
-  // — a plain Game Over, or the brief win render before the bank effect runs —
-  // it's the live, submit-time value.
+
   const noUndoBonus = bankedBonus ?? liveBonus;
   const finalScore = score + noUndoBonus;
 
-  // Whether a finished run should prompt for the player's name. Beyond the raw
-  // score check, the leaderboard for this board must have actually loaded:
-  // while a remote leaderboard is still loading (or the radius's snapshot hasn't
-  // arrived yet), `highScores[radius]` looks empty and every positive score
-  // would falsely qualify — which is how the prompt could appear for scores
-  // outside the top N. Once not loading, an absent list means there genuinely
-  // are no entries yet (or no remote configured), so any score legitimately
-  // qualifies.
   const canPromptHighScore = (qualifyingScore: number): boolean => {
     if (isHighScoresRemote && (isHighScoresLoading || highScores[radius] === undefined)) {
       return false;
@@ -141,9 +118,6 @@ export const App: React.FC = () => {
     };
   }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown]);
 
-  // During play, "My Best" follows the on-screen "Score" so it never lags or
-  // leaps ahead of it: the raw score before a win, and the banked-bonus total
-  // (`finalScore`) once a win has locked the bonus in (e.g. while keeping play).
   const displayedScore = bankedBonus !== null ? finalScore : score;
   useEffect(() => {
     setMaxScore((prevState) => {
@@ -153,8 +127,6 @@ export const App: React.FC = () => {
     });
   }, [displayedScore, radius]);
 
-  // At end-of-run, bump "My Best" up to the bonus-adjusted final score (score ×
-  // rate × unused undos) so it matches what gets submitted to the leaderboard.
   useEffect(() => {
     if (!isGameOver && !isWin) return;
     setMaxScore((prevState) => {
@@ -267,8 +239,7 @@ export const App: React.FC = () => {
         mergeCounter.count += 1;
         const comboMultiplier = mergeCounter.count;
         setScore((prevScore) => prevScore + newValue * comboMultiplier);
-        // The base value counts once at ×1; anything above that (×2, ×3, … on
-        // chained merges) is the combo bonus.
+
         if (comboMultiplier > 1) {
           setComboBonus((prev) => prev + newValue * (comboMultiplier - 1));
         }
@@ -335,11 +306,6 @@ export const App: React.FC = () => {
       );
     });
 
-    // One cue for the move as a whole. No merge: a soft slide, and the merge
-    // streak breaks (pitch will restart next time). A merge: bump the streak and
-    // play a single blip whose pitch rises the longer the run goes, regardless
-    // of how many tiles merged this move. A combo flourish layers on for chains
-    // of two or more.
     if (mergeCounter.count === 0) {
       mergeStreakRef.current = 0;
       play("move");
@@ -460,17 +426,12 @@ export const App: React.FC = () => {
     setHasKeptPlaying(true);
   }, []);
 
-  // "Try Again" resets immediately, exactly like "Keep Playing" dismisses: the
-  // fresh board and chrome then ease from the win layout back to normal in one
-  // continuous transition. Deferring the reset until after an exit animation
-  // looked worse — the board content swapped at the very end, so the layout
-  // shifted just as the transition settled.
   const handleTryAgain = useCallback(() => {
     resetGameHandler(radius);
   }, [radius]);
 
   const undoHandler = useCallback(() => {
-    // No undoing once the run is decided — the win/Game Over result is final.
+
     if (isWin || isGameOver) return;
     setTileSet(historyTileSet);
     setScore(historyScore);
@@ -537,10 +498,7 @@ export const App: React.FC = () => {
           onToggleMuted={toggleMuted}
           isWin={isWin}
         />
-        {/* "How to Play" — collapses smoothly on a win (handled inside the
-            component) so the win panel has more room without a pop. It eases
-            back in as `isWin` clears on Keep Playing / Try Again, in step with
-            the board growing back. */}
+        {}
         <Instructions radius={radius} collapsed={isWin} />
         <GameContainer
           ref={boardRef}

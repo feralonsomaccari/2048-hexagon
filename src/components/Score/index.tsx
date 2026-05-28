@@ -4,9 +4,7 @@ type props = {
   title: string;
   score: number;
   historyScore?: number;
-  // Explicit "+N gained" amount for the pop animation. When provided it
-  // overrides the score−historyScore delta, so the animation can show just the
-  // raw move gain even when `score` includes a bonus that isn't a per-move gain.
+
   gain?: number;
 };
 

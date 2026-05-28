@@ -9,17 +9,11 @@ type props = {
   merged?: boolean;
 };
 
-// Tile values that have their own color class in Tile.module.css. Anything
-// beyond the largest tier uses the shared "final" color so super-tiles never
-// render without a background.
 const COLORED_VALUES = new Set([
   2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
   65536,
 ]);
 
-// Shrink the font for longer numbers so big tiles still fit inside the
-// hexagon. The base 42px comfortably fits up to 4 digits (e.g. 2048); past
-// that we scale down by digit count.
 const fontSizeForValue = (value: number): number => {
   const digits = String(value).length;
   if (digits <= 4) return 42;

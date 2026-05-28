@@ -13,8 +13,7 @@ type props = {
   grid: gridElement[];
   radius: number;
   resetGameHandler?: (radius: number) => void;
-  // "Try Again": owned by App so the win panel, board, and surrounding chrome
-  // can run a single coordinated exit. Falls back to a plain reset if absent.
+
   onTryAgain?: () => void;
   isGameOver: boolean;
   isWin: boolean;
@@ -42,16 +41,10 @@ const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
 const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => {}, onTryAgain, isGameOver, isWin, dismissOverlay = () => {}, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, noUndoBonus = 0, noUndoBonusUndos = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false }, ref) => {
-  // Measure the space the board area actually has from its top edge down to the
-  // bottom of the viewport. Used to scale the board on a mobile win so the board
-  // and the result panel together never overflow (which would scroll the page).
-  // Measuring beats estimating page chrome, which varies by device and with the
-  // mobile browser's collapsing URL bar.
+
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
 
-  // "Try Again": App owns the coordinated exit (board regrow + panel pop-out +
-  // chrome ease-in, then reset). Fall back to a plain reset if no handler.
   const handleTryAgain = React.useCallback(() => {
     if (onTryAgain) onTryAgain();
     else resetGameHandler(radius);
@@ -76,8 +69,6 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     return () => window.removeEventListener("resize", measure);
   }, [isWin, viewport.width, viewport.height, radius]);
 
-  // Pure merge points: the raw score with combo points peeled off so each
-  // breakdown line is an honest, additive component of the final score.
   const mergeScore = baseScore - comboBonus;
   const hasBreakdown = comboBonus > 0 || noUndoBonus > 0;
   const natural = naturalGridHeight(radius);
@@ -90,18 +81,9 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   const marginBottom = natural * (scale - 1);
   const boardRenderedHeight = natural * scale;
 
-  // On a win we keep the board on screen and reveal the result panel below the
-  // board (the board shrinks). Game Over keeps the classic full-cover overlay.
-  // `overlayShown` just gates rendering the overlay element itself.
   const overlayShown = isGameOver || isWin;
 
-  // Extra shrink applied to the board on a mobile win so the board *and* the
-  // result panel both fit in the space below the header without scrolling.
-  // `availableHeight` is measured (top of the board area → bottom of viewport);
-  // reserve room for the stacked panel and scale the board to fit the rest,
-  // capped so it never grows. On wider screens the panel also stacks below, but
-  // a fixed gentle shrink (driven by CSS) is fine.
-  const PANEL_RESERVE = 170; // px reserved for the result panel + gap on mobile (no trophy)
+  const PANEL_RESERVE = 170;
   const mobilePanelScale =
     viewport.isMobile && availableHeight > 0
       ? Math.max(
@@ -147,9 +129,6 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
         >
           {isWin && <span className={styles.overlayIcon} aria-hidden="true">🏆</span>}
           <h2 id="overlay-title" className={styles.overlayTitle}>{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
-          <p className={styles.overlayMoves} data-testid="overlay-moves">
-            {movesCount} move{movesCount === 1 ? "" : "s"}
-          </p>
           {hasBreakdown && (
             <dl className={styles.scoreBreakdown} data-testid="score-breakdown">
               <div className={styles.scoreBreakdownRow}>
@@ -171,8 +150,8 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
             </dl>
           )}
           {!(pendingHighScore && onSubmitHighScore) && (
-            <p className={styles.overlayScore}>
-              {hasBreakdown ? "Final score" : "Score"}: {score}
+            <p className={styles.overlayScore} data-testid="overlay-moves">
+              {hasBreakdown ? "Final Score" : "Score"}: {score} in {movesCount} move{movesCount === 1 ? "" : "s"}
             </p>
           )}
           {pendingHighScore && onSubmitHighScore && (

@@ -1,12 +1,9 @@
 type props = {
-  /** Pixel size of the (square) icon. Defaults to 1em so it scales with text. */
+
   size?: number | string;
   className?: string;
 };
 
-// Speaker-with-waves (sound on) icon, cropped and traced from soundicon.png.
-// Uses `fill: currentColor` so it matches its label color in both themes, like
-// the other icons. Keeps potrace's flip/scale transform.
 const UnmuteIcon = ({ size = "1em", className }: props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

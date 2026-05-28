@@ -1,12 +1,9 @@
 type props = {
-  /** Pixel size of the (square) icon. Defaults to 1em so it scales with text. */
+
   size?: number | string;
   className?: string;
 };
 
-// "Undo" arrow, traced from return-icon.png. Uses `fill: currentColor` so it
-// inherits the surrounding text color and matches the button label in both the
-// light and dark themes.
 const UndoIcon = ({ size = "1em", className }: props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -107,8 +107,6 @@
   display: flex;
   align-items: center;
   column-gap: 12px;
-  /* Fill the row's remaining width so the top-score legend can be pushed to the
-     far right while the Undo button stays grouped on the left next to New Game. */
   flex: 1;
 }
 
@@ -317,8 +315,6 @@
   }
 
   .actionsRight {
-    /* Fill remaining width so the top-score legend is pushed to the far right
-       while New Game + Undo stay grouped on the left. */
     flex: 1;
     min-width: 0;
   }

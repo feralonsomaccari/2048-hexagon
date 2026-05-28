@@ -1,4 +1,4 @@
-// Procedural sound engine built on the Web Audio API — no audio assets.
+
 
 type SoundName = "move" | "merge" | "combo" | "win" | "gameOver";
 
@@ -42,13 +42,12 @@ const playTone = (
     delay?: number;
     glideTo?: number;
     attack?: number;
-    vary?: number; // ± fraction of random pitch jitter per play (e.g. 0.06 = ±6%)
+    vary?: number;
   } = {}
 ): void => {
   const audio = getContext();
   if (!audio || !masterGain) return;
 
-  // Nudge the pitch a touch each play so repeats don't sound identical.
   const detune = vary ? 1 + (Math.random() * 2 - 1) * vary : 1;
 
   const start = audio.currentTime + delay;
@@ -59,7 +58,6 @@ const playTone = (
   osc.frequency.setValueAtTime(freq * detune, start);
   if (glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo * detune, start + duration);
 
-  // Quick attack, exponential decay — a soft percussive blip rather than a beep.
   env.gain.setValueAtTime(0.0001, start);
   env.gain.exponentialRampToValueAtTime(gain, start + attack);
   env.gain.exponentialRampToValueAtTime(0.0001, start + duration);
@@ -70,7 +68,7 @@ const playTone = (
   osc.stop(start + duration + 0.02);
 };
 
-const MERGE_BASE = 330; // ~E4, the pitch of the smallest merge (the new "4" tile)
+const MERGE_BASE = 330;
 const SEMITONE = Math.pow(2, 1 / 12);
 
 type SoundOpts = { streak?: number; combo?: number };
@@ -80,15 +78,15 @@ const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
     playTone(180, { duration: 0.04, type: "triangle", gain: 0.3, glideTo: 140, vary: 0.08 }),
 
   merge: () => {
-    // Same sound as a move.
+
     playTone(180, { duration: 0.04, type: "triangle", gain: 0.6, glideTo: 140, vary: 0.08 });
   },
 
   combo: ({ combo = 2 } = {}) => {
     if (!COMBO_SOUND_ENABLED) return;
-    const steps = Math.min(Math.max(combo, 2), 6); // 2..6 rising notes
+    const steps = Math.min(Math.max(combo, 2), 6);
     for (let i = 0; i < steps; i++) {
-      const freq = MERGE_BASE * Math.pow(SEMITONE, 7 + i * 2); // start a 5th up, climb
+      const freq = MERGE_BASE * Math.pow(SEMITONE, 7 + i * 2);
       playTone(freq, {
         duration: 0.06,
         type: "triangle",
@@ -117,13 +115,10 @@ export const playSound = (name: SoundName, opts?: SoundOpts): void => {
   sounds[name](opts);
 };
 
-// Haptic feedback for big moments. Honors the same mute flag as sound.
-// Note: the Vibration API is unsupported on iOS Safari, so this is a no-op
-// on iPhones/iPads — Android Chrome/Firefox will buzz.
 const vibrationPatterns: Partial<Record<SoundName, number | number[]>> = {
-  // A short triple buzz to celebrate.
+
   win: [60, 50, 60, 50, 120],
-  // A single longer buzz for the loss.
+
   gameOver: 250,
 };
 
@@ -135,7 +130,7 @@ export const vibrate = (name: SoundName): void => {
   try {
     navigator.vibrate(pattern);
   } catch {
-    // Some browsers throw if called outside a user gesture; ignore.
+
   }
 };
 
