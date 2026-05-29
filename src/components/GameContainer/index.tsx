@@ -94,12 +94,15 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     : desktopDesignWidth;
   const widthScale = targetWidth / naturalWidth;
   // Vertical room below the board top, reserving space for the power-up bar
-  // that renders after the board so the page fits without scrolling on mobile.
+  // and footer that render after the board so the page fits without scrolling.
   const POWER_UP_BAR_RESERVE = 110;
+  // Desktop additionally renders the attribution footer below the power-up bar,
+  // so reserve extra room to keep it on-screen without vertical overflow.
+  const FOOTER_RESERVE = 60;
+  const verticalReserve =
+    POWER_UP_BAR_RESERVE + (viewport.isMobile ? 0 : FOOTER_RESERVE);
   const heightScale =
-    viewport.isMobile && availableHeight > 0
-      ? (availableHeight - POWER_UP_BAR_RESERVE) / natural
-      : widthScale;
+    availableHeight > 0 ? (availableHeight - verticalReserve) / natural : widthScale;
   const scale = isWin
     ? widthScale
     : Math.max(0.4, Math.min(widthScale, heightScale));

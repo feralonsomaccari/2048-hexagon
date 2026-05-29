@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.17.1] - 2026-05-29
+
+### Fixed
+- **Normal board no longer overflows vertically on desktop.** The board was scaled purely by width on desktop, ignoring the vertical space taken by the power-up bar and the "Based on 2048 by Gabriele Cirulli" attribution footer below it — so on the Normal board the footer was pushed off-screen and the page scrolled. The board now also shrinks to fit the available height on desktop (reserving room for both the power-up bar and the footer), matching the existing mobile behaviour.
+
 ## [0.17.0] - 2026-05-28
 
 ### Added
