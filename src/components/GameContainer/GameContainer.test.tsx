@@ -92,6 +92,60 @@ describe("<GameContainer/>", () => {
     expect(resetGameHandler).toHaveBeenCalledWith(3);
   });
 
+  it("should offer Undo in the game-over overlay when a revive is available", () => {
+    const onReviveWithUndo = vi.fn();
+    render(
+      <GameContainer
+        {...props}
+        isGameOver={true}
+        canReviveWithUndo={true}
+        undosRemaining={2}
+        onReviveWithUndo={onReviveWithUndo}
+      />
+    );
+    const undoButton = screen.getByRole("button", { name: "Undo (2)" });
+    fireEvent.click(undoButton);
+    expect(onReviveWithUndo).toHaveBeenCalledTimes(1);
+  });
+
+  it("should label the revive Undo without a count when one charge remains", () => {
+    render(
+      <GameContainer
+        {...props}
+        isGameOver={true}
+        canReviveWithUndo={true}
+        undosRemaining={1}
+        onReviveWithUndo={vi.fn()}
+      />
+    );
+    expect(screen.getByRole("button", { name: "Undo" })).toBeInTheDocument();
+  });
+
+  it("should not offer Undo in the overlay when no revive is available", () => {
+    render(
+      <GameContainer
+        {...props}
+        isGameOver={true}
+        canReviveWithUndo={false}
+        onReviveWithUndo={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole("button", { name: /^Undo/ })).not.toBeInTheDocument();
+  });
+
+  it("should not offer Undo in the win overlay", () => {
+    render(
+      <GameContainer
+        {...props}
+        isWin={true}
+        canReviveWithUndo={true}
+        undosRemaining={2}
+        onReviveWithUndo={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole("button", { name: /^Undo/ })).not.toBeInTheDocument();
+  });
+
   it("should expose tiles as buttons in remove mode", () => {
     render(<GameContainer {...props} isRemoveMode={true} onRemoveTile={vi.fn()} />);
     expect(screen.getAllByRole("button", { name: /Remove tile/ })).toHaveLength(3);

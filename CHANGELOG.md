@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-05-29
+
+### Added
+- **Undo your way out of a loss.** When the board fills up and you have an undo charge left, the **Game Over** overlay now offers an **Undo** button alongside **Try Again**. Tapping it spends one undo charge to roll the board back to the move before the loss and resume play — no restart, score preserved. The button shows the remaining charge count when more than one is left (e.g. **"Undo (2)"**) and only appears when undos remain for that board and there's a prior move to return to.
+
 ## [0.17.1] - 2026-05-29
 
 ### Fixed

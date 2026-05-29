@@ -502,6 +502,25 @@ export const App: React.FC = () => {
     setUndoCount(prev => prev + 1)
   }, [historyTileSet, historyScore, historyComboBonus, isWin, isGameOver]);
 
+  // Undo charges left this run; a revive spends one charge to roll the
+  // game-over board back to the move before the loss.
+  const undosRemaining = Math.max(0, maxUndo - undoCount);
+  const canReviveWithUndo =
+    isGameOver && !isWin && undosRemaining > 0 && historyTileSet.length > 0;
+
+  const reviveWithUndo = useCallback(() => {
+    if (!canReviveWithUndo) return;
+    setTileSet(historyTileSet);
+    setScore(historyScore);
+    setComboBonus(historyComboBonus);
+    setBankedBonus(null);
+    setUndoCount((prev) => prev + 1);
+    setIsUndoAvailable(false);
+    setIsGameOver(false);
+    setPendingHighScore(false);
+    playedGameOverRef.current = false;
+  }, [canReviveWithUndo, historyTileSet, historyScore, historyComboBonus]);
+
   const toggleRemoveMode = useCallback(() => {
     if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
     setIsSwapMode(false);
@@ -630,6 +649,9 @@ export const App: React.FC = () => {
           isSwapMode={isSwapMode}
           selectedSwapTileId={selectedSwapTileId}
           onSwapSelect={swapSelectHandler}
+          canReviveWithUndo={canReviveWithUndo}
+          undosRemaining={undosRemaining}
+          onReviveWithUndo={reviveWithUndo}
         />
         {!isWin && (
           <PowerUpBar

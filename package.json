@@ -1,6 +1,6 @@
 {
   "name": "2048-hexagon",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "private": true,
   "type": "module",
   "description": "A hexagonal twist on the classic 2048 puzzle game, built with React and TypeScript.",

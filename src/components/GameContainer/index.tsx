@@ -35,6 +35,9 @@ type props = {
   isSwapMode?: boolean;
   selectedSwapTileId?: number | null;
   onSwapSelect?: (tile: gridElement) => void;
+  canReviveWithUndo?: boolean;
+  undosRemaining?: number;
+  onReviveWithUndo?: () => void;
 };
 
 const EDGE_LENGTH = 66.5;
@@ -47,7 +50,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -225,6 +228,12 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
             />
           )}
           <div className={styles.overlayActions}>
+            {!isWin && canReviveWithUndo && onReviveWithUndo && (
+              <Button
+                clickHandler={onReviveWithUndo}
+                text={`Undo${undosRemaining > 1 ? ` (${undosRemaining})` : ""}`}
+              />
+            )}
             <Button clickHandler={handleTryAgain} text='Try Again' />
             {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing' />}
           </div>
