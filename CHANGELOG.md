@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-06-01
+
 ### Added
 - Added Freeze and Double power-ups for radius 1.
+- Added an under-development notice to the leaderboard.
 
 ## [0.24.0] - 2026-06-01
 

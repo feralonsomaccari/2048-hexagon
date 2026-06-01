@@ -16,6 +16,11 @@ type props = {
 
 const radiusOrder = [1, 2];
 
+const isPreRelease = (): boolean => {
+  const major = Number(__APP_VERSION__.split(".")[0]);
+  return Number.isFinite(major) && major < 1;
+};
+
 const Leaderboard = ({ scores, highlightRadius, highlightEntry, isLoading = false }: props) => {
   const isHighlighted = (
     radius: number,
@@ -75,6 +80,11 @@ const Leaderboard = ({ scores, highlightRadius, highlightEntry, isLoading = fals
           </section>
         );
       })}
+      {isPreRelease() && (
+        <p className={styles.devNotice} data-testid="leaderboard-dev-notice">
+          This game is under development - the leaderboard may be wiped at release.
+        </p>
+      )}
     </div>
   );
 };
