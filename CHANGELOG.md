@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.23.3] - 2026-06-01
+
+### Fixed
+- Fixed the high-score prompt reappearing after you save your name.
+
 ## [0.23.2] - 2026-06-01
 
 ### Changed

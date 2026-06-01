@@ -87,6 +87,7 @@ export const App: React.FC = () => {
 
   const playedWinRef = useRef<boolean>(initialSavedGame?.isWin ?? false);
   const playedGameOverRef = useRef<boolean>(false);
+  const hasSubmittedHighScoreRef = useRef<boolean>(false);
 
   const mergeStreakRef = useRef<number>(0);
 
@@ -229,6 +230,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (!isGameOver && !isWin) return;
     if (pendingHighScore) return;
+    if (hasSubmittedHighScoreRef.current) return;
     if (canPromptHighScore(finalScore)) {
       setPendingHighScore(true);
     }
@@ -442,6 +444,7 @@ export const App: React.FC = () => {
     setLastQualifyingRadius(null);
     playedWinRef.current = false;
     playedGameOverRef.current = false;
+    hasSubmittedHighScoreRef.current = false;
     mergeStreakRef.current = 0;
     maxComboThisMoveRef.current = 0;
     maxMergeStreakRef.current = 0;
@@ -466,6 +469,7 @@ export const App: React.FC = () => {
         setLastQualifyingEntry(entry);
         setLastQualifyingRadius(radius);
       }
+      hasSubmittedHighScoreRef.current = true;
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
@@ -739,6 +743,9 @@ export const App: React.FC = () => {
             </button>
             <button type="button" onClick={() => setIsGameOver(true)}>
               Dev: Lose
+            </button>
+            <button type="button" onClick={() => setScore((prev) => prev + 1000)}>
+              Dev: +1000
             </button>
           </div>
         )}
