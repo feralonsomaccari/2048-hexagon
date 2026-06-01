@@ -53,7 +53,6 @@ export const App: React.FC = () => {
   const [bankedBonus, setBankedBonus] = useState<number | null>(initialSavedGame?.bankedBonus ?? null);
   const [score, setScore] = useState(initialSavedGame?.score ?? 0);
 
-  const [comboBonus, setComboBonus] = useState(initialSavedGame?.comboBonus ?? 0);
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
   const [movesCount, setMovesCount] = useState(initialSavedGame?.movesCount ?? 0)
@@ -65,7 +64,6 @@ export const App: React.FC = () => {
   const [isSwapMode, setIsSwapMode] = useState(false)
   const [selectedSwapTileId, setSelectedSwapTileId] = useState<number | null>(null)
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
-  const [historyComboBonus, setHistoryComboBonus] = useState(initialSavedGame?.historyComboBonus ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading, isRemote: isHighScoresRemote } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
@@ -234,11 +232,9 @@ export const App: React.FC = () => {
       tileSet,
       grid,
       score,
-      comboBonus,
       radius,
       historyTileSet,
       historyScore,
-      historyComboBonus,
       undoCount,
       isUndoAvailable,
       isMaxUndo,
@@ -249,7 +245,7 @@ export const App: React.FC = () => {
       bankedBonus: bankedBonus ?? undefined,
       movesCount,
     });
-  }, [tileSet, grid, score, comboBonus, radius, historyTileSet, historyScore, historyComboBonus, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
+  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
 
   const updateTile = (
     tile: gridElement,
@@ -273,12 +269,8 @@ export const App: React.FC = () => {
         }
         const newValue = tile.value + nextBlock.value;
         mergeCounter.count += 1;
-        const comboMultiplier = mergeCounter.count;
-        setScore((prevScore) => prevScore + newValue * comboMultiplier);
+        setScore((prevScore) => prevScore + newValue);
 
-        if (comboMultiplier > 1) {
-          setComboBonus((prev) => prev + newValue * (comboMultiplier - 1));
-        }
         if (!hasKeptPlaying && newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
         tile.x = nextBlock.x;
         tile.y = nextBlock.y;
@@ -323,7 +315,6 @@ export const App: React.FC = () => {
     const clonedTileSet = structuredClone(tileSet);
     setHistoryTileSet(clonedTileSet);
     setHistoryScore(score);
-    setHistoryComboBonus(comboBonus);
     if (!isMaxUndo) {
       setIsUndoAvailable(true);
     }
@@ -410,8 +401,6 @@ export const App: React.FC = () => {
 
   const resetGameHandler = (newRadius: number): void => {
     setScore(0);
-    setComboBonus(0);
-    setHistoryComboBonus(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
     setUndoCount(0)
@@ -447,7 +436,6 @@ export const App: React.FC = () => {
         undosUsed: undoCount,
         removesUsed: removeCount,
         swapsUsed: swapCount,
-        comboBonus,
         nonUsedPowerUpBonus: powerUpBonus,
         movesCount,
       });
@@ -458,7 +446,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, finalScore, undoCount, removeCount, swapCount, comboBonus, powerUpBonus, movesCount, submitRemoteHighScore]
+    [radius, finalScore, undoCount, removeCount, swapCount, powerUpBonus, movesCount, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {
@@ -497,10 +485,9 @@ export const App: React.FC = () => {
     if (isWin || isGameOver) return;
     setTileSet(historyTileSet);
     setScore(historyScore);
-    setComboBonus(historyComboBonus);
     setIsUndoAvailable(false);
     setUndoCount(prev => prev + 1)
-  }, [historyTileSet, historyScore, historyComboBonus, isWin, isGameOver]);
+  }, [historyTileSet, historyScore, isWin, isGameOver]);
 
   // Undo charges left this run; a revive spends one charge to roll the
   // game-over board back to the move before the loss.
@@ -512,14 +499,13 @@ export const App: React.FC = () => {
     if (!canReviveWithUndo) return;
     setTileSet(historyTileSet);
     setScore(historyScore);
-    setComboBonus(historyComboBonus);
     setBankedBonus(null);
     setUndoCount((prev) => prev + 1);
     setIsUndoAvailable(false);
     setIsGameOver(false);
     setPendingHighScore(false);
     playedGameOverRef.current = false;
-  }, [canReviveWithUndo, historyTileSet, historyScore, historyComboBonus]);
+  }, [canReviveWithUndo, historyTileSet, historyScore]);
 
   const toggleRemoveMode = useCallback(() => {
     if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
@@ -637,7 +623,6 @@ export const App: React.FC = () => {
           pendingHighScore={pendingHighScore}
           score={finalScore}
           baseScore={score}
-          comboBonus={comboBonus}
           powerUpBonus={powerUpBonus}
           unusedPowerUps={unusedPowerUps}
           movesCount={movesCount}

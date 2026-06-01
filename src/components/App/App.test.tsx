@@ -29,7 +29,7 @@ vi.mock("firebase/firestore", () => ({
 }));
 
 import { App } from ".";
-import { MAX_REMOVE_BY_RADIUS } from "../../config/gameConfig";
+import { MAX_REMOVE_BY_RADIUS, MAX_UNDO_BY_RADIUS } from "../../config/gameConfig";
 
 const MOVE_KEYS = ["q", "w", "e", "a", "s", "d"];
 
@@ -87,16 +87,29 @@ describe("<App/>", () => {
     });
   });
 
+  // The undo power-up only exists on radius-1 boards, but the app defaults to
+  // radius 2 (no power-ups). Pin lastRadius to 1 and render a fresh module so
+  // the undo tile mounts.
   describe("undo budget", () => {
-    it("should start with 1 remaining undo shown on the power-up", async () => {
-      render(<App />);
+    beforeEach(() => {
+      localStorage.clear();
+      localStorage.setItem("lastRadius", String(RADIUS_1));
+    });
+
+    afterEach(() => {
+      cleanup();
+      localStorage.clear();
+    });
+
+    it("should start with 3 remaining undos shown on the power-up", async () => {
+      await renderFreshApp();
       await waitFor(() => {
-        expect(remainingUndos()).toBe(1);
+        expect(remainingUndos()).toBe(3);
       });
     });
 
     it("should keep the undo power-up disabled before any move is made", async () => {
-      render(<App />);
+      await renderFreshApp();
       await waitFor(() => {
         expect(screen.getByTestId("power-up-undo")).toBeInTheDocument();
       });
@@ -104,21 +117,22 @@ describe("<App/>", () => {
     });
 
     it("should decrement the counter after each undo and lock at 0", async () => {
-      render(<App />);
+      await renderFreshApp();
       await waitFor(() => {
         expect(screen.getByTestId("power-up-undo")).toBeInTheDocument();
       });
 
-      for (let used = 0; used < 1; used += 1) {
+      const totalUndos = MAX_UNDO_BY_RADIUS[RADIUS_1];
+      for (let used = 0; used < totalUndos; used += 1) {
         await makeAnyValidMove();
-        expect(remainingUndos()).toBe(1 - used);
+        expect(remainingUndos()).toBe(totalUndos - used);
 
         await act(async () => {
           fireEvent.click(screen.getByTestId("power-up-undo"));
         });
 
         await waitFor(() => {
-          expect(remainingUndos()).toBe(1 - used - 1);
+          expect(remainingUndos()).toBe(totalUndos - used - 1);
         });
       }
 
@@ -126,7 +140,7 @@ describe("<App/>", () => {
 
       try {
         await makeAnyValidMove();
-        throw new Error("Expected no undo to become available after 1 undo consumed");
+        throw new Error("Expected no undo to become available after all undos consumed");
       } catch (err) {
         expect((err as Error).message).toMatch(/No movement direction enabled undo/);
       }
@@ -212,8 +226,8 @@ describe("<App/> win overlay", () => {
 
   it("awards the power-up bonus in the win overlay when no power-up was used", async () => {
 
-    // radius 1 budgets: 3 undo + 1 remove + 1 swap = 5 unused power-ups.
-    // 512 * 0.05 * 5 = 128 bonus.
+    // radius 1 budgets: 3 undo + 2 remove + 2 swap = 7 unused power-ups.
+    // 512 * 0.05 * 7 = 179.2 -> 179 bonus.
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -227,14 +241,14 @@ describe("<App/> win overlay", () => {
 
     const breakdown = screen.getByTestId("score-breakdown");
     expect(breakdown).toHaveTextContent("512");
-    expect(breakdown).toHaveTextContent("+128");
+    expect(breakdown).toHaveTextContent("+179");
 
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("640");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("691");
   });
 
   it("awards a partial bonus scaled to the power-ups left unused", async () => {
 
-    // 2 unused undo + 1 remove + 1 swap = 4 unused. 512 * 0.05 * 4 = 102.4 -> 102.
+    // 2 unused undo + 2 remove + 2 swap = 6 unused. 512 * 0.05 * 6 = 153.6 -> 154.
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 1 });
     await renderFreshApp();
 
@@ -248,8 +262,8 @@ describe("<App/> win overlay", () => {
 
     const breakdown = screen.getByTestId("score-breakdown");
     expect(breakdown).toHaveTextContent("512");
-    expect(breakdown).toHaveTextContent("+102");
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("614");
+    expect(breakdown).toHaveTextContent("+154");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("666");
   });
 
   it("awards no bonus once all power-ups are used", async () => {
@@ -258,8 +272,8 @@ describe("<App/> win overlay", () => {
       isWin: false,
       hasKeptPlaying: false,
       undoCount: 3,
-      removeCount: 1,
-      swapCount: 1,
+      removeCount: 2,
+      swapCount: 2,
     });
     await renderFreshApp();
 
@@ -276,41 +290,6 @@ describe("<App/> win overlay", () => {
     expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("512");
   });
 
-  it("breaks out the combo bonus earned from chained merges", async () => {
-
-    const comboPairs: gridElement[] = [
-      { x: 1, y: 0, z: -1, value: 256, id: 1 },
-      { x: 1, y: -1, z: 0, value: 256, id: 2 },
-      { x: -1, y: 1, z: 0, value: 256, id: 3 },
-      { x: -1, y: 0, z: 1, value: 256, id: 4 },
-    ];
-    // Consume every power-up so only the combo bonus shows up here.
-    seedSavedGame({
-      tileSet: comboPairs,
-      historyTileSet: comboPairs,
-      isWin: false,
-      hasKeptPlaying: false,
-      undoCount: 3,
-      removeCount: 1,
-      swapCount: 1,
-    });
-    await renderFreshApp();
-
-    await act(async () => {
-      fireEvent.keyDown(document, { key: "w" });
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("overlay")).toBeInTheDocument();
-    });
-
-    const breakdown = screen.getByTestId("score-breakdown");
-    expect(breakdown).toHaveTextContent("Combo bonus");
-    expect(breakdown).toHaveTextContent("+512");
-    expect(breakdown).toHaveTextContent("1024");
-
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("1536");
-  });
 
   it("tracks the live raw score in My Best during play (no bonus mid-game)", async () => {
 
@@ -342,8 +321,8 @@ describe("<App/> win overlay", () => {
       expect(screen.getByTestId("overlay")).toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText("Score: 640")).toBeInTheDocument();
-    expect(screen.getByLabelText("My Best: 640")).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 691")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 691")).toBeInTheDocument();
   });
 
   it("keeps the banked bonus in the header Score after Keep Playing", async () => {
@@ -358,7 +337,7 @@ describe("<App/> win overlay", () => {
     await waitFor(() => {
       expect(screen.getByTestId("overlay")).toBeInTheDocument();
     });
-    expect(screen.getByLabelText("Score: 640")).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 691")).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.click(screen.getByText("Keep Playing"));
@@ -368,8 +347,8 @@ describe("<App/> win overlay", () => {
       expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText("Score: 640")).toBeInTheDocument();
-    expect(screen.getByLabelText("My Best: 640")).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 691")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 691")).toBeInTheDocument();
   });
 
   it("keeps the banked bonus fixed even when an undo is used after Keep Playing", async () => {
@@ -395,7 +374,7 @@ describe("<App/> win overlay", () => {
       fireEvent.click(screen.getByTestId("power-up-undo"));
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("Score: 128")).toBeInTheDocument();
+      expect(screen.getByLabelText("Score: 179")).toBeInTheDocument();
     });
   });
 

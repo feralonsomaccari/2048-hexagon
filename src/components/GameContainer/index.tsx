@@ -23,7 +23,6 @@ type props = {
   pendingHighScore?: boolean;
   score?: number;
   baseScore?: number;
-  comboBonus?: number;
   powerUpBonus?: number;
   unusedPowerUps?: number;
   movesCount?: number;
@@ -50,7 +49,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, comboBonus = 0, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -87,8 +86,8 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     return () => window.removeEventListener("resize", measure);
   }, [isWin, viewport.width, viewport.height, radius]);
 
-  const mergeScore = baseScore - comboBonus;
-  const hasBreakdown = comboBonus > 0 || powerUpBonus > 0;
+  const mergeScore = baseScore;
+  const hasBreakdown = powerUpBonus > 0;
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
   const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
@@ -201,12 +200,6 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
                 <dt>Score</dt>
                 <dd>{mergeScore}</dd>
               </div>
-              {comboBonus > 0 && (
-                <div className={styles.scoreBreakdownRow}>
-                  <dt>Combo bonus</dt>
-                  <dd>+{comboBonus}</dd>
-                </div>
-              )}
               {powerUpBonus > 0 && (
                 <div className={styles.scoreBreakdownRow}>
                   <dt>Unused power-up{unusedPowerUps > 1 ? ` (×${unusedPowerUps})` : ""}</dt>

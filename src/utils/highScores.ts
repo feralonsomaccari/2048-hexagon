@@ -9,8 +9,6 @@ export type HighScoreEntry = {
 
   swapsUsed?: number;
 
-  comboBonus?: number;
-
   nonUsedPowerUpBonus?: number;
 
   movesCount?: number;

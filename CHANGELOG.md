@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-06-01
+
+### Changed
+- **Combo points removed.** Chaining several merges in a single move no longer multiplies their value — each merge is now worth its plain combined tile value, regardless of how many merges happen that turn. The **"Combo bonus"** row in the end-of-game score breakdown is gone, and combo bonus is no longer tracked in the saved game or recorded with leaderboard submissions.
+
 ## [0.18.0] - 2026-05-29
 
 ### Added
