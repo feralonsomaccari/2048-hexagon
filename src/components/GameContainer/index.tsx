@@ -55,12 +55,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
 
-  // On a win, the winning tile shines for a beat before the overlay choreography
-  // (overlay fade -> confetti -> trophy) begins. SHINE_DURATION matches the
-  // winning-tile shine animation in Tile.module.css (2 pulses x 0.45s).
   const SHINE_DURATION = 900;
-  // A restored saved game that is already won should show the overlay immediately
-  // rather than replaying the shine; only a fresh in-play win triggers it.
   const winOnMountRef = React.useRef(isWin);
   const [winRevealed, setWinRevealed] = React.useState(isWin);
   React.useEffect(() => {
@@ -70,7 +65,6 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
       return;
     }
     if (winOnMountRef.current) return;
-    // Users who prefer reduced motion skip the shine and see the overlay at once.
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -81,6 +75,27 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     const timer = window.setTimeout(() => setWinRevealed(true), SHINE_DURATION);
     return () => window.clearTimeout(timer);
   }, [isWin]);
+
+  const COLLAPSE_DURATION = 400;
+  const gameOverOnMountRef = React.useRef(isGameOver);
+  const [gameOverRevealed, setGameOverRevealed] = React.useState(isGameOver);
+  React.useEffect(() => {
+    if (!isGameOver) {
+      gameOverOnMountRef.current = false;
+      setGameOverRevealed(false);
+      return;
+    }
+    if (gameOverOnMountRef.current) return;
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      setGameOverRevealed(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setGameOverRevealed(true), COLLAPSE_DURATION);
+    return () => window.clearTimeout(timer);
+  }, [isGameOver]);
 
   const handleTryAgain = React.useCallback(() => {
     if (onTryAgain) onTryAgain();
@@ -137,8 +152,6 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   const marginBottom = natural * (scale - 1);
   const boardRenderedHeight = natural * scale;
 
-  // The winning tile is the highest-value tile that reached the win threshold;
-  // it shines on the board before the overlay appears.
   const winTileValue = WIN_TILE_BY_RADIUS[radius] ?? 2048;
   const winningTileId = React.useMemo(() => {
     if (!isWin) return null;
@@ -149,7 +162,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     return best?.id ?? null;
   }, [isWin, tileSet, winTileValue]);
 
-  const overlayShown = isGameOver || (isWin && winRevealed);
+  const overlayShown = (isGameOver && gameOverRevealed) || (isWin && winRevealed);
   const shineActive = isWin && !winRevealed;
 
   return (

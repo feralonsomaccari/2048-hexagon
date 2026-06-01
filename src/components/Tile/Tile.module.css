@@ -64,9 +64,6 @@
   outline-offset: -3px;
 }
 
-/* Winning tile: a golden glow halo grows/shrinks while the tile pulses,
-   played before the win overlay choreography begins. The drop-shadow filter
-   renders the hex silhouette's glow outside the tile's own clipping. */
 .winning {
   z-index: 3;
   animation: winningPulse 0.45s ease-in-out 2 both;

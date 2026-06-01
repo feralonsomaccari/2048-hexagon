@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.21.3] - 2026-06-01
+
+### Changed
+- Game Over now collapses the power-up bar and How-to-Play before the overlay fades in.
+
 ## [0.21.2] - 2026-06-01
 
 ### Added
