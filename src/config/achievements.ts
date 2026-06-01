@@ -25,7 +25,7 @@ export type Achievement = {
 
 export const ACHIEVEMENT_GROUP_LABELS: Record<AchievementGroup, string> = {
   small: "Small board",
-  default: "Default board",
+  default: "Big board",
   general: "General",
 };
 

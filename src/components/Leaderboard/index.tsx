@@ -14,7 +14,7 @@ type props = {
   isLoading?: boolean;
 };
 
-const radiusOrder = [2, 1];
+const radiusOrder = [1, 2];
 
 const Leaderboard = ({ scores, highlightRadius, highlightEntry, isLoading = false }: props) => {
   const isHighlighted = (

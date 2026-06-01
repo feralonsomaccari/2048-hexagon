@@ -24,7 +24,7 @@ export const MAX_ENTRIES_PER_BOARD = LEADERBOARD_SIZE;
 
 export const BOARD_LABELS: Record<number, string> = {
   1: "Small",
-  2: "Normal",
+  2: "Big",
   3: "Large",
   4: "XL",
 };

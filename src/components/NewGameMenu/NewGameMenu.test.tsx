@@ -9,13 +9,13 @@ describe("<NewGameMenu/>", () => {
   it("should render all size options", () => {
     render(<NewGameMenu {...props} />);
     expect(screen.getByText("Small")).toBeInTheDocument();
-    expect(screen.getByText("Normal")).toBeInTheDocument();
+    expect(screen.getByText("Big")).toBeInTheDocument();
     expect(screen.queryByText("Medium")).not.toBeInTheDocument();
     expect(screen.queryByText("Large")).not.toBeInTheDocument();
     expect(screen.queryByText("XL")).not.toBeInTheDocument();
   });
 
-  it("should note power ups on Small and none on Normal", () => {
+  it("should note power ups on Small and none on Big", () => {
     render(<NewGameMenu {...props} />);
     expect(screen.getByText("Power ups")).toBeInTheDocument();
     expect(screen.getByText("No power ups")).toBeInTheDocument();
@@ -34,10 +34,10 @@ describe("<NewGameMenu/>", () => {
     expect(resetGameHandler).toHaveBeenCalledWith(1);
   });
 
-  it("should default to Normal (radius 2)", () => {
+  it("should default to Small (radius 1)", () => {
     const resetGameHandler = vi.fn();
     render(<NewGameMenu resetGameHandler={resetGameHandler} />);
     fireEvent.click(screen.getByText("Start Game"));
-    expect(resetGameHandler).toHaveBeenCalledWith(2);
+    expect(resetGameHandler).toHaveBeenCalledWith(1);
   });
 });

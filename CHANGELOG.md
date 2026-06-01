@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-06-01
+
 ### Added
 - Achievements with unlock toasts and a panel listing progress.
+
+### Changed
+- Renamed the Normal board to Big, made Small the default, and listed Small first on the leaderboard.
 
 ## [0.22.1] - 2026-06-01
 

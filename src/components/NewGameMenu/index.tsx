@@ -20,11 +20,11 @@ const hasPowerUps = (radius: number): boolean =>
 
 const sizes = [
   { radius: 1, label: "Small", description: "7 cells" },
-  { radius: 2, label: "Normal", description: "19 cells" },
+  { radius: 2, label: "Big", description: "19 cells" },
 
 ];
 
-const NewGameMenu = ({ resetGameHandler, currentRadius = 2 }: props) => {
+const NewGameMenu = ({ resetGameHandler, currentRadius = 1 }: props) => {
   const [selected, setSelected] = useState(currentRadius);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
