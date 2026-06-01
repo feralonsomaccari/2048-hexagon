@@ -11,11 +11,14 @@ type props = {
 
 const HighScorePrompt = ({ score, onSubmit, beatsHighScore = false }: props) => {
   const [name, setName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (submitting) return;
     const trimmed = name.trim().slice(0, MAX_NAME_LENGTH);
     if (!trimmed) return;
+    setSubmitting(true);
     onSubmit(trimmed);
   };
 
@@ -33,10 +36,12 @@ const HighScorePrompt = ({ score, onSubmit, beatsHighScore = false }: props) => 
         maxLength={MAX_NAME_LENGTH}
         autoFocus
         autoComplete="off"
+        disabled={submitting}
       />
       <div className={styles.formActions}>
         <Button
-          text="Save"
+          text={submitting ? "Saving…" : "Save"}
+          disabled={submitting}
           extraProps={{ type: "submit" }}
         />
       </div>

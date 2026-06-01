@@ -4,7 +4,7 @@ export const FIREBASE_LOGS_ENABLED = false;
 export const DEFAULT_RADIUS = 1;
 
 export const WIN_TILE_BY_RADIUS: Record<number, number> = {
-  1: 512,
+  1: 2048,
   2: 2048,
   3: 2048,
   4: 2048,
