@@ -21,7 +21,7 @@ export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
 };
 
 export const MAX_REMOVE_BY_RADIUS: Record<number, number> = {
-  1: 2,
+  1: 0,
   2: 0,
   3: 0,
   4: 0,
@@ -34,9 +34,25 @@ export const MAX_SWAP_BY_RADIUS: Record<number, number> = {
   4: 0,
 };
 
+export const MAX_FREEZE_BY_RADIUS: Record<number, number> = {
+  1: 2,
+  2: 0,
+  3: 0,
+  4: 0,
+};
+
+export const MAX_DOUBLE_BY_RADIUS: Record<number, number> = {
+  1: 2,
+  2: 0,
+  3: 0,
+  4: 0,
+};
+
+export const DOUBLE_MAX_VALUE = 512;
+
 export const UNUSED_POWER_UP_BONUS_RATE = 0.03;
 
-export type PowerUpId = "undo" | "removeTile" | "swap" | "newGame";
+export type PowerUpId = "undo" | "removeTile" | "swap" | "freeze" | "double" | "newGame";
 
 export type PowerUpDef = {
   id: PowerUpId;
@@ -61,6 +77,16 @@ export const POWER_UPS: PowerUpDef[] = [
     id: "swap",
     label: "Swap",
     description: "Swap two tiles on the board",
+  },
+  {
+    id: "freeze",
+    label: "Freeze",
+    description: "Skip the next tile spawn",
+  },
+  {
+    id: "double",
+    label: "Double",
+    description: "Double a tile's value (up to 512)",
   },
   {
     id: "newGame",

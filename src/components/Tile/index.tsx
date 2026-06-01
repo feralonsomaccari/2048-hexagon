@@ -8,7 +8,8 @@ type props = {
   top?: number;
   merged?: boolean;
   targeting?: boolean;
-  targetingAction?: "remove" | "swap";
+  targetable?: boolean;
+  targetingAction?: "remove" | "swap" | "double";
   selected?: boolean;
   removing?: boolean;
   winning?: boolean;
@@ -28,12 +29,17 @@ const fontSizeForValue = (value: number): number => {
   return 24;
 };
 
-const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "remove", selected = false, removing = false, winning = false, onSelect }: props): JSX.Element => {
+const Tile = ({ value, left, top, merged, targeting = false, targetable = true, targetingAction = "remove", selected = false, removing = false, winning = false, onSelect }: props): JSX.Element => {
   const colorClass = COLORED_VALUES.has(value)
     ? styles[`color-${value}`]
     : styles["color-final"];
+  const isTargetable = targeting && targetable;
   const targetingLabel =
-    targetingAction === "swap" ? `Swap tile ${value}` : `Remove tile ${value}`;
+    targetingAction === "swap"
+      ? `Swap tile ${value}`
+      : targetingAction === "double"
+        ? `Double tile ${value}`
+        : `Remove tile ${value}`;
   const fontSize = fontSizeForValue(value);
 
   if (removing) {
@@ -59,14 +65,14 @@ const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "
     <div
       data-testid="tile"
       style={{ left, top, ...getGridElementSizeFromRadius() }}
-      className={`${styles.tile} ${targeting ? styles.targeting : ""} ${targeting && selected ? styles.selected : ""} ${winning ? styles.winning : ""}`}
-      role={targeting ? "button" : "img"}
-      aria-label={targeting ? targetingLabel : `Tile ${value}`}
-      aria-pressed={targeting ? selected : undefined}
-      tabIndex={targeting ? 0 : undefined}
-      onClick={targeting ? onSelect : undefined}
+      className={`${styles.tile} ${isTargetable ? styles.targeting : ""} ${isTargetable && selected ? styles.selected : ""} ${winning ? styles.winning : ""}`}
+      role={isTargetable ? "button" : "img"}
+      aria-label={isTargetable ? targetingLabel : `Tile ${value}`}
+      aria-pressed={isTargetable ? selected : undefined}
+      tabIndex={isTargetable ? 0 : undefined}
+      onClick={isTargetable ? onSelect : undefined}
       onKeyDown={
-        targeting
+        isTargetable
           ? (event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();

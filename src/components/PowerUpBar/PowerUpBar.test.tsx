@@ -114,6 +114,54 @@ describe("<PowerUpBar/>", () => {
     expect(onActivate).toHaveBeenCalledTimes(1);
   });
 
+  it("should render freeze and double between swap and new game", () => {
+    render(
+      <PowerUpBar
+        powerUps={{
+          newGame: { onActivate: vi.fn() },
+          double: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          freeze: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          swap: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1 },
+          undo: { onActivate: vi.fn() },
+        }}
+      />
+    );
+    const tiles = screen.getAllByTestId(/^power-up-(undo|removeTile|swap|freeze|double|newGame)$/);
+    expect(tiles.map((t) => t.getAttribute("data-testid"))).toEqual([
+      "power-up-undo",
+      "power-up-removeTile",
+      "power-up-swap",
+      "power-up-freeze",
+      "power-up-double",
+      "power-up-newGame",
+    ]);
+  });
+
+  it("should call onActivate when the freeze tile is clicked", () => {
+    const onActivate = vi.fn();
+    render(<PowerUpBar powerUps={{ freeze: { onActivate, charges: 1, maxCharges: 2 } }} />);
+    fireEvent.click(screen.getByTestId("power-up-freeze"));
+    expect(onActivate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should reflect armed freeze via aria-pressed", () => {
+    render(<PowerUpBar powerUps={{ freeze: { onActivate: vi.fn(), charges: 1, maxCharges: 2, active: true } }} />);
+    expect(screen.getByTestId("power-up-freeze")).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("should call onActivate when the double tile is clicked", () => {
+    const onActivate = vi.fn();
+    render(<PowerUpBar powerUps={{ double: { onActivate, charges: 2, maxCharges: 2 } }} />);
+    fireEvent.click(screen.getByTestId("power-up-double"));
+    expect(onActivate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show double remaining charges badge", () => {
+    render(<PowerUpBar powerUps={{ double: { onActivate: vi.fn(), charges: 1, maxCharges: 2 } }} />);
+    expect(screen.getByTestId("power-up-double-charges")).toHaveTextContent("1");
+  });
+
   it("should reflect active state via aria-pressed on a toggleable power-up", () => {
     const { rerender } = render(
       <PowerUpBar powerUps={{ removeTile: { onActivate: vi.fn(), charges: 1, maxCharges: 1, active: false } }} />

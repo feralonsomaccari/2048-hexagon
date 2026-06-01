@@ -10,7 +10,7 @@ import TwitterIcon from "../TwitterIcon";
 import TrophyIcon from "../TrophyIcon";
 import UndoIcon from "../UndoIcon";
 import powerUpStyles from "../PowerUpBar/PowerUpBar.module.css";
-import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import { DOUBLE_MAX_VALUE, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 type props = {
   tileSet: gridElement[];
@@ -37,6 +37,8 @@ type props = {
   isSwapMode?: boolean;
   selectedSwapTileId?: number | null;
   onSwapSelect?: (tile: gridElement) => void;
+  isDoubleMode?: boolean;
+  onDoubleTile?: (tile: gridElement) => void;
   canReviveWithUndo?: boolean;
   undosRemaining?: number;
   onReviveWithUndo?: () => void;
@@ -52,7 +54,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, isDoubleMode = false, onDoubleTile, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -188,17 +190,22 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
               merged={tile.merged}
               removing={isRemoving}
               winning={shineActive && tile.id != null && tile.id === winningTileId}
-              targeting={!isRemoving && (isRemoveMode || isSwapMode)}
-              targetingAction={isSwapMode ? "swap" : "remove"}
+              targeting={!isRemoving && (isRemoveMode || isSwapMode || isDoubleMode)}
+              targetable={isDoubleMode ? tile.value <= DOUBLE_MAX_VALUE : true}
+              targetingAction={isDoubleMode ? "double" : isSwapMode ? "swap" : "remove"}
               selected={isSwapMode && tile.id === selectedSwapTileId}
               onSelect={
-                isSwapMode
-                  ? onSwapSelect
-                    ? () => onSwapSelect(tile)
+                isDoubleMode
+                  ? onDoubleTile
+                    ? () => onDoubleTile(tile)
                     : undefined
-                  : onRemoveTile
-                    ? () => onRemoveTile(tile)
-                    : undefined
+                  : isSwapMode
+                    ? onSwapSelect
+                      ? () => onSwapSelect(tile)
+                      : undefined
+                    : onRemoveTile
+                      ? () => onRemoveTile(tile)
+                      : undefined
               }
             />
             );

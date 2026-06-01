@@ -29,9 +29,24 @@ vi.mock("firebase/firestore", () => ({
 }));
 
 import { App } from ".";
-import { MAX_REMOVE_BY_RADIUS, MAX_UNDO_BY_RADIUS } from "../../config/gameConfig";
+import { MAX_DOUBLE_BY_RADIUS, MAX_FREEZE_BY_RADIUS, MAX_REMOVE_BY_RADIUS, MAX_SWAP_BY_RADIUS, MAX_UNDO_BY_RADIUS, UNUSED_POWER_UP_BONUS_RATE } from "../../config/gameConfig";
 
 const MOVE_KEYS = ["q", "w", "e", "a", "s", "d"];
+
+const RADIUS_1 = 1;
+const WIN_SCORE = 2048;
+
+// Total power-up charges available on radius 1, derived from config so toggling
+// any power-up on or off in gameConfig keeps these expectations correct.
+const fullPowerUpBudget = (): number =>
+  (MAX_UNDO_BY_RADIUS[RADIUS_1] ?? 0) +
+  (MAX_REMOVE_BY_RADIUS[RADIUS_1] ?? 0) +
+  (MAX_SWAP_BY_RADIUS[RADIUS_1] ?? 0) +
+  (MAX_FREEZE_BY_RADIUS[RADIUS_1] ?? 0) +
+  (MAX_DOUBLE_BY_RADIUS[RADIUS_1] ?? 0);
+
+const bonusFor = (unusedCharges: number): number =>
+  Math.round(WIN_SCORE * UNUSED_POWER_UP_BONUS_RATE * unusedCharges);
 
 const remainingUndos = () => {
   const badge = screen.queryByTestId("power-up-undo-charges");
@@ -150,8 +165,6 @@ describe("<App/>", () => {
   });
 });
 
-const RADIUS_1 = 1;
-
 const RADIUS_1_CELLS: Array<[number, number, number]> = [
   [0, 0, 0],
   [0, 1, -1],
@@ -226,8 +239,8 @@ describe("<App/> win overlay", () => {
 
   it("awards the power-up bonus in the win overlay when no power-up was used", async () => {
 
-    // radius 1 budgets: 3 undo + 2 remove + 2 swap = 7 unused power-ups.
-    // 2048 * 0.03 * 7 = 430.08 -> 430 bonus.
+    const unused = fullPowerUpBudget();
+    const bonus = bonusFor(unused);
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -240,15 +253,16 @@ describe("<App/> win overlay", () => {
     });
 
     const breakdown = screen.getByTestId("score-breakdown");
-    expect(breakdown).toHaveTextContent("2048");
-    expect(breakdown).toHaveTextContent("+430");
+    expect(breakdown).toHaveTextContent(String(WIN_SCORE));
+    expect(breakdown).toHaveTextContent(`+${bonus}`);
 
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("2478");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent(String(WIN_SCORE + bonus));
   });
 
   it("awards a partial bonus scaled to the power-ups left unused", async () => {
 
-    // 2 unused undo + 2 remove + 2 swap = 6 unused. 2048 * 0.03 * 6 = 368.64 -> 369.
+    const unused = fullPowerUpBudget() - 1;
+    const bonus = bonusFor(unused);
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 1 });
     await renderFreshApp();
 
@@ -261,9 +275,9 @@ describe("<App/> win overlay", () => {
     });
 
     const breakdown = screen.getByTestId("score-breakdown");
-    expect(breakdown).toHaveTextContent("2048");
-    expect(breakdown).toHaveTextContent("+369");
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("2417");
+    expect(breakdown).toHaveTextContent(String(WIN_SCORE));
+    expect(breakdown).toHaveTextContent(`+${bonus}`);
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent(String(WIN_SCORE + bonus));
   });
 
   it("awards no bonus once all power-ups are used", async () => {
@@ -274,6 +288,8 @@ describe("<App/> win overlay", () => {
       undoCount: 3,
       removeCount: 2,
       swapCount: 2,
+      freezeCount: 2,
+      doubleCount: 2,
     });
     await renderFreshApp();
 
@@ -310,6 +326,7 @@ describe("<App/> win overlay", () => {
 
   it("syncs header Score and My Best to the bonus-adjusted final score at win", async () => {
 
+    const finalScore = WIN_SCORE + bonusFor(fullPowerUpBudget());
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -321,12 +338,13 @@ describe("<App/> win overlay", () => {
       expect(screen.getByTestId("overlay")).toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText("Score: 2478")).toBeInTheDocument();
-    expect(screen.getByLabelText("My Best: 2478")).toBeInTheDocument();
+    expect(screen.getByLabelText(`Score: ${finalScore}`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`My Best: ${finalScore}`)).toBeInTheDocument();
   });
 
   it("keeps the banked bonus in the header Score after Keep Playing", async () => {
 
+    const finalScore = WIN_SCORE + bonusFor(fullPowerUpBudget());
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -337,7 +355,7 @@ describe("<App/> win overlay", () => {
     await waitFor(() => {
       expect(screen.getByTestId("overlay")).toBeInTheDocument();
     });
-    expect(screen.getByLabelText("Score: 2478")).toBeInTheDocument();
+    expect(screen.getByLabelText(`Score: ${finalScore}`)).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.click(screen.getByText("Keep Playing"));
@@ -347,12 +365,13 @@ describe("<App/> win overlay", () => {
       expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText("Score: 2478")).toBeInTheDocument();
-    expect(screen.getByLabelText("My Best: 2478")).toBeInTheDocument();
+    expect(screen.getByLabelText(`Score: ${finalScore}`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`My Best: ${finalScore}`)).toBeInTheDocument();
   });
 
   it("keeps the banked bonus fixed even when an undo is used after Keep Playing", async () => {
 
+    const bonus = bonusFor(fullPowerUpBudget());
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -374,7 +393,7 @@ describe("<App/> win overlay", () => {
       fireEvent.click(screen.getByTestId("power-up-undo"));
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("Score: 430")).toBeInTheDocument();
+      expect(screen.getByLabelText(`Score: ${bonus}`)).toBeInTheDocument();
     });
   });
 
@@ -394,15 +413,16 @@ describe("<App/> win overlay", () => {
   });
 });
 
-const threeTileSet = (): gridElement[] => [
-  { x: 0, y: 0, z: 0, value: 2, id: 11 },
-  { x: 1, y: 0, z: -1, value: 4, id: 12 },
-  { x: -1, y: 1, z: 0, value: 8, id: 13 },
+const FREEZE_CHARGES = MAX_FREEZE_BY_RADIUS[RADIUS_1];
+const DOUBLE_CHARGES = MAX_DOUBLE_BY_RADIUS[RADIUS_1];
+
+const distinctTileSet = (): gridElement[] => [
+  { x: -1, y: 1, z: 0, value: 2, id: 21 },
+  { x: 0, y: 1, z: -1, value: 4, id: 22 },
+  { x: 1, y: 0, z: -1, value: 8, id: 23 },
 ];
 
-const REMOVE_CHARGES = MAX_REMOVE_BY_RADIUS[RADIUS_1];
-
-describe("<App/> remove-tile power-up", () => {
+describe("<App/> freeze power-up", () => {
   beforeEach(() => {
     localStorage.clear();
   });
@@ -412,34 +432,34 @@ describe("<App/> remove-tile power-up", () => {
     localStorage.clear();
   });
 
-  it("removes a tapped tile and decrements the remaining charges", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 1 });
+  it("stays disabled before the first move", async () => {
+    seedSavedGame({ tileSet: distinctTileSet(), hasKeptPlaying: true, movesCount: 0 });
     await renderFreshApp();
 
     await waitFor(() => {
-      expect(screen.getAllByTestId("tile")).toHaveLength(3);
+      expect(screen.getByTestId("power-up-freeze")).toBeInTheDocument();
     });
-
-    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent(String(REMOVE_CHARGES));
-
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("power-up-removeTile"));
-    });
-    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByRole("button", { name: /Remove tile/ })[0]);
-    });
-
-    await waitFor(() => {
-      expect(screen.getAllByTestId("tile")).toHaveLength(2);
-    });
-    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent(String(REMOVE_CHARGES - 1));
-    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByTestId("power-up-freeze")).toBeDisabled();
   });
 
-  it("cancels remove mode with Escape without consuming a charge", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 1 });
+  it("arms without consuming a charge", async () => {
+    seedSavedGame({ tileSet: distinctTileSet(), hasKeptPlaying: true, movesCount: 1 });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-freeze")).not.toBeDisabled();
+    });
+    expect(screen.getByTestId("power-up-freeze-charges")).toHaveTextContent(String(FREEZE_CHARGES));
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-freeze"));
+    });
+    expect(screen.getByTestId("power-up-freeze")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("power-up-freeze-charges")).toHaveTextContent(String(FREEZE_CHARGES));
+  });
+
+  it("consumes a charge on the next move and spawns no new tile", async () => {
+    seedSavedGame({ tileSet: distinctTileSet(), hasKeptPlaying: true, movesCount: 1 });
     await renderFreshApp();
 
     await waitFor(() => {
@@ -447,50 +467,134 @@ describe("<App/> remove-tile power-up", () => {
     });
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId("power-up-removeTile"));
+      fireEvent.click(screen.getByTestId("power-up-freeze"));
     });
-    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("power-up-freeze")).toHaveAttribute("aria-pressed", "true");
+
+    for (const key of MOVE_KEYS) {
+      await act(async () => {
+        fireEvent.keyDown(document, { key });
+      });
+      if (screen.getByTestId("power-up-freeze").getAttribute("aria-pressed") === "false") break;
+    }
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-freeze-charges")).toHaveTextContent(String(FREEZE_CHARGES - 1));
+    });
+    expect(screen.getByTestId("power-up-freeze")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getAllByTestId("tile").length).toBeLessThanOrEqual(3);
+  });
+
+  it("disarms with Escape without consuming a charge", async () => {
+    seedSavedGame({ tileSet: distinctTileSet(), hasKeptPlaying: true, movesCount: 1 });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-freeze")).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-freeze"));
+    });
+    expect(screen.getByTestId("power-up-freeze")).toHaveAttribute("aria-pressed", "true");
 
     await act(async () => {
       fireEvent.keyDown(document, { key: "Escape" });
     });
 
-    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getAllByTestId("tile")).toHaveLength(3);
-    expect(screen.getByTestId("power-up-removeTile-charges")).toHaveTextContent(String(REMOVE_CHARGES));
+    expect(screen.getByTestId("power-up-freeze")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByTestId("power-up-freeze-charges")).toHaveTextContent(String(FREEZE_CHARGES));
+  });
+});
+
+describe("<App/> double power-up", () => {
+  beforeEach(() => {
+    localStorage.clear();
   });
 
-  it("toggles remove mode off when the power-up is clicked again", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 1 });
+  afterEach(() => {
+    cleanup();
+    localStorage.clear();
+  });
+
+  it("doubles a tapped tile and decrements the remaining charges", async () => {
+    seedSavedGame({ tileSet: distinctTileSet(), hasKeptPlaying: true, movesCount: 1 });
     await renderFreshApp();
 
     await waitFor(() => {
       expect(screen.getAllByTestId("tile")).toHaveLength(3);
     });
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("power-up-removeTile"));
-    });
-    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("power-up-double-charges")).toHaveTextContent(String(DOUBLE_CHARGES));
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId("power-up-removeTile"));
+      fireEvent.click(screen.getByTestId("power-up-double"));
     });
-    expect(screen.getByTestId("power-up-removeTile")).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getAllByTestId("tile")).toHaveLength(3);
+    expect(screen.getByTestId("power-up-double")).toHaveAttribute("aria-pressed", "true");
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Double tile 8" }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-double-charges")).toHaveTextContent(String(DOUBLE_CHARGES - 1));
+    });
+    expect(screen.getByRole("img", { name: "Tile 16" })).toBeInTheDocument();
+    expect(screen.getByTestId("power-up-double")).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("stays disabled until the first move is made", async () => {
-    seedSavedGame({ tileSet: threeTileSet(), hasKeptPlaying: true, movesCount: 0 });
+  it("does not expose tiles of value >= 1024 as double targets", async () => {
+    const tileSet: gridElement[] = [
+      { x: -1, y: 1, z: 0, value: 256, id: 31 },
+      { x: 0, y: 1, z: -1, value: 1024, id: 32 },
+    ];
+    seedSavedGame({ tileSet, hasKeptPlaying: true, movesCount: 1 });
     await renderFreshApp();
 
     await waitFor(() => {
-      expect(screen.getByTestId("power-up-removeTile")).toBeInTheDocument();
+      expect(screen.getAllByTestId("tile")).toHaveLength(2);
     });
-    expect(screen.getByTestId("power-up-removeTile")).toBeDisabled();
 
-    await makeAnyValidMove();
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-double"));
+    });
 
-    expect(screen.getByTestId("power-up-removeTile")).not.toBeDisabled();
+    expect(screen.getAllByRole("button", { name: /Double tile/ })).toHaveLength(1);
+    expect(screen.getByRole("img", { name: "Tile 1024" })).toBeInTheDocument();
+  });
+
+  it("disables the double power-up when no tile is <= 512", async () => {
+    const tileSet: gridElement[] = [
+      { x: -1, y: 1, z: 0, value: 1024, id: 41 },
+      { x: 0, y: 1, z: -1, value: 2048, id: 42 },
+    ];
+    seedSavedGame({ tileSet, hasKeptPlaying: true, movesCount: 1 });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-double")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("power-up-double")).toBeDisabled();
+  });
+
+  it("cancels double mode with Escape without consuming a charge", async () => {
+    seedSavedGame({ tileSet: distinctTileSet(), hasKeptPlaying: true, movesCount: 1 });
+    await renderFreshApp();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("power-up-double")).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("power-up-double"));
+    });
+    expect(screen.getByTestId("power-up-double")).toHaveAttribute("aria-pressed", "true");
+
+    await act(async () => {
+      fireEvent.keyDown(document, { key: "Escape" });
+    });
+
+    expect(screen.getByTestId("power-up-double")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByTestId("power-up-double-charges")).toHaveTextContent(String(DOUBLE_CHARGES));
   });
 });

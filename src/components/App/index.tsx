@@ -37,7 +37,7 @@ import {
   loadLastRadius,
   saveLastRadius,
 } from "../../utils/savedGameStorage";
-import { DEFAULT_RADIUS, LEADERBOARD_SIZE, MAX_REMOVE_BY_RADIUS, MAX_SWAP_BY_RADIUS, MAX_UNDO_BY_RADIUS, UNUSED_POWER_UP_BONUS_RATE, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
+import { DEFAULT_RADIUS, DOUBLE_MAX_VALUE, LEADERBOARD_SIZE, MAX_DOUBLE_BY_RADIUS, MAX_FREEZE_BY_RADIUS, MAX_REMOVE_BY_RADIUS, MAX_SWAP_BY_RADIUS, MAX_UNDO_BY_RADIUS, UNUSED_POWER_UP_BONUS_RATE, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 const initialSavedGame = loadSavedGame();
 const initialRadius = initialSavedGame?.radius ?? loadLastRadius() ?? DEFAULT_RADIUS;
@@ -70,6 +70,10 @@ export const App: React.FC = () => {
   const [swapCount, setSwapCount] = useState(initialSavedGame?.swapCount ?? 0)
   const [isSwapMode, setIsSwapMode] = useState(false)
   const [selectedSwapTileId, setSelectedSwapTileId] = useState<number | null>(null)
+  const [freezeCount, setFreezeCount] = useState(initialSavedGame?.freezeCount ?? 0)
+  const [isFreezeArmed, setIsFreezeArmed] = useState(false)
+  const [doubleCount, setDoubleCount] = useState(initialSavedGame?.doubleCount ?? 0)
+  const [isDoubleMode, setIsDoubleMode] = useState(false)
   const [historyScore, setHistoryScore] = useState(initialSavedGame?.historyScore ?? 0);
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading, isRemote: isHighScoresRemote } = useRemoteHighScores();
@@ -101,9 +105,14 @@ export const App: React.FC = () => {
   const removesRemaining = Math.max(0, maxRemove - removeCount);
   const maxSwap = MAX_SWAP_BY_RADIUS[radius] ?? 0;
   const swapsRemaining = Math.max(0, maxSwap - swapCount);
+  const maxFreeze = MAX_FREEZE_BY_RADIUS[radius] ?? 0;
+  const freezesRemaining = Math.max(0, maxFreeze - freezeCount);
+  const maxDouble = MAX_DOUBLE_BY_RADIUS[radius] ?? 0;
+  const doublesRemaining = Math.max(0, maxDouble - doubleCount);
+  const hasDoubleTargets = tileSet.some((t) => t.value <= DOUBLE_MAX_VALUE);
 
   const unusedUndos = Math.max(0, maxUndo - undoCount);
-  const unusedPowerUps = unusedUndos + removesRemaining + swapsRemaining;
+  const unusedPowerUps = unusedUndos + removesRemaining + swapsRemaining + freezesRemaining + doublesRemaining;
   const liveBonus = Math.round(score * UNUSED_POWER_UP_BONUS_RATE * unusedPowerUps);
 
   const powerUpBonus = bankedBonus ?? liveBonus;
@@ -142,27 +151,35 @@ export const App: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", keyPressHandler);
     };
-  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown, isRemoveMode, isSwapMode]);
+  }, [tileSet, isMovementBlocked, score, isGameOver, isWin, isModalShown, isRemoveMode, isSwapMode, isDoubleMode, isFreezeArmed]);
 
   useEffect(() => {
-    if (!isRemoveMode && !isSwapMode) return;
+    if (!isRemoveMode && !isSwapMode && !isDoubleMode && !isFreezeArmed) return;
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setIsRemoveMode(false);
       setIsSwapMode(false);
       setSelectedSwapTileId(null);
+      setIsDoubleMode(false);
+      setIsFreezeArmed(false);
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isRemoveMode, isSwapMode]);
+  }, [isRemoveMode, isSwapMode, isDoubleMode, isFreezeArmed]);
 
   useEffect(() => {
     if (isGameOver || isWin) {
       setIsRemoveMode(false);
       setIsSwapMode(false);
       setSelectedSwapTileId(null);
+      setIsDoubleMode(false);
+      setIsFreezeArmed(false);
     }
   }, [isGameOver, isWin]);
+
+  useEffect(() => {
+    if (isDoubleMode && !hasDoubleTargets) setIsDoubleMode(false);
+  }, [isDoubleMode, hasDoubleTargets]);
 
   const displayedScore = bankedBonus !== null ? finalScore : score;
   useEffect(() => {
@@ -255,13 +272,15 @@ export const App: React.FC = () => {
       isMaxUndo,
       removeCount,
       swapCount,
+      freezeCount,
+      doubleCount,
       isWin,
       hasKeptPlaying,
       bankedBonus: bankedBonus ?? undefined,
       movesCount,
       bestTile,
     });
-  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount, bestTile]);
+  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, freezeCount, doubleCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount, bestTile]);
 
   const updateTile = (
     tile: gridElement,
@@ -363,6 +382,14 @@ export const App: React.FC = () => {
     maxMergeStreakRef.current = Math.max(maxMergeStreakRef.current, mergeStreakRef.current);
 
     setTileSet(updatedTileSet);
+
+    if (isFreezeArmed) {
+      setFreezeCount((prev) => prev + 1);
+      setIsFreezeArmed(false);
+      setIsMovementBlocked(false);
+      return;
+    }
+
     setTimeout(() => {
       restoredRef.current = false;
       fetchTiles(updatedTileSet, radius);
@@ -370,12 +397,12 @@ export const App: React.FC = () => {
   };
 
   useSwipe(boardRef, (direction) => {
-    if (isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode || isSwapMode) return;
+    if (isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode || isSwapMode || isDoubleMode) return;
     updateTilesPos(direction);
   });
 
   const keyPressHandler = (event: KeyboardEvent): void => {
-    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode || isSwapMode) return;
+    if (event.repeat || isMovementBlocked || isGameOver || isWin || isModalShown || isRemoveMode || isSwapMode || isDoubleMode) return;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
       event.preventDefault();
     }
@@ -433,6 +460,10 @@ export const App: React.FC = () => {
     setSwapCount(0)
     setIsSwapMode(false)
     setSelectedSwapTileId(null)
+    setFreezeCount(0)
+    setIsFreezeArmed(false)
+    setDoubleCount(0)
+    setIsDoubleMode(false)
     setRadius(newRadius);
     setGrid(createHexGrid(newRadius));
     setIsWin(false);
@@ -518,7 +549,7 @@ export const App: React.FC = () => {
 
   // Undo charges left this run; a revive spends one charge to roll the
   // game-over board back to the move before the loss.
-  const usedAnyPowerUp = undoCount + removeCount + swapCount > 0;
+  const usedAnyPowerUp = undoCount + removeCount + swapCount + freezeCount + doubleCount > 0;
 
   useEffect(() => {
     if (!tileSet.length) return;
@@ -557,6 +588,7 @@ export const App: React.FC = () => {
     if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
     setIsSwapMode(false);
     setSelectedSwapTileId(null);
+    setIsDoubleMode(false);
     setIsRemoveMode((prev) => !prev);
   }, [isWin, isGameOver, isMovementBlocked, movesCount]);
 
@@ -576,6 +608,7 @@ export const App: React.FC = () => {
     if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
     setIsRemoveMode(false);
     setSelectedSwapTileId(null);
+    setIsDoubleMode(false);
     setIsSwapMode((prev) => !prev);
   }, [isWin, isGameOver, isMovementBlocked, movesCount]);
 
@@ -601,6 +634,34 @@ export const App: React.FC = () => {
       return null;
     });
   }, [play]);
+
+  const toggleFreeze = useCallback(() => {
+    if (isWin || isGameOver || isMovementBlocked || movesCount === 0) return;
+    setIsRemoveMode(false);
+    setIsSwapMode(false);
+    setSelectedSwapTileId(null);
+    setIsDoubleMode(false);
+    setIsFreezeArmed((prev) => !prev);
+  }, [isWin, isGameOver, isMovementBlocked, movesCount]);
+
+  const toggleDoubleMode = useCallback(() => {
+    if (isWin || isGameOver || isMovementBlocked || movesCount === 0 || !hasDoubleTargets) return;
+    setIsRemoveMode(false);
+    setIsSwapMode(false);
+    setSelectedSwapTileId(null);
+    setIsDoubleMode((prev) => !prev);
+  }, [isWin, isGameOver, isMovementBlocked, movesCount, hasDoubleTargets]);
+
+  const doubleTileHandler = useCallback((tile: gridElement) => {
+    if (tile.id == null || tile.value > DOUBLE_MAX_VALUE) return;
+    const newValue = tile.value * 2;
+    setDoubleCount((prev) => prev + 1);
+    setIsDoubleMode(false);
+    setBestTile((prev) => Math.max(prev, newValue));
+    if (!hasKeptPlaying && newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
+    setTileSet((prev) => prev.map((t) => (t.id === tile.id ? { ...t, value: newValue } : t)));
+    play("move");
+  }, [hasKeptPlaying, radius, play]);
 
   const onNewGameHandler = useCallback(() => {
     setIsModalShown(true);
@@ -688,6 +749,8 @@ export const App: React.FC = () => {
           isSwapMode={isSwapMode}
           selectedSwapTileId={selectedSwapTileId}
           onSwapSelect={swapSelectHandler}
+          isDoubleMode={isDoubleMode}
+          onDoubleTile={doubleTileHandler}
           canReviveWithUndo={canReviveWithUndo}
           undosRemaining={undosRemaining}
           onReviveWithUndo={reviveWithUndo}
@@ -727,6 +790,28 @@ export const App: React.FC = () => {
                       charges: swapsRemaining,
                       maxCharges: maxSwap,
                       active: isSwapMode,
+                    },
+                  }
+                : {}),
+              ...(maxFreeze > 0
+                ? {
+                    freeze: {
+                      onActivate: toggleFreeze,
+                      disabled: isGameOver || movesCount === 0,
+                      charges: freezesRemaining,
+                      maxCharges: maxFreeze,
+                      active: isFreezeArmed,
+                    },
+                  }
+                : {}),
+              ...(maxDouble > 0
+                ? {
+                    double: {
+                      onActivate: toggleDoubleMode,
+                      disabled: isGameOver || movesCount === 0 || !hasDoubleTargets,
+                      charges: doublesRemaining,
+                      maxCharges: maxDouble,
+                      active: isDoubleMode,
                     },
                   }
                 : {}),

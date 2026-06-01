@@ -193,6 +193,29 @@ describe("<GameContainer/>", () => {
     expect(pressed).toHaveLength(1);
   });
 
+  it("should expose tiles as double targets in double mode", () => {
+    render(<GameContainer {...props} isDoubleMode={true} onDoubleTile={vi.fn()} />);
+    expect(screen.getAllByRole("button", { name: /Double tile/ })).toHaveLength(3);
+  });
+
+  it("should call onDoubleTile with the tapped tile in double mode", () => {
+    const onDoubleTile = vi.fn();
+    render(<GameContainer {...props} isDoubleMode={true} onDoubleTile={onDoubleTile} />);
+    fireEvent.click(screen.getAllByRole("button", { name: /Double tile/ })[0]);
+    expect(onDoubleTile).toHaveBeenCalledTimes(1);
+    expect(onDoubleTile).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(Number) }));
+  });
+
+  it("should not make tiles of value >= 1024 targetable in double mode", () => {
+    const highTileSet = [
+      { x: 1, y: 0, z: -1, value: 256, id: 1 },
+      { x: -1, y: 1, z: 0, value: 1024, id: 2 },
+    ];
+    render(<GameContainer {...props} tileSet={highTileSet} isDoubleMode={true} onDoubleTile={vi.fn()} />);
+    expect(screen.getAllByRole("button", { name: /Double tile/ })).toHaveLength(1);
+    expect(screen.getByRole("img", { name: "Tile 1024" })).toBeInTheDocument();
+  });
+
   it("should not consume taps on the Try Again button via swipe gestures", () => {
     const TestHarness = () => {
       const ref = React.useRef<HTMLElement>(null);

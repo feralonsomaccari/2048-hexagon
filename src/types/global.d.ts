@@ -22,6 +22,8 @@ declare global {
     isMaxUndo?: boolean,
     removeCount?: number,
     swapCount?: number,
+    freezeCount?: number,
+    doubleCount?: number,
     isWin?: boolean,
     hasKeptPlaying?: boolean,
     bankedBonus?: number,

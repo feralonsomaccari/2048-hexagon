@@ -39,14 +39,18 @@
   z-index: 1;
 }
 
-.targeting .tileInner {
+.targeting {
   animation: targetPulse 1s ease-in-out infinite;
+}
+
+.targeting:hover,
+.targeting:focus-visible {
+  animation: none;
 }
 
 .targeting:hover .tileInner,
 .targeting:focus-visible .tileInner {
   filter: brightness(0.7) saturate(1.2);
-  animation: none;
 }
 
 .targeting:focus-visible {
@@ -54,14 +58,14 @@
   outline-offset: -3px;
 }
 
-.selected .tileInner {
-  filter: brightness(0.7) saturate(1.2);
-  animation: none;
-}
-
 .selected {
+  animation: none;
   outline: 3px solid var(--color-text-main);
   outline-offset: -3px;
+}
+
+.selected .tileInner {
+  filter: brightness(0.7) saturate(1.2);
 }
 
 .winning {
@@ -164,7 +168,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .targeting .tileInner {
+  .targeting {
     animation: none;
   }
 }

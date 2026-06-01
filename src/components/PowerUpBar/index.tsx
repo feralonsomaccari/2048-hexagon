@@ -2,6 +2,8 @@ import styles from "./PowerUpBar.module.css";
 import UndoIcon from "../UndoIcon";
 import RemoveIcon from "../RemoveIcon";
 import SwapIcon from "../SwapIcon";
+import FreezeIcon from "../FreezeIcon";
+import DoubleIcon from "../DoubleIcon";
 import NewGameIcon from "../NewGameIcon";
 import { POWER_UPS, PowerUpId } from "../../config/gameConfig";
 
@@ -21,6 +23,8 @@ const ICONS: Record<PowerUpId, React.FC<{ className?: string }>> = {
   undo: UndoIcon,
   removeTile: RemoveIcon,
   swap: SwapIcon,
+  freeze: FreezeIcon,
+  double: DoubleIcon,
   newGame: NewGameIcon,
 };
 
