@@ -751,6 +751,7 @@ export const App: React.FC = () => {
           onSwapSelect={swapSelectHandler}
           isDoubleMode={isDoubleMode}
           onDoubleTile={doubleTileHandler}
+          isFreezeArmed={isFreezeArmed}
           canReviveWithUndo={canReviveWithUndo}
           undosRemaining={undosRemaining}
           onReviveWithUndo={reviveWithUndo}

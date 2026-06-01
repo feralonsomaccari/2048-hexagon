@@ -9,6 +9,7 @@ import Confetti from "../Confetti";
 import TwitterIcon from "../TwitterIcon";
 import TrophyIcon from "../TrophyIcon";
 import UndoIcon from "../UndoIcon";
+import Snowfall from "../Snowfall";
 import powerUpStyles from "../PowerUpBar/PowerUpBar.module.css";
 import { DOUBLE_MAX_VALUE, WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
@@ -39,6 +40,7 @@ type props = {
   onSwapSelect?: (tile: gridElement) => void;
   isDoubleMode?: boolean;
   onDoubleTile?: (tile: gridElement) => void;
+  isFreezeArmed?: boolean;
   canReviveWithUndo?: boolean;
   undosRemaining?: number;
   onReviveWithUndo?: () => void;
@@ -54,7 +56,7 @@ const DEFAULT_VIEWPORT = { width: 576, height: 800, isMobile: false };
 const naturalGridHeight = (radius: number) => 4 * radius * EDGE_H + TILE_HEIGHT;
 const naturalGridWidth = (radius: number) => 2 * radius * EDGE_W + TILE_WIDTH;
 
-const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, isDoubleMode = false, onDoubleTile, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
+const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, radius, resetGameHandler = () => { }, onTryAgain, isGameOver, isWin, dismissOverlay = () => { }, viewport = DEFAULT_VIEWPORT, pendingHighScore = false, score = 0, baseScore = score, powerUpBonus = 0, unusedPowerUps = 0, movesCount = 0, onSubmitHighScore, beatsHighScore = false, isRemoveMode = false, onRemoveTile, removingTileId = null, isSwapMode = false, selectedSwapTileId = null, onSwapSelect, isDoubleMode = false, onDoubleTile, isFreezeArmed = false, canReviveWithUndo = false, undosRemaining = 0, onReviveWithUndo }, ref) => {
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
@@ -179,7 +181,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     >
       {isWin && winRevealed && <Confetti />}
       <div className={styles.boardZone}>
-        <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
+        <div className={`${styles.gameContainer} ${isFreezeArmed ? styles.tileFrost : ""}`} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
           {tileSet.map((tile) => {
             const isRemoving = tile.id != null && tile.id === removingTileId;
             return (
@@ -214,6 +216,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
             <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
           ))}
         </div>
+        {isFreezeArmed && <Snowfall />}
       </div>
       {overlayShown && (
         <div

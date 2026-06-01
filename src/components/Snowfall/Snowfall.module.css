@@ -1,0 +1,44 @@
+.snowfall {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.flake {
+  position: absolute;
+  top: -8%;
+  color: rgba(226, 244, 255, 0.92);
+  text-shadow: 0 0 6px rgba(150, 205, 255, 0.9);
+  opacity: 0;
+  will-change: top, transform, opacity;
+  animation-name: snowFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes snowFall {
+  0% {
+    top: -8%;
+    opacity: 0;
+    transform: translateX(0) scale(var(--scale));
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: 105%;
+    opacity: 0;
+    transform: translateX(var(--drift)) scale(var(--scale));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snowfall {
+    display: none;
+  }
+}

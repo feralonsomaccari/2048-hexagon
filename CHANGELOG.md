@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - Added Freeze and Double power-ups for radius 1.
+- Added a frost-and-snowfall effect on the board while Freeze is armed.
 - Added an under-development notice to the leaderboard.
 
 ## [0.24.0] - 2026-06-01

@@ -216,6 +216,16 @@ describe("<GameContainer/>", () => {
     expect(screen.getByRole("img", { name: "Tile 1024" })).toBeInTheDocument();
   });
 
+  it("shows falling snowflakes when freeze is armed", () => {
+    render(<GameContainer {...props} isFreezeArmed={true} />);
+    expect(screen.getByTestId("snowfall")).toBeInTheDocument();
+  });
+
+  it("hides the snowflakes when freeze is not armed", () => {
+    render(<GameContainer {...props} />);
+    expect(screen.queryByTestId("snowfall")).not.toBeInTheDocument();
+  });
+
   it("should not consume taps on the Try Again button via swipe gestures", () => {
     const TestHarness = () => {
       const ref = React.useRef<HTMLElement>(null);
