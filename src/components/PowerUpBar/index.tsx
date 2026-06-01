@@ -42,6 +42,8 @@ const PowerUpBar = ({ powerUps }: props) => {
             ? `${def.description}, ${charges} remaining`
             : def.description;
 
+          const tooltipId = `power-up-tip-${def.id}`;
+
           return (
             <li key={def.id} className={styles.item}>
               <button
@@ -49,9 +51,9 @@ const PowerUpBar = ({ powerUps }: props) => {
                 className={`${styles.tile} ${isActive ? styles.tileActive : ""}`}
                 onClick={state.onActivate}
                 disabled={isDisabled}
-                title={def.description}
                 data-testid={`power-up-${def.id}`}
                 aria-label={ariaLabel}
+                aria-describedby={tooltipId}
                 aria-pressed={state.active !== undefined ? isActive : undefined}
               >
                 <Icon className={`${styles.icon} ${styles[`icon-${def.id}`] ?? ""}`} />
@@ -62,6 +64,20 @@ const PowerUpBar = ({ powerUps }: props) => {
                 )}
               </button>
               <span className={styles.label}>{def.label}</span>
+              <div
+                id={tooltipId}
+                role="tooltip"
+                className={styles.tooltip}
+                data-testid={`power-up-${def.id}-tooltip`}
+              >
+                <span className={styles.tooltipTitle}>{def.label}</span>
+                <span className={styles.tooltipDesc}>{def.description}</span>
+                {hasCharges && (
+                  <span className={styles.tooltipCharges}>
+                    {charges} of {state.maxCharges} remaining
+                  </span>
+                )}
+              </div>
             </li>
           );
         })}
