@@ -5,6 +5,7 @@ import {
   HighScores,
   MAX_ENTRIES_PER_BOARD,
 } from "../../utils/highScores";
+import { LEADERBOARD_SHOW_MOVES } from "../../config/gameConfig";
 
 type props = {
   scores: HighScores;
@@ -58,7 +59,14 @@ const Leaderboard = ({ scores, highlightRadius, highlightEntry, isLoading = fals
                   >
                     <span className={styles.rank}>{index + 1}.</span>
                     <span className={styles.name}>{entry.name}</span>
-                    <span className={styles.score}>{entry.score}</span>
+                    <span className={styles.scoreCell}>
+                      <span className={styles.score}>{entry.score}</span>
+                      {LEADERBOARD_SHOW_MOVES && typeof entry.movesCount === "number" && (
+                        <span className={styles.moves}>
+                          {entry.movesCount} move{entry.movesCount === 1 ? "" : "s"}
+                        </span>
+                      )}
+                    </span>
                   </li>
                   );
                 })}

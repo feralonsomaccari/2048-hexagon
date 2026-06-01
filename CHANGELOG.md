@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-06-01
+
+### Added
+- **Move count on the leaderboard.** Each high-score entry now shows how many moves it took, displayed beneath the score.
+
 ## [0.19.0] - 2026-06-01
 
 ### Changed
