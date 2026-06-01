@@ -616,7 +616,7 @@ export const App: React.FC = () => {
           onShareFacebook={shareOnFacebook}
           isWin={isWin}
         />
-        <Instructions radius={radius} collapsed={isWin} />
+        <Instructions radius={radius} collapsed={isWin || isGameOver} />
         <GameContainer
           ref={boardRef}
           tileSet={sortTileSetById(tileSet)}
@@ -647,8 +647,8 @@ export const App: React.FC = () => {
           onReviveWithUndo={reviveWithUndo}
         />
         <div
-          className={`${styles.powerUpCollapsible} ${isWin ? styles.collapsed : ""}`}
-          aria-hidden={isWin}
+          className={`${styles.powerUpCollapsible} ${isWin || isGameOver ? styles.collapsed : ""}`}
+          aria-hidden={isWin || isGameOver}
         >
           <PowerUpBar
             powerUps={{
@@ -690,6 +690,16 @@ export const App: React.FC = () => {
             }}
           />
         </div>
+        {import.meta.env.DEV && (
+          <div className={styles.devTools} data-testid="dev-tools">
+            <button type="button" onClick={() => setIsWin(true)}>
+              Dev: Win
+            </button>
+            <button type="button" onClick={() => setIsGameOver(true)}>
+              Dev: Lose
+            </button>
+          </div>
+        )}
         <footer className={styles.footer}>
           Based on 2048 by{" "}
           <a

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.21.2] - 2026-06-01
+
+### Added
+- Dev-only Win / Lose buttons to trigger the end-game overlays (stripped from production builds).
+
 ## [0.21.1] - 2026-06-01
 
 ### Changed

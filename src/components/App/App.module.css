@@ -19,8 +19,6 @@
   }
 }
 
-/* Power-up bar collapses smoothly on a win, matching the How-to-Play section,
-   so the board settles instead of jumping when the bar is removed. */
 .powerUpCollapsible {
   display: grid;
   grid-template-rows: 1fr;
@@ -43,6 +41,28 @@
   .powerUpCollapsible {
     transition: none;
   }
+}
+
+.devTools {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  opacity: 0.5;
+}
+
+.devTools button {
+  font-size: 11px;
+  padding: 2px 8px;
+  border: 1px dashed var(--color-tertiary);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.devTools:hover {
+  opacity: 1;
 }
 
 .footer {
