@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./GameMenu.module.css";
 import Button from "../Button";
 import TrophyIcon from "../TrophyIcon";
+import AchievementsIcon from "../AchievementsIcon";
 import LightModeIcon from "../LightModeIcon";
 import DarkModeIcon from "../DarkModeIcon";
 import MuteIcon from "../MuteIcon";
@@ -15,6 +16,7 @@ type props = {
   theme?: "light" | "dark";
   onToggleTheme?: () => void;
   onHighScoresHandler?: () => void;
+  onAchievementsHandler?: () => void;
   isMuted?: boolean;
   onToggleMuted?: () => void;
   onShareTwitter?: () => void;
@@ -30,6 +32,7 @@ const GameMenu = ({
   theme,
   onToggleTheme,
   onHighScoresHandler,
+  onAchievementsHandler,
   isMuted,
   onToggleMuted,
   onShareTwitter,
@@ -73,7 +76,7 @@ const GameMenu = ({
     closeMenuAndRefocus();
   };
 
-  const hasMenuItems = Boolean(onHighScoresHandler || onToggleTheme || onToggleMuted || onShareTwitter || onShareFacebook);
+  const hasMenuItems = Boolean(onHighScoresHandler || onAchievementsHandler || onToggleTheme || onToggleMuted || onShareTwitter || onShareFacebook);
 
   return (
     <header data-testid="game-menu" className={styles.gameMenu}>
@@ -121,6 +124,22 @@ const GameMenu = ({
                         title: "View high scores",
                         "data-testid": "high-scores-btn",
                         "aria-label": "View high scores",
+                      }}
+                    />
+                  )}
+                  {onAchievementsHandler && (
+                    <Button
+                      clickHandler={runAndClose(onAchievementsHandler)}
+                      text={
+                        <span className={styles.menuItemLabel}>
+                          <AchievementsIcon className={styles.menuItemIcon} />
+                          Achievements
+                        </span>
+                      }
+                      extraProps={{
+                        title: "View achievements",
+                        "data-testid": "achievements-btn",
+                        "aria-label": "View achievements",
                       }}
                     />
                   )}

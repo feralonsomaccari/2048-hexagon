@@ -27,6 +27,9 @@ import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
 import useSound from "../../hooks/useSound";
 import useRemoteHighScores from "../../hooks/useRemoteHighScores";
+import useAchievements from "../../hooks/useAchievements";
+import AchievementToasts from "../AchievementToast";
+import AchievementsPanel from "../AchievementsPanel";
 import {
   loadSavedGame,
   saveGame,
@@ -71,6 +74,7 @@ export const App: React.FC = () => {
   const [maxScore, setMaxScore] = useLocalStorage<Record<string, number>>("maxScore", { 2: 0 });
   const { scores: highScores, submit: submitRemoteHighScore, isLoading: isHighScoresLoading, isRemote: isHighScoresRemote } = useRemoteHighScores();
   const [isLeaderboardShown, setIsLeaderboardShown] = useState(false);
+  const [isAchievementsShown, setIsAchievementsShown] = useState(false);
   const [pendingHighScore, setPendingHighScore] = useState(false);
   const [lastQualifyingEntry, setLastQualifyingEntry] = useState<HighScoreEntry | null>(null);
   const [lastQualifyingRadius, setLastQualifyingRadius] = useState<number | null>(null);
@@ -85,6 +89,11 @@ export const App: React.FC = () => {
   const playedGameOverRef = useRef<boolean>(false);
 
   const mergeStreakRef = useRef<number>(0);
+
+  const { unlockedIds, evaluate, queue, dismissToast } = useAchievements();
+  const maxComboThisMoveRef = useRef<number>(0);
+  const maxMergeStreakRef = useRef<number>(0);
+  const revivedThisRunRef = useRef<boolean>(false);
 
   const maxUndo = MAX_UNDO_BY_RADIUS[radius] ?? 0;
   const maxRemove = MAX_REMOVE_BY_RADIUS[radius] ?? 0;
@@ -348,6 +357,9 @@ export const App: React.FC = () => {
       if (mergeCounter.count >= 2) play("combo", { combo: mergeCounter.count });
     }
 
+    maxComboThisMoveRef.current = Math.max(maxComboThisMoveRef.current, mergeCounter.count);
+    maxMergeStreakRef.current = Math.max(maxMergeStreakRef.current, mergeStreakRef.current);
+
     setTileSet(updatedTileSet);
     setTimeout(() => {
       restoredRef.current = false;
@@ -431,6 +443,9 @@ export const App: React.FC = () => {
     playedWinRef.current = false;
     playedGameOverRef.current = false;
     mergeStreakRef.current = 0;
+    maxComboThisMoveRef.current = 0;
+    maxMergeStreakRef.current = 0;
+    revivedThisRunRef.current = false;
     clearSavedGame();
     saveLastRadius(newRadius);
     restoredRef.current = false;
@@ -499,12 +514,31 @@ export const App: React.FC = () => {
 
   // Undo charges left this run; a revive spends one charge to roll the
   // game-over board back to the move before the loss.
+  const usedAnyPowerUp = undoCount + removeCount + swapCount > 0;
+
+  useEffect(() => {
+    if (!tileSet.length) return;
+    evaluate({
+      radius,
+      bestTile,
+      finalScore,
+      movesCount,
+      isWin,
+      hasKeptPlaying,
+      usedAnyPowerUp,
+      maxComboThisMove: maxComboThisMoveRef.current,
+      maxMergeStreak: maxMergeStreakRef.current,
+      revivedThisRun: revivedThisRunRef.current,
+    });
+  }, [bestTile, finalScore, movesCount, isWin, hasKeptPlaying, usedAnyPowerUp, radius, tileSet.length, evaluate]);
+
   const undosRemaining = Math.max(0, maxUndo - undoCount);
   const canReviveWithUndo =
     isGameOver && !isWin && undosRemaining > 0 && historyTileSet.length > 0;
 
   const reviveWithUndo = useCallback(() => {
     if (!canReviveWithUndo) return;
+    revivedThisRunRef.current = true;
     setTileSet(historyTileSet);
     setScore(historyScore);
     setBankedBonus(null);
@@ -585,6 +619,12 @@ export const App: React.FC = () => {
           />
         </Modal>
       )}
+      {isAchievementsShown && (
+        <Modal setIsModalShown={setIsAchievementsShown} title="Achievements">
+          <AchievementsPanel unlockedIds={unlockedIds} />
+        </Modal>
+      )}
+      <AchievementToasts queue={queue} onDismiss={dismissToast} />
       <div className={styles.wrapper}>
         <GameMenu
           scores={
@@ -610,6 +650,7 @@ export const App: React.FC = () => {
           theme={theme}
           onToggleTheme={toggleTheme}
           onHighScoresHandler={openLeaderboard}
+          onAchievementsHandler={() => setIsAchievementsShown(true)}
           isMuted={isMuted}
           onToggleMuted={toggleMuted}
           onShareTwitter={shareOnTwitter}

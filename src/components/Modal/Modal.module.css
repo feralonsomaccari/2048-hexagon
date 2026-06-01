@@ -16,7 +16,8 @@
 }
 
 .modalContent {
-  width: 340px;
+  min-width: 340px;
+  max-width: calc(100vw - 32px);
   background-color: var(--color-bg-page);
   color: var(--color-text-main);
   border-radius: 12px;
