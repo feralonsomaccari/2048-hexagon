@@ -51,13 +51,10 @@ const tileAchievement = (
 };
 
 export const ACHIEVEMENTS: Achievement[] = [
-  tileAchievement(1, "small", 128, "First Steps"),
-  tileAchievement(1, "small", 256, "Warming Up"),
   tileAchievement(1, "small", 512, "Small Champion"),
   tileAchievement(1, "small", 1024, "Beyond Small"),
+  tileAchievement(1, "small", 2048, "Hexagon Wizard"),
 
-  tileAchievement(2, "default", 256, "Getting Started"),
-  tileAchievement(2, "default", 512, "Getting Serious"),
   tileAchievement(2, "default", 1024, "So Close"),
   tileAchievement(2, "default", 2048, "Hexagon Master"),
   tileAchievement(2, "default", 4096, "Beyond 2048"),

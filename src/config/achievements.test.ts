@@ -30,18 +30,18 @@ describe("achievement checks", () => {
 
   it("tile achievements are board-specific", () => {
     const smallWin = find("tile-r1-512");
-    const defaultMid = find("tile-r2-512");
+    const defaultMid = find("tile-r2-1024");
 
     expect(smallWin.check({ ...baseCtx, radius: 1, bestTile: 512 })).toBe(true);
     expect(smallWin.check({ ...baseCtx, radius: 2, bestTile: 512 })).toBe(false);
 
-    expect(defaultMid.check({ ...baseCtx, radius: 2, bestTile: 512 })).toBe(true);
-    expect(defaultMid.check({ ...baseCtx, radius: 1, bestTile: 512 })).toBe(false);
+    expect(defaultMid.check({ ...baseCtx, radius: 2, bestTile: 1024 })).toBe(true);
+    expect(defaultMid.check({ ...baseCtx, radius: 1, bestTile: 1024 })).toBe(false);
   });
 
   it("unlocks lower tile milestones when a higher tile is reached", () => {
     const ctx = { ...baseCtx, radius: 2, bestTile: 2048 };
-    expect(find("tile-r2-256").check(ctx)).toBe(true);
+    expect(find("tile-r2-1024").check(ctx)).toBe(true);
     expect(find("tile-r2-2048").check(ctx)).toBe(true);
     expect(find("tile-r2-4096").check(ctx)).toBe(false);
   });

@@ -28,18 +28,18 @@ describe("useAchievements", () => {
   it("unlocks a newly earned achievement and queues a toast", () => {
     const { result } = renderHook(() => useAchievements());
 
-    act(() => result.current.evaluate({ ...baseCtx, radius: 2, bestTile: 256 }));
+    act(() => result.current.evaluate({ ...baseCtx, radius: 2, bestTile: 1024 }));
 
-    expect(result.current.unlockedIds.has("tile-r2-256")).toBe(true);
-    expect(result.current.queue.some((a) => a.id === "tile-r2-256")).toBe(true);
+    expect(result.current.unlockedIds.has("tile-r2-1024")).toBe(true);
+    expect(result.current.queue.some((a) => a.id === "tile-r2-1024")).toBe(true);
   });
 
   it("does not re-queue an already unlocked achievement", () => {
     const { result } = renderHook(() => useAchievements());
 
-    act(() => result.current.evaluate({ ...baseCtx, bestTile: 256 }));
-    act(() => result.current.dismissToast("tile-r2-256"));
-    act(() => result.current.evaluate({ ...baseCtx, bestTile: 256 }));
+    act(() => result.current.evaluate({ ...baseCtx, bestTile: 1024 }));
+    act(() => result.current.dismissToast("tile-r2-1024"));
+    act(() => result.current.evaluate({ ...baseCtx, bestTile: 1024 }));
 
     expect(result.current.queue.length).toBe(0);
   });
@@ -78,9 +78,9 @@ describe("useAchievements", () => {
 
   it("persists unlocks across mounts", () => {
     const first = renderHook(() => useAchievements());
-    act(() => first.result.current.evaluate({ ...baseCtx, bestTile: 256 }));
+    act(() => first.result.current.evaluate({ ...baseCtx, bestTile: 1024 }));
 
     const second = renderHook(() => useAchievements());
-    expect(second.result.current.unlockedIds.has("tile-r2-256")).toBe(true);
+    expect(second.result.current.unlockedIds.has("tile-r2-1024")).toBe(true);
   });
 });

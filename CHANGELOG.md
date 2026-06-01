@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.23.2] - 2026-06-01
+
+### Changed
+- Reworked the Small board achievement tiers, now topping out at a 2048 win.
+
 ## [0.23.1] - 2026-06-01
 
 ### Fixed

@@ -166,8 +166,8 @@ const buildRadius1Grid = (): gridElement[] =>
   RADIUS_1_CELLS.map(([x, y, z]) => ({ x, y, z, value: 0 }));
 
 const winningPairTileSet = (): gridElement[] => [
-  { x: 0, y: 0, z: 0, value: 256, id: 1 },
-  { x: 0, y: -1, z: 1, value: 256, id: 2 },
+  { x: 0, y: 0, z: 0, value: 1024, id: 1 },
+  { x: 0, y: -1, z: 1, value: 1024, id: 2 },
 ];
 
 const seedSavedGame = (overrides: Partial<savedGame>): void => {
@@ -227,7 +227,7 @@ describe("<App/> win overlay", () => {
   it("awards the power-up bonus in the win overlay when no power-up was used", async () => {
 
     // radius 1 budgets: 3 undo + 2 remove + 2 swap = 7 unused power-ups.
-    // 512 * 0.03 * 7 = 107.52 -> 108 bonus.
+    // 2048 * 0.03 * 7 = 430.08 -> 430 bonus.
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 0 });
     await renderFreshApp();
 
@@ -240,15 +240,15 @@ describe("<App/> win overlay", () => {
     });
 
     const breakdown = screen.getByTestId("score-breakdown");
-    expect(breakdown).toHaveTextContent("512");
-    expect(breakdown).toHaveTextContent("+108");
+    expect(breakdown).toHaveTextContent("2048");
+    expect(breakdown).toHaveTextContent("+430");
 
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("620");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("2478");
   });
 
   it("awards a partial bonus scaled to the power-ups left unused", async () => {
 
-    // 2 unused undo + 2 remove + 2 swap = 6 unused. 512 * 0.03 * 6 = 92.16 -> 92.
+    // 2 unused undo + 2 remove + 2 swap = 6 unused. 2048 * 0.03 * 6 = 368.64 -> 369.
     seedSavedGame({ isWin: false, hasKeptPlaying: false, undoCount: 1 });
     await renderFreshApp();
 
@@ -261,9 +261,9 @@ describe("<App/> win overlay", () => {
     });
 
     const breakdown = screen.getByTestId("score-breakdown");
-    expect(breakdown).toHaveTextContent("512");
-    expect(breakdown).toHaveTextContent("+92");
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("604");
+    expect(breakdown).toHaveTextContent("2048");
+    expect(breakdown).toHaveTextContent("+369");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("2417");
   });
 
   it("awards no bonus once all power-ups are used", async () => {
@@ -287,7 +287,7 @@ describe("<App/> win overlay", () => {
 
     expect(screen.queryByTestId("score-breakdown")).not.toBeInTheDocument();
 
-    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("512");
+    expect(screen.getByTestId("high-score-prompt")).toHaveTextContent("2048");
   });
 
 
@@ -303,9 +303,9 @@ describe("<App/> win overlay", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByLabelText("Score: 512")).toBeInTheDocument();
+      expect(screen.getByLabelText("Score: 2048")).toBeInTheDocument();
     });
-    expect(screen.getByLabelText("My Best: 512")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 2048")).toBeInTheDocument();
   });
 
   it("syncs header Score and My Best to the bonus-adjusted final score at win", async () => {
@@ -321,8 +321,8 @@ describe("<App/> win overlay", () => {
       expect(screen.getByTestId("overlay")).toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText("Score: 620")).toBeInTheDocument();
-    expect(screen.getByLabelText("My Best: 620")).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 2478")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 2478")).toBeInTheDocument();
   });
 
   it("keeps the banked bonus in the header Score after Keep Playing", async () => {
@@ -337,7 +337,7 @@ describe("<App/> win overlay", () => {
     await waitFor(() => {
       expect(screen.getByTestId("overlay")).toBeInTheDocument();
     });
-    expect(screen.getByLabelText("Score: 620")).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 2478")).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.click(screen.getByText("Keep Playing"));
@@ -347,8 +347,8 @@ describe("<App/> win overlay", () => {
       expect(screen.queryByTestId("overlay")).not.toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText("Score: 620")).toBeInTheDocument();
-    expect(screen.getByLabelText("My Best: 620")).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 2478")).toBeInTheDocument();
+    expect(screen.getByLabelText("My Best: 2478")).toBeInTheDocument();
   });
 
   it("keeps the banked bonus fixed even when an undo is used after Keep Playing", async () => {
@@ -374,7 +374,7 @@ describe("<App/> win overlay", () => {
       fireEvent.click(screen.getByTestId("power-up-undo"));
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("Score: 108")).toBeInTheDocument();
+      expect(screen.getByLabelText("Score: 430")).toBeInTheDocument();
     });
   });
 
