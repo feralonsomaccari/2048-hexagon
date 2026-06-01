@@ -55,8 +55,8 @@ describe("useAchievements", () => {
         finalScore: 20000,
         isWin: true,
         revivedThisRun: true,
-        maxComboThisMove: 3,
-        maxMergeStreak: 8,
+        maxComboThisMove: 4,
+        maxMergeStreak: 16,
       })
     );
     act(() =>
@@ -67,8 +67,8 @@ describe("useAchievements", () => {
         finalScore: 20000,
         isWin: true,
         revivedThisRun: true,
-        maxComboThisMove: 3,
-        maxMergeStreak: 8,
+        maxComboThisMove: 4,
+        maxMergeStreak: 16,
       })
     );
 

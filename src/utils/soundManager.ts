@@ -1,6 +1,6 @@
 
 
-type SoundName = "move" | "merge" | "combo" | "win" | "gameOver";
+type SoundName = "move" | "merge" | "combo" | "win" | "gameOver" | "achievement";
 
 const COMBO_SOUND_ENABLED = false;
 
@@ -141,6 +141,13 @@ const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
       playTone(freq, { duration: 0.25, type: "triangle", gain: 0.26, delay: i * 0.09 })
     );
   },
+
+  achievement: () => {
+    [196, 246.94, 293.66, 392.0].forEach((freq, i) =>
+      playTone(freq, { duration: 0.14, type: "triangle", gain: 0.26, delay: i * 0.07 })
+    );
+    playTone(392.0, { duration: 0.3, type: "triangle", gain: 0.2, delay: 0.28, attack: 0.02 });
+  },
 };
 
 export const playSound = (name: SoundName, opts?: SoundOpts): void => {
@@ -153,6 +160,8 @@ const vibrationPatterns: Partial<Record<SoundName, number | number[]>> = {
   win: [50, 70, 50, 70, 50, 70, 50, 70, 200],
 
   gameOver: 250,
+
+  achievement: [40, 60, 40, 120],
 };
 
 export const vibrate = (name: SoundName): void => {

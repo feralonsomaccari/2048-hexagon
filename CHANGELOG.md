@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-06-01
+
+### Added
+- Added a sound when an achievement is unlocked.
+- Added the Relentless achievement for merging on 16 moves in a row.
+
+### Changed
+- Made the Combo Artist achievement require 4 merges in a single move.
+- Made the Unstoppable achievement require a 12-move merge streak.
+
 ## [0.25.1] - 2026-06-01
 
 ### Fixed

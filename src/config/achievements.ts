@@ -77,16 +77,23 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "combo-3",
     name: "Combo Artist",
-    description: "Merge 3 or more pairs in a single move",
+    description: "Merge 4 or more pairs in a single move",
     group: "general",
-    check: (ctx) => ctx.maxComboThisMove >= 3,
+    check: (ctx) => ctx.maxComboThisMove >= 4,
   },
   {
     id: "streak-8",
     name: "Unstoppable",
-    description: "Merge on 8 moves in a row",
+    description: "Merge on 12 moves in a row",
     group: "general",
-    check: (ctx) => ctx.maxMergeStreak >= 8,
+    check: (ctx) => ctx.maxMergeStreak >= 12,
+  },
+  {
+    id: "streak-16",
+    name: "Relentless",
+    description: "Merge on 16 moves in a row",
+    group: "general",
+    check: (ctx) => ctx.maxMergeStreak >= 16,
   },
   {
     id: "purist",

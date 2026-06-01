@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import styles from "./AchievementToast.module.css";
 import AchievementsIcon from "../AchievementsIcon";
 import { Achievement } from "../../config/achievements";
+import { playSound, vibrate } from "../../utils/soundManager";
 
 const TOAST_DURATION = 4000;
 const EXIT_DURATION = 240;
@@ -15,6 +16,11 @@ const AchievementToast = ({ achievement, onDismiss }: ToastProps) => {
   const [leaving, setLeaving] = useState(false);
 
   const beginLeave = useCallback(() => setLeaving(true), []);
+
+  useEffect(() => {
+    playSound("achievement");
+    vibrate("achievement");
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(beginLeave, TOAST_DURATION);

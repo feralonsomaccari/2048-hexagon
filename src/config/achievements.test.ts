@@ -53,10 +53,12 @@ describe("achievement checks", () => {
   });
 
   it("combo and streak track peaks", () => {
-    expect(find("combo-3").check({ ...baseCtx, maxComboThisMove: 3 })).toBe(true);
-    expect(find("combo-3").check({ ...baseCtx, maxComboThisMove: 2 })).toBe(false);
-    expect(find("streak-8").check({ ...baseCtx, maxMergeStreak: 8 })).toBe(true);
-    expect(find("streak-8").check({ ...baseCtx, maxMergeStreak: 7 })).toBe(false);
+    expect(find("combo-3").check({ ...baseCtx, maxComboThisMove: 4 })).toBe(true);
+    expect(find("combo-3").check({ ...baseCtx, maxComboThisMove: 3 })).toBe(false);
+    expect(find("streak-8").check({ ...baseCtx, maxMergeStreak: 12 })).toBe(true);
+    expect(find("streak-8").check({ ...baseCtx, maxMergeStreak: 11 })).toBe(false);
+    expect(find("streak-16").check({ ...baseCtx, maxMergeStreak: 16 })).toBe(true);
+    expect(find("streak-16").check({ ...baseCtx, maxMergeStreak: 15 })).toBe(false);
   });
 
   it("purist requires a win with no power-ups", () => {
