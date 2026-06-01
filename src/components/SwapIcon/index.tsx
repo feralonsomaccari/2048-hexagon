@@ -18,14 +18,12 @@ const SwapIcon = ({ size = "1em", className }: props) => (
     aria-hidden="true"
     focusable="false"
   >
-    {/* Two flat-top hexagons, offset like the swap icon */}
-    <path d="M6.5 3.2 L9.6 5 V8.6 L6.5 10.4 L3.4 8.6 V5 Z" />
-    <path d="M17.5 13.6 L20.6 15.4 V19 L17.5 20.8 L14.4 19 V15.4 Z" />
-    {/* Clockwise swap arrows wrapping the pair */}
-    <path d="M13 5.2 A6 6 0 0 1 18.5 9.4" />
-    <path d="M18.9 6.2 L18.5 9.6 L15.2 9" />
-    <path d="M11 18.8 A6 6 0 0 1 5.5 14.6" />
-    <path d="M5.1 17.8 L5.5 14.4 L8.8 15" />
+    <path d="M4.9 2.86 L9.1 2.86 L11.2 6.5 L9.1 10.14 L4.9 10.14 L2.8 6.5 Z" />
+    <path d="M14.9 13.86 L19.1 13.86 L21.2 17.5 L19.1 21.14 L14.9 21.14 L12.8 17.5 Z" />
+    <path d="M13.4 5 A6.2 6.2 0 0 1 19 9.6" />
+    <path d="M19.6 6.2 L19.1 9.8 L15.6 9.2" />
+    <path d="M10.6 19 A6.2 6.2 0 0 1 5 14.4" />
+    <path d="M4.4 17.8 L4.9 14.2 L8.4 14.8" />
   </svg>
 );
 
