@@ -216,6 +216,13 @@ const GameMenu = ({
                       }}
                     />
                   )}
+                  <p className={styles.menuAttribution}>
+                    Based on 2048 by{" "}
+                    <a href="https://play2048.co/" target="_blank" rel="noopener">
+                      Gabriele Cirulli
+                    </a>
+                    {" · v"}{__APP_VERSION__}
+                  </p>
                 </div>
               )}
             </div>

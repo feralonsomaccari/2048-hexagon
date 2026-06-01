@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-06-01
+
+### Added
+- Added the "Based on 2048" attribution and version to the mobile hamburger menu.
+
 ## [0.23.3] - 2026-06-01
 
 ### Fixed
