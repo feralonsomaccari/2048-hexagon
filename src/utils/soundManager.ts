@@ -25,6 +25,35 @@ const getContext = (): AudioContext | null => {
   return ctx;
 };
 
+let unlocked = false;
+
+const unlock = (): void => {
+  if (unlocked) return;
+  const audio = getContext();
+  if (!audio) return;
+  void audio.resume();
+  const buffer = audio.createBuffer(1, 1, 22050);
+  const source = audio.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audio.destination);
+  source.start(0);
+  if (audio.state === "running") unlocked = true;
+};
+
+export const initAudioUnlock = (): (() => void) => {
+  if (typeof window === "undefined") return () => {};
+  const events: (keyof DocumentEventMap)[] = ["touchend", "mousedown", "keydown"];
+  const handler = (): void => {
+    unlock();
+    if (unlocked) cleanup();
+  };
+  const cleanup = (): void => {
+    events.forEach((e) => document.removeEventListener(e, handler));
+  };
+  events.forEach((e) => document.addEventListener(e, handler, { passive: true }));
+  return cleanup;
+};
+
 const playTone = (
   freq: number,
   {

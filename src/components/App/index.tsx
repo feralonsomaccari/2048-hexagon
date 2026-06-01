@@ -26,6 +26,7 @@ import useViewport from "../../hooks/useWindowScale";
 import useSwipe from "../../hooks/useSwipe";
 import useTheme from "../../hooks/useTheme";
 import useSound from "../../hooks/useSound";
+import { initAudioUnlock } from "../../utils/soundManager";
 import useRemoteHighScores from "../../hooks/useRemoteHighScores";
 import useAchievements from "../../hooks/useAchievements";
 import AchievementToasts from "../AchievementToast";
@@ -144,6 +145,8 @@ export const App: React.FC = () => {
     setTileSet(serverResponse);
     setIsMovementBlocked(false);
   }, [serverResponse]);
+
+  useEffect(() => initAudioUnlock(), []);
 
   useEffect(() => {
     document.addEventListener("keydown", keyPressHandler);
