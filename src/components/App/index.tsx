@@ -615,6 +615,7 @@ export const App: React.FC = () => {
           onShareTwitter={shareOnTwitter}
           onShareFacebook={shareOnFacebook}
           isWin={isWin}
+          isGameOver={isGameOver}
         />
         <Instructions radius={radius} collapsed={isWin || isGameOver} />
         <GameContainer

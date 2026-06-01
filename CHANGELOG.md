@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.21.4] - 2026-06-01
+
+### Changed
+- Game Over overlay polish — Undo shown as a power-up icon tile, top score hidden, and matching button height and hover bump.
+
 ## [0.21.3] - 2026-06-01
 
 ### Changed

@@ -103,12 +103,12 @@ describe("<GameContainer/>", () => {
         onReviveWithUndo={onReviveWithUndo}
       />
     );
-    const undoButton = screen.getByRole("button", { name: "Undo (2)" });
+    const undoButton = screen.getByRole("button", { name: "Undo, 2 remaining" });
     fireEvent.click(undoButton);
     expect(onReviveWithUndo).toHaveBeenCalledTimes(1);
   });
 
-  it("should label the revive Undo without a count when one charge remains", () => {
+  it("shows the remaining undo count on the revive button", () => {
     render(
       <GameContainer
         {...props}
@@ -118,7 +118,7 @@ describe("<GameContainer/>", () => {
         onReviveWithUndo={vi.fn()}
       />
     );
-    expect(screen.getByRole("button", { name: "Undo" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Undo, 1 remaining" })).toBeInTheDocument();
   });
 
   it("should not offer Undo in the overlay when no revive is available", () => {

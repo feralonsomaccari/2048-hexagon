@@ -21,6 +21,7 @@ type props = {
   onShareFacebook?: () => void;
 
   isWin?: boolean;
+  isGameOver?: boolean;
 };
 
 const GameMenu = ({
@@ -34,7 +35,9 @@ const GameMenu = ({
   onShareTwitter,
   onShareFacebook,
   isWin = false,
+  isGameOver = false,
 }: props) => {
+  const isEnded = isWin || isGameOver;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -208,7 +211,7 @@ const GameMenu = ({
         </div>
         {scores && <div className={styles.scores}>{scores}</div>}
       </div>
-      <div className={`${styles.collapsible} ${isWin ? styles.collapsed : ""}`} aria-hidden={isWin}>
+      <div className={`${styles.collapsible} ${isEnded ? styles.collapsed : ""}`} aria-hidden={isEnded}>
       <div className={styles.collapsibleInner}>
       <div className={styles.divider} />
       <div className={styles.bottom}>

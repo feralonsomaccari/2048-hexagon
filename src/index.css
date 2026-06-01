@@ -10,7 +10,6 @@
   --color-bg-overlay-gameover: rgba(238, 228, 218, 0.73);
   --color-bg-overlay-win: rgba(237, 194, 46, 0.72);
   --color-text-overlay-win: #3d2f0c;
-  --color-text-overlay-win-hover: #574316;
   --color-bg-page: #faf8ef;
 
   --bg-color-2: #eae8dc;
@@ -43,7 +42,6 @@
   --color-disabled: #4a4640;
   --color-bg-overlay-gameover: rgba(28, 26, 22, 0.78);
   --color-bg-overlay-win: rgba(212, 165, 35, 0.74);
-  --color-text-overlay-win-hover: #574316;
   --color-bg-page: #1d1b17;
 
   --bg-color-2: #3a3631;

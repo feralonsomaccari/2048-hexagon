@@ -113,8 +113,31 @@
 
 .overlayActions {
   display: flex;
+  align-items: center;
   column-gap: 10px;
   margin-top: 4px;
+}
+
+.gameOverOverlay:not(.isWin) .overlayActions button {
+  height: 56px;
+  max-height: 56px;
+  border-radius: 12px;
+  transition: transform 0.12s ease, background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.gameOverOverlay:not(.isWin) .overlayActions button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.gameOverOverlay:not(.isWin) .overlayActions button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .gameOverOverlay:not(.isWin) .overlayActions button {
+    height: 50px;
+    max-height: 50px;
+  }
 }
 
 .shareCorner {
@@ -131,11 +154,15 @@
   color: var(--color-bg-overlay-win-button-text, #fdf6e3);
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
 }
 
 .shareCorner:hover {
-  background-color: var(--color-text-overlay-win-hover);
+  transform: translateY(-2px);
+}
+
+.shareCorner:active {
+  transform: translateY(0);
 }
 
 .shareCorner:active {
@@ -213,15 +240,15 @@
   color: var(--color-bg-overlay-win-button-text, #fdf6e3);
   text-shadow: none;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
 }
 
-.gameOverOverlay.isWin .overlayActions button:hover {
-  background-color: var(--color-text-overlay-win-hover, #574316);
+.gameOverOverlay.isWin .overlayActions button:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
-.gameOverOverlay.isWin .overlayActions button:active {
-  transform: translateY(1px);
+.gameOverOverlay.isWin .overlayActions button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .gameOverOverlay.isWin .overlayActions button:focus-visible {

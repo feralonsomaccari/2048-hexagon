@@ -8,6 +8,8 @@ import HighScorePrompt from "../Leaderboard/HighScorePrompt";
 import Confetti from "../Confetti";
 import TwitterIcon from "../TwitterIcon";
 import TrophyIcon from "../TrophyIcon";
+import UndoIcon from "../UndoIcon";
+import powerUpStyles from "../PowerUpBar/PowerUpBar.module.css";
 import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 type props = {
@@ -249,10 +251,18 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
           )}
           <div className={styles.overlayActions}>
             {!isWin && canReviveWithUndo && onReviveWithUndo && (
-              <Button
-                clickHandler={onReviveWithUndo}
-                text={`Undo${undosRemaining > 1 ? ` (${undosRemaining})` : ""}`}
-              />
+              <button
+                type="button"
+                className={powerUpStyles.tile}
+                onClick={onReviveWithUndo}
+                title="Undo"
+                aria-label={`Undo, ${undosRemaining} remaining`}
+              >
+                <UndoIcon className={powerUpStyles.icon} />
+                <span className={powerUpStyles.badge} aria-hidden="true">
+                  {undosRemaining}
+                </span>
+              </button>
             )}
             <Button clickHandler={handleTryAgain} text='Try Again' />
             {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing' />}
