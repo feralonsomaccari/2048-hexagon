@@ -98,8 +98,12 @@ const sounds: Record<SoundName, (opts?: SoundOpts) => void> = {
   },
 
   win: () => {
-    [261.63, 329.63, 392.0, 523.25].forEach((freq, i) =>
-      playTone(freq, { duration: 0.22, type: "triangle", gain: 0.3, delay: i * 0.08 })
+    const run = [261.63, 329.63, 392.0, 523.25, 659.25, 783.99];
+    run.forEach((freq, i) =>
+      playTone(freq, { duration: 0.16, type: "triangle", gain: 0.28, delay: i * 0.09 })
+    );
+    [523.25, 659.25, 783.99].forEach((freq) =>
+      playTone(freq, { duration: 0.36, type: "triangle", gain: 0.24, delay: 0.55, attack: 0.02 })
     );
   },
 
@@ -117,7 +121,7 @@ export const playSound = (name: SoundName, opts?: SoundOpts): void => {
 
 const vibrationPatterns: Partial<Record<SoundName, number | number[]>> = {
 
-  win: [60, 50, 60, 50, 120],
+  win: [50, 70, 50, 70, 50, 70, 50, 70, 200],
 
   gameOver: 250,
 };
