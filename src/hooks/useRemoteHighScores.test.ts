@@ -205,6 +205,26 @@ describe("useRemoteHighScores — Firebase configured", () => {
     });
   });
 
+  it("submit records the biggest tile reached, defaulting to 0 when omitted", async () => {
+    addDocMock.mockResolvedValue(undefined);
+    const { result } = renderHook(() => useRemoteHighScores());
+    await emitInitialEmptySnapshots();
+
+    await act(async () => {
+      await result.current.submit(1, 1536, "Alice", { bestTile: 2048 });
+      await result.current.submit(1, 400, "Bob");
+    });
+
+    expect(addDocMock.mock.calls[0][1]).toMatchObject({
+      name: "Alice",
+      bestTile: 2048,
+    });
+    expect(addDocMock.mock.calls[1][1]).toMatchObject({
+      name: "Bob",
+      bestTile: 0,
+    });
+  });
+
   it("submit records removes and swaps used, defaulting to 0 when omitted", async () => {
     addDocMock.mockResolvedValue(undefined);
     const { result } = renderHook(() => useRemoteHighScores());

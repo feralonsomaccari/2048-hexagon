@@ -53,6 +53,10 @@ export const App: React.FC = () => {
   const [bankedBonus, setBankedBonus] = useState<number | null>(initialSavedGame?.bankedBonus ?? null);
   const [score, setScore] = useState(initialSavedGame?.score ?? 0);
 
+  // Highest tile value ever produced this run; only grows, so removing the
+  // biggest tile (Remove power-up) can't shrink it.
+  const [bestTile, setBestTile] = useState(initialSavedGame?.bestTile ?? 0);
+
   const [isUndoAvailable, setIsUndoAvailable] = useState(initialSavedGame?.isUndoAvailable ?? false);
   const [undoCount, setUndoCount] = useState(initialSavedGame?.undoCount ?? 0)
   const [movesCount, setMovesCount] = useState(initialSavedGame?.movesCount ?? 0)
@@ -244,8 +248,9 @@ export const App: React.FC = () => {
       hasKeptPlaying,
       bankedBonus: bankedBonus ?? undefined,
       movesCount,
+      bestTile,
     });
-  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount]);
+  }, [tileSet, grid, score, radius, historyTileSet, historyScore, undoCount, isUndoAvailable, isMaxUndo, removeCount, swapCount, isWin, hasKeptPlaying, bankedBonus, isGameOver, movesCount, bestTile]);
 
   const updateTile = (
     tile: gridElement,
@@ -270,6 +275,7 @@ export const App: React.FC = () => {
         const newValue = tile.value + nextBlock.value;
         mergeCounter.count += 1;
         setScore((prevScore) => prevScore + newValue);
+        setBestTile((prev) => Math.max(prev, newValue));
 
         if (!hasKeptPlaying && newValue >= (WIN_TILE_BY_RADIUS[radius] ?? 2048)) setIsWin(true);
         tile.x = nextBlock.x;
@@ -401,6 +407,7 @@ export const App: React.FC = () => {
 
   const resetGameHandler = (newRadius: number): void => {
     setScore(0);
+    setBestTile(0);
     setIsGameOver(false);
     setIsUndoAvailable(false);
     setUndoCount(0)
@@ -438,6 +445,7 @@ export const App: React.FC = () => {
         swapsUsed: swapCount,
         nonUsedPowerUpBonus: powerUpBonus,
         movesCount,
+        bestTile,
       });
       if (entry) {
         setLastQualifyingEntry(entry);
@@ -446,7 +454,7 @@ export const App: React.FC = () => {
       setPendingHighScore(false);
       setIsLeaderboardShown(true);
     },
-    [radius, finalScore, undoCount, removeCount, swapCount, powerUpBonus, movesCount, submitRemoteHighScore]
+    [radius, finalScore, undoCount, removeCount, swapCount, powerUpBonus, movesCount, bestTile, submitRemoteHighScore]
   );
 
   const openLeaderboard = useCallback(() => {

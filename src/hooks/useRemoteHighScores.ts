@@ -17,6 +17,7 @@ type ScoreBreakdown = {
   swapsUsed?: number;
   nonUsedPowerUpBonus?: number;
   movesCount?: number;
+  bestTile?: number;
 };
 
 type RemoteState = {
@@ -40,6 +41,7 @@ type FirestoreDocData = {
   swapsUsed?: number;
   nonUsedPowerUpBonus?: number;
   movesCount?: number;
+  bestTile?: number;
   createdAt?: { toDate: () => Date };
 };
 
@@ -52,6 +54,7 @@ const docToEntry = (data: FirestoreDocData): HighScoreEntry => ({
   ...(typeof data.swapsUsed === "number" ? { swapsUsed: data.swapsUsed } : {}),
   ...(typeof data.nonUsedPowerUpBonus === "number" ? { nonUsedPowerUpBonus: data.nonUsedPowerUpBonus } : {}),
   ...(typeof data.movesCount === "number" ? { movesCount: data.movesCount } : {}),
+  ...(typeof data.bestTile === "number" ? { bestTile: data.bestTile } : {}),
 });
 
 const safeBonus = (value: number | undefined): number =>
@@ -131,6 +134,7 @@ const useRemoteHighScores = (): RemoteState => {
       const safeSwapsUsed = safeBonus(breakdown?.swapsUsed);
       const safeNonUsedPowerUpBonus = safeBonus(breakdown?.nonUsedPowerUpBonus);
       const safeMovesCount = safeBonus(breakdown?.movesCount);
+      const safeBestTile = safeBonus(breakdown?.bestTile);
 
       const entry: HighScoreEntry = {
         name: trimmedName,
@@ -141,6 +145,7 @@ const useRemoteHighScores = (): RemoteState => {
         swapsUsed: safeSwapsUsed,
         nonUsedPowerUpBonus: safeNonUsedPowerUpBonus,
         movesCount: safeMovesCount,
+        bestTile: safeBestTile,
       };
 
       try {
@@ -159,6 +164,7 @@ const useRemoteHighScores = (): RemoteState => {
           swapsUsed: safeSwapsUsed,
           nonUsedPowerUpBonus: safeNonUsedPowerUpBonus,
           movesCount: safeMovesCount,
+          bestTile: safeBestTile,
           createdAt: serverTimestamp(),
         });
       } catch (err) {

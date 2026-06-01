@@ -25,6 +25,7 @@ declare global {
     isWin?: boolean,
     hasKeptPlaying?: boolean,
     bankedBonus?: number,
-    movesCount?: number
+    movesCount?: number,
+    bestTile?: number
   }
 }

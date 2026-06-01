@@ -12,6 +12,8 @@ export type HighScoreEntry = {
   nonUsedPowerUpBonus?: number;
 
   movesCount?: number;
+
+  bestTile?: number;
 };
 
 export type HighScores = Record<string, HighScoreEntry[]>;
