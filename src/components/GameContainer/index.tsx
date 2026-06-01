@@ -7,6 +7,7 @@ import Button from "../Button";
 import HighScorePrompt from "../Leaderboard/HighScorePrompt";
 import Confetti from "../Confetti";
 import TwitterIcon from "../TwitterIcon";
+import TrophyIcon from "../TrophyIcon";
 import { WIN_TILE_BY_RADIUS } from "../../config/gameConfig";
 
 type props = {
@@ -53,6 +54,33 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
 
   const innerRef = React.useRef<HTMLElement | null>(null);
   const [availableHeight, setAvailableHeight] = React.useState(0);
+
+  // On a win, the winning tile shines for a beat before the overlay choreography
+  // (overlay fade -> confetti -> trophy) begins. SHINE_DURATION matches the
+  // winning-tile shine animation in Tile.module.css (2 pulses x 0.45s).
+  const SHINE_DURATION = 900;
+  // A restored saved game that is already won should show the overlay immediately
+  // rather than replaying the shine; only a fresh in-play win triggers it.
+  const winOnMountRef = React.useRef(isWin);
+  const [winRevealed, setWinRevealed] = React.useState(isWin);
+  React.useEffect(() => {
+    if (!isWin) {
+      winOnMountRef.current = false;
+      setWinRevealed(false);
+      return;
+    }
+    if (winOnMountRef.current) return;
+    // Users who prefer reduced motion skip the shine and see the overlay at once.
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      setWinRevealed(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setWinRevealed(true), SHINE_DURATION);
+    return () => window.clearTimeout(timer);
+  }, [isWin]);
 
   const handleTryAgain = React.useCallback(() => {
     if (onTryAgain) onTryAgain();
@@ -105,40 +133,35 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     POWER_UP_BAR_RESERVE + (viewport.isMobile ? 0 : FOOTER_RESERVE);
   const heightScale =
     availableHeight > 0 ? (availableHeight - verticalReserve) / natural : widthScale;
-  const scale = isWin
-    ? widthScale
-    : Math.max(0.4, Math.min(widthScale, heightScale));
+  const scale = Math.max(0.4, Math.min(widthScale, heightScale));
   const marginBottom = natural * (scale - 1);
   const boardRenderedHeight = natural * scale;
 
-  const overlayShown = isGameOver || isWin;
+  // The winning tile is the highest-value tile that reached the win threshold;
+  // it shines on the board before the overlay appears.
+  const winTileValue = WIN_TILE_BY_RADIUS[radius] ?? 2048;
+  const winningTileId = React.useMemo(() => {
+    if (!isWin) return null;
+    let best: gridElement | null = null;
+    for (const tile of tileSet) {
+      if (tile.value >= winTileValue && (!best || tile.value > best.value)) best = tile;
+    }
+    return best?.id ?? null;
+  }, [isWin, tileSet, winTileValue]);
 
-  const PANEL_RESERVE = 170;
-  const mobilePanelScale =
-    viewport.isMobile && availableHeight > 0
-      ? Math.max(
-        0.35,
-        Math.min(0.66, (availableHeight - PANEL_RESERVE) / boardRenderedHeight)
-      )
-      : 0.55;
+  const overlayShown = isGameOver || (isWin && winRevealed);
+  const shineActive = isWin && !winRevealed;
 
   return (
     <main
       ref={setRefs}
-      className={`${styles.gameWrapper} ${isWin ? styles.winLayout : ""}`}
+      className={styles.gameWrapper}
       id="game"
-      style={
-        isWin
-          ? ({
-            "--board-rendered-height": `${boardRenderedHeight}px`,
-            "--win-scale-mobile": mobilePanelScale,
-          } as React.CSSProperties)
-          : { height: `${boardRenderedHeight}px` }
-      }
+      style={{ height: `${boardRenderedHeight}px` }}
       aria-label={`Hexagonal 2048 board, ${tileSet.length} tile${tileSet.length === 1 ? "" : "s"} in play`}
     >
-      {isWin && <Confetti />}
-      <div className={`${styles.boardZone} ${isWin ? styles.boardZoneWin : ""}`}>
+      {isWin && winRevealed && <Confetti />}
+      <div className={styles.boardZone}>
         <div className={styles.gameContainer} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
           {tileSet.map((tile) => {
             const isRemoving = tile.id != null && tile.id === removingTileId;
@@ -149,6 +172,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
               value={tile.value}
               merged={tile.merged}
               removing={isRemoving}
+              winning={shineActive && tile.id != null && tile.id === winningTileId}
               targeting={!isRemoving && (isRemoveMode || isSwapMode)}
               targetingAction={isSwapMode ? "swap" : "remove"}
               selected={isSwapMode && tile.id === selectedSwapTileId}
@@ -179,20 +203,10 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
           aria-modal="true"
         >
           {isWin && (
-            <div className={styles.shareContainer}>
-              <button
-                type="button"
-                className={styles.shareCorner}
-                onClick={handleShare}
-                title="Share your win on Twitter"
-                data-testid="share-btn"
-                aria-label="Share your win on Twitter"
-              >
-                <TwitterIcon className={styles.shareIcon} />
-              </button>
-            </div>
+            <span className={styles.overlayIcon} aria-hidden="true">
+              <TrophyIcon size={56} />
+            </span>
           )}
-          {/* {isWin && <span className={styles.overlayIcon} aria-hidden="true">🏆</span>} */}
           <h2 id="overlay-title" className={styles.overlayTitle}>{isWin ? `You reached ${WIN_TILE_BY_RADIUS[radius] ?? 2048}!` : "Game Over"}</h2>
           {hasBreakdown && (
             <dl className={styles.scoreBreakdown} data-testid="score-breakdown">
@@ -229,6 +243,18 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
             )}
             <Button clickHandler={handleTryAgain} text='Try Again' />
             {isWin && <Button clickHandler={dismissOverlay} text='Keep Playing' />}
+            {isWin && (
+              <button
+                type="button"
+                className={styles.shareCorner}
+                onClick={handleShare}
+                title="Share your win on Twitter"
+                data-testid="share-btn"
+                aria-label="Share your win on Twitter"
+              >
+                <TwitterIcon className={styles.shareIcon} />
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -11,6 +11,7 @@ type props = {
   targetingAction?: "remove" | "swap";
   selected?: boolean;
   removing?: boolean;
+  winning?: boolean;
   onSelect?: () => void;
 };
 
@@ -27,7 +28,7 @@ const fontSizeForValue = (value: number): number => {
   return 24;
 };
 
-const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "remove", selected = false, removing = false, onSelect }: props): JSX.Element => {
+const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "remove", selected = false, removing = false, winning = false, onSelect }: props): JSX.Element => {
   const colorClass = COLORED_VALUES.has(value)
     ? styles[`color-${value}`]
     : styles["color-final"];
@@ -58,7 +59,7 @@ const Tile = ({ value, left, top, merged, targeting = false, targetingAction = "
     <div
       data-testid="tile"
       style={{ left, top, ...getGridElementSizeFromRadius() }}
-      className={`${styles.tile} ${targeting ? styles.targeting : ""} ${targeting && selected ? styles.selected : ""}`}
+      className={`${styles.tile} ${targeting ? styles.targeting : ""} ${targeting && selected ? styles.selected : ""} ${winning ? styles.winning : ""}`}
       role={targeting ? "button" : "img"}
       aria-label={targeting ? targetingLabel : `Tile ${value}`}
       aria-pressed={targeting ? selected : undefined}

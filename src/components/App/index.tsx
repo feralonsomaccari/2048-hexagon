@@ -646,7 +646,10 @@ export const App: React.FC = () => {
           undosRemaining={undosRemaining}
           onReviveWithUndo={reviveWithUndo}
         />
-        {!isWin && (
+        <div
+          className={`${styles.powerUpCollapsible} ${isWin ? styles.collapsed : ""}`}
+          aria-hidden={isWin}
+        >
           <PowerUpBar
             powerUps={{
               ...(maxUndo > 0
@@ -686,7 +689,7 @@ export const App: React.FC = () => {
               },
             }}
           />
-        )}
+        </div>
         <footer className={styles.footer}>
           Based on 2048 by{" "}
           <a

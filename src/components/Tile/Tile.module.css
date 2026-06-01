@@ -64,6 +64,42 @@
   outline-offset: -3px;
 }
 
+/* Winning tile: a golden glow halo grows/shrinks while the tile pulses,
+   played before the win overlay choreography begins. The drop-shadow filter
+   renders the hex silhouette's glow outside the tile's own clipping. */
+.winning {
+  z-index: 3;
+  animation: winningPulse 0.45s ease-in-out 2 both;
+}
+
+.winning .tileInner {
+  animation: popin 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
+             winningFlash 0.45s ease-in-out 2 both;
+}
+
+@keyframes winningPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(255, 226, 120, 0));
+  }
+  50% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 14px rgba(255, 226, 120, 0.95));
+  }
+}
+
+@keyframes winningFlash {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.45) saturate(1.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .winning,
+  .winning .tileInner {
+    animation: none;
+  }
+}
+
 /* Remove power-up: the tile splits along a diagonal crack into two halves that
    slide apart and fade. The container drops its own hexagon mask and clipping so
    the halves can travel outward; each half carries the mask to keep the hex shape. */

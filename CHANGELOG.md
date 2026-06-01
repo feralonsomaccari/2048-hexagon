@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-06-01
+
+### Changed
+- Win screen reworked: winning tile shines, then the overlay, confetti and power-up bar fade in over the board.
+
 ## [0.20.1] - 2026-06-01
 
 ### Changed
