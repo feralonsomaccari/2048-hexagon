@@ -11,7 +11,7 @@ export const WIN_TILE_BY_RADIUS: Record<number, number> = {
 };
 
 export const LEADERBOARD_SIZE = 5;
-export const LEADERBOARD_SHOW_MOVES = false;
+export const LEADERBOARD_SHOW_MOVES = true;
 export const MAX_NAME_LENGTH = 16;
 export const MAX_UNDO_BY_RADIUS: Record<number, number> = {
   1: 3,
