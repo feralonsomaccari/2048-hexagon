@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.26.2] - 2026-06-02
+
+### Fixed
+- Vertically centered the hexagon glyph in the title.
+
 ## [0.26.1] - 2026-06-02
 
 ### Fixed

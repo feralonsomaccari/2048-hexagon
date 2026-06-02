@@ -83,7 +83,7 @@ const GameMenu = ({
       <div className={styles.top}>
         <div className={styles.titleBlock}>
           <h1 className={styles.title} aria-label="2048 Hexagon">
-            <span aria-hidden="true">2048 ⬡</span>
+            <span aria-hidden="true">2048 <span className={styles.titleHex}>⬡</span></span>
           </h1>
           {hasMenuItems && (
             <div className={styles.menu} ref={menuRef}>
