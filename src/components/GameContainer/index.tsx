@@ -103,6 +103,24 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     return () => window.clearTimeout(timer);
   }, [isGameOver]);
 
+  const FREEZE_FADE_OUT_DURATION = 250;
+  const [freezeVisible, setFreezeVisible] = React.useState(isFreezeArmed);
+  const [freezeExiting, setFreezeExiting] = React.useState(false);
+  React.useEffect(() => {
+    if (isFreezeArmed) {
+      setFreezeVisible(true);
+      setFreezeExiting(false);
+      return;
+    }
+    if (!freezeVisible) return;
+    setFreezeExiting(true);
+    const timer = window.setTimeout(() => {
+      setFreezeVisible(false);
+      setFreezeExiting(false);
+    }, FREEZE_FADE_OUT_DURATION);
+    return () => window.clearTimeout(timer);
+  }, [isFreezeArmed, freezeVisible]);
+
   const handleTryAgain = React.useCallback(() => {
     if (onTryAgain) onTryAgain();
     else resetGameHandler(radius);
@@ -181,7 +199,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     >
       {isWin && winRevealed && <Confetti />}
       <div className={styles.boardZone}>
-        <div className={`${styles.gameContainer} ${isFreezeArmed ? styles.tileFrost : ""}`} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
+        <div className={`${styles.gameContainer} ${freezeVisible ? styles.tileFrost : ""} ${freezeExiting ? styles.tileFrostExiting : ""}`} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
           {tileSet.map((tile) => {
             const isRemoving = tile.id != null && tile.id === removingTileId;
             return (
@@ -216,7 +234,7 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
             <Block key={index} {...getPositionFromCoordinates(coords, radius)} x={coords.x} y={coords.y} z={coords.z} value={coords.value} />
           ))}
         </div>
-        {isFreezeArmed && <Snowfall />}
+        {freezeVisible && <Snowfall exiting={freezeExiting} />}
       </div>
       {overlayShown && (
         <div

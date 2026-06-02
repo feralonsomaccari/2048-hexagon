@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.26.1] - 2026-06-02
+
+### Fixed
+- Made the freeze frost and snowfall fade out smoothly when freeze is turned off.
+
 ## [0.26.0] - 2026-06-01
 
 ### Added

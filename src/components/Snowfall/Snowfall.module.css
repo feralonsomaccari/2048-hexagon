@@ -18,6 +18,15 @@
   animation-iteration-count: infinite;
 }
 
+.exiting {
+  animation: snowfallFadeOut 0.25s ease-in both;
+}
+
+@keyframes snowfallFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 @keyframes snowFall {
   0% {
     top: -8%;

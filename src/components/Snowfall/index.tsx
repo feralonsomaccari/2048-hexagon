@@ -3,11 +3,12 @@ import styles from "./Snowfall.module.css";
 
 type Props = {
   count?: number;
+  exiting?: boolean;
 };
 
 const FLAKES = ["❄", "❅", "❆"];
 
-const Snowfall = ({ count = 28 }: Props): React.ReactElement => {
+const Snowfall = ({ count = 28, exiting = false }: Props): React.ReactElement => {
   const pieces = React.useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({
@@ -23,7 +24,7 @@ const Snowfall = ({ count = 28 }: Props): React.ReactElement => {
   );
 
   return (
-    <div className={styles.snowfall} data-testid="snowfall" aria-hidden="true">
+    <div className={`${styles.snowfall} ${exiting ? styles.exiting : ""}`} data-testid="snowfall" aria-hidden="true">
       {pieces.map((p) => (
         <span
           key={p.key}
