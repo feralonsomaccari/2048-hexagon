@@ -31,6 +31,7 @@ import useRemoteHighScores from "../../hooks/useRemoteHighScores";
 import useAchievements from "../../hooks/useAchievements";
 import AchievementToasts from "../AchievementToast";
 import AchievementsPanel from "../AchievementsPanel";
+import AdSlot from "../AdSlot";
 import {
   loadSavedGame,
   saveGame,
@@ -693,6 +694,9 @@ export const App: React.FC = () => {
         </Modal>
       )}
       <AchievementToasts queue={queue} onDismiss={dismissToast} />
+      <AdSlot placement="top" />
+      <AdSlot placement="desktop-left" />
+      <AdSlot placement="desktop-right" />
       <div className={styles.wrapper}>
         <GameMenu
           scores={

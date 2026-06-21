@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+- Add AdSense loader script and reserved ad slots (placeholders).
+
 ## [0.26.2] - 2026-06-02
 
 ### Fixed
