@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#bbada0" />
+    <meta name="author" content="feralonsomaccari" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9627820440615166" crossorigin="anonymous"></script>
+    <meta
+      name="description"
+      content="Privacy policy for 2048 Hexagon: what data the game stores in your browser, what the leaderboard saves, and how advertising cookies are used."
+    />
+    <link rel="canonical" href="https://2048hexagon.com/privacy/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <title>Privacy Policy - 2048 Hexagon</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Privacy Policy - 2048 Hexagon" />
+    <meta property="og:description" content="What data 2048 Hexagon stores in your browser, what the leaderboard saves, and how advertising cookies are used." />
+    <meta property="og:url" content="https://2048hexagon.com/privacy/" />
+    <meta property="og:site_name" content="2048 Hexagon" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://2048hexagon.com/og-image.png" />
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --color-text-main: #776e65;
+        --color-text-muted: #8a8178;
+        --color-heading: #6b6259;
+        --color-link: #8f7a66;
+        --color-rule: #d8cfc4;
+        --color-bg-page: #faf8ef;
+        --color-bg-card: #f3efe2;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-text-main: #ede0c8;
+          --color-text-muted: #a89279;
+          --color-heading: #f2e8d5;
+          --color-link: #d6b98c;
+          --color-rule: #4a4239;
+          --color-bg-page: #1d1b17;
+          --color-bg-card: #26231e;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+          'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+          'Helvetica Neue', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: var(--color-bg-page);
+        color: var(--color-text-main);
+        line-height: 1.65;
+      }
+
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+
+      header.site {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+
+      header.site a.brand {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--color-heading);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+
+      header.site .tag {
+        font-size: 14px;
+        color: var(--color-text-muted);
+      }
+
+      h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin: 0 0 6px;
+        color: var(--color-heading);
+        letter-spacing: -0.02em;
+      }
+
+      .updated {
+        margin: 0 0 28px;
+        font-size: 14px;
+        color: var(--color-text-muted);
+      }
+
+      h2 {
+        font-size: 20px;
+        margin: 34px 0 10px;
+        color: var(--color-heading);
+        letter-spacing: -0.01em;
+      }
+
+      h3 {
+        font-size: 16px;
+        margin: 22px 0 6px;
+        color: var(--color-heading);
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      ul {
+        margin: 0 0 14px;
+        padding-left: 22px;
+      }
+
+      li {
+        margin-bottom: 7px;
+      }
+
+      a {
+        color: var(--color-link);
+        font-weight: 600;
+      }
+
+      a:hover,
+      a:focus {
+        text-decoration: underline;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+        background: var(--color-bg-card);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 18px;
+        font-size: 15px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--color-rule);
+        vertical-align: top;
+      }
+
+      th {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+      }
+
+      .note {
+        background: var(--color-bg-card);
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin: 0 0 18px;
+      }
+
+      .note p:last-child {
+        margin-bottom: 0;
+      }
+
+      footer.site {
+        margin-top: 44px;
+        padding-top: 18px;
+        border-top: 1px solid var(--color-rule);
+        font-size: 14px;
+        color: var(--color-text-muted);
+      }
+
+      footer.site a {
+        margin-right: 16px;
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 26px;
+        }
+        .wrap {
+          padding: 24px 16px 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <a class="brand" href="/">2048 &#x2B22;</a>
+        <span class="tag">hexagon version</span>
+      </header>
+
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated: 13 September 2026</p>
+
+      <p>
+        This policy explains what data 2048 Hexagon collects when you play the game at
+        <a href="https://2048hexagon.com/">2048hexagon.com</a>, why the data is collected, and
+        what control you have over it.
+      </p>
+
+      <div class="note">
+        <p>
+          <strong>Short version:</strong> the game needs no account and asks for no personal
+          details. Your progress stays in your own browser. The only data that leaves your device
+          is the name and score you choose to submit to the public leaderboard. Advertising
+          partners set their own cookies, which you can control.
+        </p>
+      </div>
+
+      <h2>Who runs this site</h2>
+      <p>
+        2048 Hexagon is an independent, free browser game made by feralonsomaccari. The game is a
+        hexagonal version of the original 2048 by Gabriele Cirulli. The source code is public on
+        <a href="https://github.com/feralonsomaccari/2048-hexagon" rel="noopener">GitHub</a>.
+      </p>
+      <p>
+        For any question about this policy or your data, write to
+        <a href="mailto:privacy@2048hexagon.com">privacy@2048hexagon.com</a>.
+      </p>
+
+      <h2>Data stored in your browser</h2>
+      <p>
+        The game saves your progress and settings with the <code>localStorage</code> feature of
+        your browser. This data stays on your device. It is not sent to a server, and it is not
+        readable by other websites.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>savedGame</code></td>
+            <td>The current board, so you can continue an unfinished game.</td>
+          </tr>
+          <tr>
+            <td><code>lastRadius</code></td>
+            <td>The last difficulty you played.</td>
+          </tr>
+          <tr>
+            <td><code>maxScore</code></td>
+            <td>Your best score for each difficulty.</td>
+          </tr>
+          <tr>
+            <td><code>achievements</code></td>
+            <td>The achievements you unlocked.</td>
+          </tr>
+          <tr>
+            <td><code>theme</code></td>
+            <td>Your light or dark mode choice.</td>
+          </tr>
+          <tr>
+            <td><code>soundMuted</code></td>
+            <td>Your sound on or off choice.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        To erase all of this data, clear the site data for 2048hexagon.com in your browser
+        settings. The game then starts as new. No copy is kept anywhere else.
+      </p>
+
+      <h2>The public leaderboard</h2>
+      <p>
+        When you reach a high score, the game offers to add it to the public leaderboard. This
+        step is optional. If you skip it, nothing leaves your device.
+      </p>
+      <p>If you submit a score, two items are stored on a server:</p>
+      <ul>
+        <li>The <strong>name</strong> you type in the form.</li>
+        <li>The <strong>score</strong> and the difficulty you played.</li>
+      </ul>
+      <p>
+        You choose the name yourself. You do not need to use your real name, and the game never
+        asks for an email address, an account, or any other personal detail.
+      </p>
+      <p>
+        The leaderboard runs on Google Firebase Cloud Firestore. Google processes this data as a
+        hosting provider. See the
+        <a href="https://firebase.google.com/support/privacy" rel="noopener">Firebase privacy information</a>.
+      </p>
+      <p>
+        To remove an entry you submitted, write to
+        <a href="mailto:privacy@2048hexagon.com">privacy@2048hexagon.com</a>. Name the entry and
+        the approximate date. The entry will be deleted.
+      </p>
+
+      <h2>Advertising</h2>
+      <p>
+        This site shows advertisements from Google AdSense. Advertising pays the hosting and
+        domain costs and keeps the game free.
+      </p>
+      <p>
+        Google and its partners use cookies and similar technologies to show and measure
+        advertisements. These cookies can be used to show advertisements based on your earlier
+        visits to this site and to other websites.
+      </p>
+
+      <h3>How to control advertising cookies</h3>
+      <ul>
+        <li>
+          Turn off personalised advertising in your
+          <a href="https://www.google.com/settings/ads" rel="noopener">Google Ads settings</a>.
+        </li>
+        <li>
+          Read how Google uses data from sites that use its services at
+          <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a>.
+        </li>
+        <li>
+          Turn off third-party vendor cookies at
+          <a href="https://www.aboutads.info/choices/" rel="noopener">aboutads.info/choices</a>
+          or
+          <a href="https://www.youronlinechoices.com/" rel="noopener">youronlinechoices.com</a>.
+        </li>
+        <li>Block cookies for this site in your browser settings.</li>
+      </ul>
+      <p>
+        Third-party vendors other than Google may also show advertisements on this site. Each
+        vendor uses its own cookies, which the links above let you control.
+      </p>
+
+      <h2>Analytics</h2>
+      <p>
+        This site runs no analytics service. There is no Google Analytics, no tracking pixel, and
+        no visitor profiling by the game itself.
+      </p>
+
+      <h2>Hosting</h2>
+      <p>
+        The site is hosted on GitHub Pages and served through Cloudflare. Like all web servers,
+        these services record standard request data such as the IP address, the time of the
+        request, and the browser type. This data is used to deliver the site and to protect it
+        from abuse. See the
+        <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub privacy statement</a>
+        and the
+        <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare privacy policy</a>.
+      </p>
+
+      <h2>Children</h2>
+      <p>
+        This game is suitable for all ages, and it collects no personal details from anybody. The
+        site is not directed at children under 13, and it does not knowingly collect personal
+        information from them. If you believe a child has submitted a name to the leaderboard
+        that must be removed, write to
+        <a href="mailto:privacy@2048hexagon.com">privacy@2048hexagon.com</a>.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        Depending on your country, you may have the right to see, correct, or delete the data
+        held about you. Because the game stores almost everything in your own browser, you can do
+        most of this yourself:
+      </p>
+      <ul>
+        <li><strong>See your data:</strong> it is the list in the table above, inside your browser.</li>
+        <li><strong>Delete your data:</strong> clear the site data for 2048hexagon.com.</li>
+        <li><strong>Delete a leaderboard entry:</strong> write to the address below.</li>
+      </ul>
+      <p>
+        For any other request, write to
+        <a href="mailto:privacy@2048hexagon.com">privacy@2048hexagon.com</a>.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        This policy can change if the game adds a new feature or a new service provider. The date
+        at the top of the page shows the last change. Significant changes will also be noted on
+        the game page.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Email: <a href="mailto:privacy@2048hexagon.com">privacy@2048hexagon.com</a>
+      </p>
+
+      <footer class="site">
+        <a href="/">Play the game</a>
+        <a href="https://github.com/feralonsomaccari/2048-hexagon" rel="noopener">Source code</a>
+      </footer>
+    </div>
+  </body>
+</html>

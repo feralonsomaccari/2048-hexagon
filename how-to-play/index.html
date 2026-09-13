@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#bbada0" />
+    <meta name="author" content="feralonsomaccari" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9627820440615166" crossorigin="anonymous"></script>
+    <meta
+      name="description"
+      content="The complete guide to 2048 Hexagon: the rules, both board sizes, every power-up charge, hex-grid strategy tips, all 15 achievements and the leaderboard."
+    />
+    <link rel="canonical" href="https://2048hexagon.com/how-to-play/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="How to play 2048 Hexagon - full guide and strategy" />
+    <meta property="og:description" content="Board sizes, power-up charges, hex-grid strategy, achievements and the leaderboard." />
+    <meta property="og:url" content="https://2048hexagon.com/how-to-play/" />
+    <meta property="og:site_name" content="2048 Hexagon" />
+    <meta property="og:image" content="https://2048hexagon.com/og-image.png" />
+
+    <title>How to Play 2048 Hexagon - Full Guide and Strategy</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "How to play 2048 Hexagon - full guide and strategy",
+        "description": "Board sizes, power-up charges, hex-grid strategy, achievements and the leaderboard in 2048 Hexagon.",
+        "image": "https://2048hexagon.com/og-image.png",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://2048hexagon.com/how-to-play/"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "feralonsomaccari",
+          "url": "https://feralonsomaccari.github.io/my-portfolio/"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "feralonsomaccari"
+        },
+        "about": {
+          "@type": "VideoGame",
+          "name": "2048 Hexagon",
+          "url": "https://2048hexagon.com/"
+        }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "2048 Hexagon",
+            "item": "https://2048hexagon.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "How to play",
+            "item": "https://2048hexagon.com/how-to-play/"
+          }
+        ]
+      }
+    </script>
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --color-text-main: #776e65;
+        --color-text-muted: #8a8178;
+        --color-heading: #6b6259;
+        --color-link: #8f7a66;
+        --color-rule: #d8cfc4;
+        --color-bg-page: #faf8ef;
+        --color-bg-card: #f3efe2;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-text-main: #ede0c8;
+          --color-text-muted: #a89279;
+          --color-heading: #f2e8d5;
+          --color-link: #d6b98c;
+          --color-rule: #4a4239;
+          --color-bg-page: #1d1b17;
+          --color-bg-card: #26231e;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+          'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+          'Helvetica Neue', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: var(--color-bg-page);
+        color: var(--color-text-main);
+        line-height: 1.65;
+      }
+
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+
+      header.site {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+
+      header.site a.brand {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--color-heading);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+
+      header.site .tag {
+        font-size: 14px;
+        color: var(--color-text-muted);
+      }
+
+      h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin: 0 0 16px;
+        color: var(--color-heading);
+        letter-spacing: -0.02em;
+      }
+
+      h2 {
+        font-size: 21px;
+        margin: 36px 0 10px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-rule);
+        color: var(--color-heading);
+        letter-spacing: -0.01em;
+      }
+
+      h3 {
+        font-size: 17px;
+        margin: 22px 0 6px;
+        color: var(--color-heading);
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      ul {
+        margin: 0 0 14px;
+        padding-left: 22px;
+      }
+
+      li {
+        margin-bottom: 7px;
+      }
+
+      a {
+        color: var(--color-link);
+        font-weight: 600;
+      }
+
+      a:hover,
+      a:focus {
+        text-decoration: underline;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 16px;
+        font-size: 15px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--color-rule);
+        vertical-align: top;
+      }
+
+      th {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+      }
+
+      .play-cta {
+        display: inline-block;
+        margin: 8px 0 24px;
+        padding: 11px 20px;
+        border-radius: 8px;
+        background: #8f7a66;
+        color: #f9f6f2;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .play-cta:hover,
+      .play-cta:focus {
+        background: #7c6857;
+        text-decoration: none;
+      }
+
+      footer.site {
+        margin-top: 44px;
+        padding-top: 18px;
+        border-top: 1px solid var(--color-rule);
+        font-size: 14px;
+        color: var(--color-text-muted);
+      }
+
+      footer.site a {
+        margin-right: 16px;
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 26px;
+        }
+        .wrap {
+          padding: 24px 16px 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <a class="brand" href="/">2048 &#x2B22;</a>
+        <span class="tag">hexagon version</span>
+      </header>
+
+      <article>
+        <h1>How to play 2048 Hexagon</h1>
+        <p>
+          This guide covers the two board sizes, the power-ups on the Small board, strategy written
+          for a hexagonal grid, the achievements and the leaderboard. If you have not played yet,
+          the rules are short: slide the board in one of six directions, and merge tiles with the
+          same number.
+        </p>
+        <a class="play-cta" href="/">Play 2048 Hexagon</a>
+
+        <h2>Board sizes</h2>
+        <p>Choose a board when you start a new game.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Board</th>
+              <th>Cells</th>
+              <th>Power-ups</th>
+              <th>Goal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Small</td>
+              <td>7</td>
+              <td>Yes</td>
+              <td>2048</td>
+            </tr>
+            <tr>
+              <td>Big</td>
+              <td>19</td>
+              <td>No</td>
+              <td>2048</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          The Small board is the harder puzzle. Seven cells fill up fast, so it gives you power-ups
+          to stay alive. The Big board has room to breathe and no power-ups at all. On the Big
+          board, tiles often spawn two at a time, which keeps the pressure on even with 19 cells.
+        </p>
+
+        <h2>Power-ups on the Small board</h2>
+        <p>
+          The Small board gives you a fixed number of charges. Charges do not refill during a game.
+        </p>
+        <ul>
+          <li><strong>Undo (3 charges)</strong>: step back one move.</li>
+          <li><strong>Swap (2 charges)</strong>: exchange the position of two tiles.</li>
+          <li><strong>Freeze (2 charges)</strong>: skip the next tile spawn, so you get a free move.</li>
+          <li><strong>Double (2 charges)</strong>: double the value of one tile, up to 512.</li>
+        </ul>
+        <p>
+          There is a reason to save them. Every power-up you finish the game without using adds
+          three percent to your final score. A clean run is worth more than a rescued one.
+        </p>
+        <p>
+          If the board locks and you still have an undo charge, you can revive: the undo charge
+          rolls the board back one move and the game continues.
+        </p>
+
+        <h2>Strategy for a hexagonal board</h2>
+        <p>
+          Advice written for square 2048 only half works here. These points are specific to the hex
+          grid.
+        </p>
+
+        <h3>Pick a corner and never leave it</h3>
+        <p>
+          The classic 2048 rule still holds, and it matters more on a hexagon. Choose one corner,
+          keep your largest tile there, and use only the moves that leave it in place. On a hexagon
+          each corner is held by two of the six directions, so you have more safe moves than on a
+          square board, but also more ways to break the pattern by accident.
+        </p>
+
+        <h3>Six directions cut both ways</h3>
+        <p>
+          More directions mean more merges available on any given board. They also mean the board
+          rearranges more violently. A move that looks harmless can pull a tile out of your corner
+          from a direction you were not watching. Before each move, check what leaves the corner,
+          not only what merges.
+        </p>
+
+        <h3>Build along a line, not in a cluster</h3>
+        <p>
+          Merges happen between neighbours in a straight line. A tidy descending line of 256,
+          128, 64, 32 collapses in one move when the top of the line merges. A cluster of
+          similar values with no order needs several moves to resolve, and each move spawns another
+          tile.
+        </p>
+
+        <h3>Chain merges score more</h3>
+        <p>
+          Several pairs can merge in a single move. Setting up a chain of four or more is worth far
+          more than four separate merges, and it clears space faster. The Combo Artist achievement
+          asks for exactly this.
+        </p>
+
+        <h3>Freeze is a planning tool</h3>
+        <p>
+          Most players keep Freeze for emergencies. It is stronger used early: skipping a spawn
+          gives you one move with no new tile, which is often enough to reorder a line before the
+          board gets tight.
+        </p>
+
+        <h2>Achievements</h2>
+        <p>
+          The game tracks 15 achievements. Some ask for a tile: 512, 1024, 2048, 4096 and
+          8192, counted separately on each board. Others ask for a way of playing: score 5,000 or
+          20,000 points in one game, merge four pairs in a single move, merge on 12 or 16 moves in a
+          row, win without touching a power-up, or win after a revive. Unlock every one of them and
+          the Completionist achievement follows.
+        </p>
+
+        <h2>Leaderboard</h2>
+        <p>
+          Beat a high score and you can add your name to the public leaderboard. The board keeps the
+          top five scores for each board size and shows the number of moves each run took. The entry
+          is optional, and the name is yours to choose. The game asks for nothing else.
+        </p>
+
+        <h2>About the game</h2>
+        <p>
+          2048 Hexagon is based on
+          <a href="https://play2048.co/" rel="noopener">2048 by Gabriele Cirulli</a>, which was
+          itself inspired by 1024 and Threes. This version is built with React and TypeScript and
+          runs entirely in your browser. The source code is open on
+          <a href="https://github.com/feralonsomaccari/2048-hexagon" rel="noopener">GitHub</a>.
+        </p>
+      </article>
+
+      <footer class="site">
+        <a href="/">Play the game</a>
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="https://github.com/feralonsomaccari/2048-hexagon" rel="noopener">Source code</a>
+      </footer>
+    </div>
+  </body>
+</html>
