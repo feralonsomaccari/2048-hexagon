@@ -15,6 +15,7 @@ const baseCtx: AchievementContext = {
   isWin: false,
   hasKeptPlaying: false,
   usedAnyPowerUp: false,
+  hadPowerUpsAvailable: true,
   maxComboThisMove: 0,
   maxMergeStreak: 0,
   revivedThisRun: false,
@@ -65,6 +66,14 @@ describe("achievement checks", () => {
     expect(find("purist").check({ ...baseCtx, isWin: true, usedAnyPowerUp: false })).toBe(true);
     expect(find("purist").check({ ...baseCtx, isWin: true, usedAnyPowerUp: true })).toBe(false);
     expect(find("purist").check({ ...baseCtx, isWin: false, usedAnyPowerUp: false })).toBe(false);
+    expect(
+      find("purist").check({
+        ...baseCtx,
+        isWin: true,
+        usedAnyPowerUp: false,
+        hadPowerUpsAvailable: false,
+      })
+    ).toBe(false);
   });
 
   it("clutch requires a win after reviving", () => {

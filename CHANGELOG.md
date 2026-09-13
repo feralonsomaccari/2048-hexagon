@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Replace the hidden SEO block with a visible content section below the board.
 - Move the guide and strategy content to a new /how-to-play/ page, linked from the game menu.
 - Query leaderboard listeners only for the two board sizes in use, halving Firestore reads.
+- Purist achievement no longer unlocks on boards that have no power-ups.
 
 ## [0.26.2] - 2026-06-02
 

@@ -114,28 +114,31 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
 
   React.useEffect(() => {
     const wasGameOver = wasGameOverRef.current;
+    if (wasGameOver === isGameOver) return;
     wasGameOverRef.current = isGameOver;
 
-    if (isGameOver && !isWin) {
-      if (gameOverOnMountRef.current || prefersReducedMotion()) return;
+    if (isGameOver) {
+      if (isWin || gameOverOnMountRef.current || prefersReducedMotion()) return;
       const frame = window.requestAnimationFrame(() => setDisassembling(true));
       return () => window.cancelAnimationFrame(frame);
     }
 
     setDisassembling(false);
 
-    if (wasGameOver && !isGameOver) {
-      if (prefersReducedMotion()) return;
-      setAssembling(true);
-      const frame = window.requestAnimationFrame(() =>
-        window.requestAnimationFrame(() => setAssembling(false))
-      );
-      const timer = window.setTimeout(() => setAssembling(false), ASSEMBLE_DURATION + 100);
-      return () => {
-        window.cancelAnimationFrame(frame);
-        window.clearTimeout(timer);
-      };
+    if (prefersReducedMotion()) {
+      setAssembling(false);
+      return;
     }
+
+    setAssembling(true);
+    const frame = window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => setAssembling(false))
+    );
+    const timer = window.setTimeout(() => setAssembling(false), ASSEMBLE_DURATION + 100);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
   }, [isGameOver, isWin]);
 
   const FREEZE_FADE_OUT_DURATION = 250;

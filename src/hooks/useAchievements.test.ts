@@ -11,6 +11,7 @@ const baseCtx: AchievementContext = {
   isWin: false,
   hasKeptPlaying: false,
   usedAnyPowerUp: false,
+  hadPowerUpsAvailable: true,
   maxComboThisMove: 0,
   maxMergeStreak: 0,
   revivedThisRun: false,

@@ -8,6 +8,7 @@ export type AchievementContext = {
   isWin: boolean;
   hasKeptPlaying: boolean;
   usedAnyPowerUp: boolean;
+  hadPowerUpsAvailable: boolean;
   maxComboThisMove: number;
   maxMergeStreak: number;
   revivedThisRun: boolean;
@@ -100,7 +101,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     name: "Purist",
     description: "Win a game without using any power-up",
     group: "general",
-    check: (ctx) => ctx.isWin && !ctx.usedAnyPowerUp,
+    check: (ctx) => ctx.isWin && ctx.hadPowerUpsAvailable && !ctx.usedAnyPowerUp,
   },
   {
     id: "clutch",

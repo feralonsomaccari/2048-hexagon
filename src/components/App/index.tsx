@@ -554,6 +554,13 @@ export const App: React.FC = () => {
   // Undo charges left this run; a revive spends one charge to roll the
   // game-over board back to the move before the loss.
   const usedAnyPowerUp = undoCount + removeCount + swapCount + freezeCount + doubleCount > 0;
+  const hadPowerUpsAvailable =
+    (MAX_UNDO_BY_RADIUS[radius] ?? 0) +
+      (MAX_REMOVE_BY_RADIUS[radius] ?? 0) +
+      (MAX_SWAP_BY_RADIUS[radius] ?? 0) +
+      (MAX_FREEZE_BY_RADIUS[radius] ?? 0) +
+      (MAX_DOUBLE_BY_RADIUS[radius] ?? 0) >
+    0;
 
   useEffect(() => {
     if (!tileSet.length) return;
@@ -565,11 +572,12 @@ export const App: React.FC = () => {
       isWin,
       hasKeptPlaying,
       usedAnyPowerUp,
+      hadPowerUpsAvailable,
       maxComboThisMove: maxComboThisMoveRef.current,
       maxMergeStreak: maxMergeStreakRef.current,
       revivedThisRun: revivedThisRunRef.current,
     });
-  }, [bestTile, finalScore, movesCount, isWin, hasKeptPlaying, usedAnyPowerUp, radius, tileSet.length, evaluate]);
+  }, [bestTile, finalScore, movesCount, isWin, hasKeptPlaying, usedAnyPowerUp, hadPowerUpsAvailable, radius, tileSet.length, evaluate]);
 
   const undosRemaining = Math.max(0, maxUndo - undoCount);
   const canReviveWithUndo =
