@@ -168,6 +168,7 @@
   border-radius: 10px;
   background-color: var(--color-score-box);
   color: var(--color-score-box-text);
+  box-shadow: 0 0 0 2px var(--color-bg-page);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
