@@ -9,7 +9,7 @@ import {
 
 const COLLECTION = "highScores";
 const MAX_SCORE_SANITY = 10_000_000;
-const RADII = [1, 2, 3, 4] as const;
+const RADII = [1, 2] as const;
 
 type ScoreBreakdown = {
   undosUsed?: number;

@@ -59,7 +59,7 @@ const makeSnapshot = (docs: Array<{ name: string; score: number }>) => ({
   })),
 });
 
-const waitForListeners = (count = 4) =>
+const waitForListeners = (count = 2) =>
   waitFor(() => expect(listeners).toHaveLength(count));
 
 const emitInitialEmptySnapshots = async () => {
@@ -130,8 +130,8 @@ describe("useRemoteHighScores — Firebase configured", () => {
   it("registers one listener per board on mount", async () => {
     renderHook(() => useRemoteHighScores());
     await waitForListeners();
-    expect(onSnapshotMock).toHaveBeenCalledTimes(4);
-    expect(listeners.map((l) => l.radius).sort()).toEqual([1, 2, 3, 4]);
+    expect(onSnapshotMock).toHaveBeenCalledTimes(2);
+    expect(listeners.map((l) => l.radius).sort()).toEqual([1, 2]);
   });
 
   it("populates scores when snapshots arrive", async () => {
@@ -318,7 +318,7 @@ describe("useRemoteHighScores — Firebase configured", () => {
   it("unregisters all listeners on unmount", async () => {
     const { unmount } = renderHook(() => useRemoteHighScores());
     await waitForListeners();
-    expect(listeners).toHaveLength(4);
+    expect(listeners).toHaveLength(2);
     unmount();
     expect(listeners).toHaveLength(0);
   });
@@ -329,12 +329,12 @@ describe("useRemoteHighScores — Firebase configured", () => {
 
     act(() => {
       listeners
-        .find((l) => l.radius === 3)
+        .find((l) => l.radius === 2)
         ?.onNext(makeSnapshot([{ name: "Bob", score: 4242 }]));
     });
 
     await waitFor(() => {
-      expect(result.current.scores[3]?.[0]).toMatchObject({ name: "Bob", score: 4242 });
+      expect(result.current.scores[2]?.[0]).toMatchObject({ name: "Bob", score: 4242 });
     });
   });
 });
