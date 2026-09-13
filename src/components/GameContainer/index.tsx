@@ -103,6 +103,41 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     return () => window.clearTimeout(timer);
   }, [isGameOver]);
 
+  const ASSEMBLE_DURATION = 1500;
+  const [disassembling, setDisassembling] = React.useState(false);
+  const [assembling, setAssembling] = React.useState(false);
+  const wasGameOverRef = React.useRef(isGameOver);
+
+  const prefersReducedMotion = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  React.useEffect(() => {
+    const wasGameOver = wasGameOverRef.current;
+    wasGameOverRef.current = isGameOver;
+
+    if (isGameOver && !isWin) {
+      if (gameOverOnMountRef.current || prefersReducedMotion()) return;
+      const frame = window.requestAnimationFrame(() => setDisassembling(true));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    setDisassembling(false);
+
+    if (wasGameOver && !isGameOver) {
+      if (prefersReducedMotion()) return;
+      setAssembling(true);
+      const frame = window.requestAnimationFrame(() =>
+        window.requestAnimationFrame(() => setAssembling(false))
+      );
+      const timer = window.setTimeout(() => setAssembling(false), ASSEMBLE_DURATION + 100);
+      return () => {
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+      };
+    }
+  }, [isGameOver, isWin]);
+
   const FREEZE_FADE_OUT_DURATION = 250;
   const [freezeVisible, setFreezeVisible] = React.useState(isFreezeArmed);
   const [freezeExiting, setFreezeExiting] = React.useState(false);
@@ -157,6 +192,20 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
   const hasBreakdown = powerUpBonus > 0;
   const natural = naturalGridHeight(radius);
   const naturalWidth = naturalGridWidth(radius);
+
+  const scatter = React.useCallback(
+    (pos: { left: number; top: number }) => {
+      if (!disassembling && !assembling) return pos;
+      const cx = naturalWidth / 2 - 70;
+      const cy = natural / 2 - 60.55;
+      return {
+        left: cx + (pos.left - cx) * 1.6,
+        top: cy + (pos.top - cy) * 1.6,
+      };
+    },
+    [disassembling, assembling, naturalWidth, natural]
+  );
+
   const desktopDesignWidth = naturalWidth * ((10 - radius) / 10);
   const targetWidth = viewport.isMobile
     ? Math.min(viewport.width, naturalWidth)
@@ -199,13 +248,13 @@ const GameContainer = React.forwardRef<HTMLElement, props>(({ tileSet, grid, rad
     >
       {isWin && winRevealed && <Confetti />}
       <div className={styles.boardZone}>
-        <div className={`${styles.gameContainer} ${freezeVisible ? styles.tileFrost : ""} ${freezeExiting ? styles.tileFrostExiting : ""}`} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
+        <div className={`${styles.gameContainer} ${disassembling ? styles.disassembling : ""} ${assembling ? styles.assembling : ""} ${freezeVisible ? styles.tileFrost : ""} ${freezeExiting ? styles.tileFrostExiting : ""}`} style={{ width: `${naturalWidth}px`, height: `${natural}px`, transform: `scale(${scale})`, marginBottom: `${marginBottom}px` }}>
           {tileSet.map((tile) => {
             const isRemoving = tile.id != null && tile.id === removingTileId;
             return (
             <Tile
               key={tile.id}
-              {...getPositionFromCoordinates(tile, radius)}
+              {...scatter(getPositionFromCoordinates(tile, radius))}
               value={tile.value}
               merged={tile.merged}
               removing={isRemoving}

@@ -332,3 +332,43 @@
     transform: translateY(0);
   }
 }
+
+.disassembling [data-testid="tile"] {
+  transition: left 700ms cubic-bezier(0.34, 1.26, 0.64, 1),
+              top 700ms cubic-bezier(0.34, 1.26, 0.64, 1),
+              opacity 700ms ease-in;
+  opacity: 0.25;
+}
+
+.disassembling [data-testid="block"] {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disassembling [data-testid="tile"],
+  .disassembling [data-testid="block"] {
+    transition: none;
+  }
+}
+
+.assembling [data-testid="tile"] {
+  transition: left 1500ms cubic-bezier(0.3, 1.28, 0.5, 1),
+              top 1500ms cubic-bezier(0.3, 1.28, 0.5, 1),
+              opacity 800ms ease-out;
+}
+
+.assembling [data-testid="block"] {
+  transition: opacity 1200ms ease-in 300ms;
+}
+
+.gameContainer.assembling [data-testid="tile"] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assembling [data-testid="tile"],
+  .assembling [data-testid="block"] {
+    transition: none;
+  }
+}
