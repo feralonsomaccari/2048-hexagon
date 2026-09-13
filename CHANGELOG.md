@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 - Add AdSense loader script and reserved ad slots (placeholders).
+- Add privacy policy page at /privacy/, linked from the game menu.
+- Replace the hidden SEO block with a visible content section below the board.
+- Move the guide and strategy content to a new /how-to-play/ page, linked from the game menu.
 
 ## [0.26.2] - 2026-06-02
 

@@ -216,6 +216,20 @@ const GameMenu = ({
                       }}
                     />
                   )}
+                  <a
+                    className={styles.menuLink}
+                    href="/how-to-play/"
+                    data-testid="how-to-play-link"
+                  >
+                    How to Play
+                  </a>
+                  <a
+                    className={styles.menuLinkPlain}
+                    href="/privacy/"
+                    data-testid="privacy-link"
+                  >
+                    Privacy Policy
+                  </a>
                   <p className={styles.menuAttribution}>
                     Based on 2048 by{" "}
                     <a href="https://play2048.co/" target="_blank" rel="noopener">

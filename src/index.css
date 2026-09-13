@@ -91,3 +91,117 @@ html, body, #root {
 .block-scroll {
   overflow-y: hidden;
 }
+
+.page-content {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: 0 20px 64px;
+  color: var(--color-text-main);
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+.page-content h1 {
+  font-size: 28px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+
+.page-content h2 {
+  font-size: 21px;
+  letter-spacing: -0.01em;
+  margin: 36px 0 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-tertiary);
+}
+
+.page-content h3 {
+  font-size: 17px;
+  margin: 22px 0 6px;
+}
+
+.page-content p {
+  margin: 0 0 14px;
+}
+
+.page-content ul {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
+.page-content li {
+  margin-bottom: 7px;
+}
+
+.page-content a {
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+.page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 16px;
+  font-size: 15px;
+}
+
+.page-content th,
+.page-content td {
+  text-align: left;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--color-tertiary);
+  vertical-align: top;
+}
+
+.page-content th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.page-content kbd {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-tertiary);
+  background: var(--color-bg-page);
+}
+
+.page-footer {
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-tertiary);
+  font-size: 14px;
+}
+
+.page-footer a {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  margin-right: 18px;
+}
+
+@media (max-width: 600px) {
+  .page-content {
+    margin-top: 32px;
+    padding: 0 16px 48px;
+    font-size: 15px;
+  }
+
+  .page-content h1 {
+    font-size: 23px;
+  }
+
+  .page-content h2 {
+    font-size: 19px;
+  }
+}
+
+.page-more {
+  margin: 24px 0 0;
+  font-weight: 600;
+}

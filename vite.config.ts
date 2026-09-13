@@ -1,11 +1,30 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vite";
+import { existsSync } from "node:fs";
+import { resolve, sep } from "node:path";
+import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import pkg from "./package.json";
 
+const staticPages = (): Plugin => ({
+  name: "static-pages",
+  configureServer(server) {
+    const publicDir = resolve(__dirname, "public");
+    server.middlewares.use((req, _res, next) => {
+      const path = req.url?.split("?")[0] ?? "";
+      if (path.endsWith("/") && path !== "/" && !path.includes("..")) {
+        const file = resolve(publicDir, `.${path}index.html`);
+        if (file.startsWith(publicDir + sep) && existsSync(file)) {
+          req.url = `${path}index.html`;
+        }
+      }
+      next();
+    });
+  },
+});
+
 export default defineConfig({
   base: "/",
-  plugins: [react()],
+  plugins: [react(), staticPages()],
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
